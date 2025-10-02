@@ -3,27 +3,25 @@ import javax.swing.*;
 public class Frog {
 
 
-    private String imagePath,name,species;
+    private String imagePath, name, species, acquisitionDate;
     private ImageIcon image;
 
-    private int exp;
+    private int experience;
     // String rarity; ?
-    // Point barPos; (to drag and drop them on the bar, make them jump, interact)
+    // Point barPos; (to drag and drop them
+    // on the bar, make them jump, interact)
 
-    public Frog(String imagePath, String name, String species){
+    public Frog(String imagePath, String name, String species, String acquisitionDate) {
         this.imagePath = imagePath;
         this.image = new ImageIcon(imagePath);
         this.name = name;
         this.species = species;
-        this.exp = 0;
+        this.acquisitionDate = acquisitionDate;
+        this.experience = 50;
     }
 
     public Frog(String imagePath){
-        this.imagePath = imagePath;
-        this.image = new ImageIcon(imagePath);
-        this.name = "John Toad";
-        this.species = "basic bitch";
-        this.exp = 0;
+        this(imagePath, "John Toad", "basic bitch", "00/00/0000");
     }
 
     public String getImagePath() {
@@ -34,5 +32,27 @@ public class Frog {
         this.imagePath = imagePath;
     }
 
+    public ImageIcon getImage() {
+        return image;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getSpecies(){
+        return species;
+    }
+
+    public String getAcquisitionDate(){
+        return acquisitionDate;
+    }
+    
+    public int getExperience(){
+        return experience % Constants.EXPERIENCE_THRESHOLD;
+    }
+
+    public int getLevel(){
+        return experience / Constants.EXPERIENCE_THRESHOLD;
+    }
 }
