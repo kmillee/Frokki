@@ -36,6 +36,7 @@ public class Pond extends JComponent {
     private void setUpFrame() {
         frame = new JFrame();
         frame.setTitle("Pond");
+//        frame.setUndecorated(true);
         frame.setPreferredSize(new Dimension(1100, 600));
 //        setBackground(new Color(255, 255, 255,40));
 

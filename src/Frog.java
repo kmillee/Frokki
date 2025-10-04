@@ -11,6 +11,7 @@ public class Frog {
     // Point barPos; (to drag and drop them
     // on the bar, make them jump, interact)
 
+
     public Frog(String imagePath, String name, String species, String acquisitionDate) {
         this.imagePath = imagePath;
         this.image = new ImageIcon(imagePath);

@@ -19,7 +19,7 @@ public class FrogBar extends JFrame {
             setUpFrogList();
             setUpFrogs();
             window.setVisible(true);
-            window.setAlwaysOnTop(true);
+            window.setAlwaysOnTop(true);    // To always appear regardless of user activity
         }
 
         private void setUpWindow() {
@@ -32,8 +32,6 @@ public class FrogBar extends JFrame {
             window.setSize(screenSize.width, 100);
             window.setLocation(0, screenSize.height - window.getHeight() - 45);
 
-
-
         }
 
         private void setUpFrogList() throws IOException {
@@ -45,12 +43,16 @@ public class FrogBar extends JFrame {
 
         private void setUpFrogs() throws IOException {
 
+
+                // Code taken: https://www.geeksforgeeks.org/java/jswing-create-translucent-shaped-windows-java/
                 // create a panel
                 JPanel p = new JPanel() {
 
                     // paint the panel
                     public void paintComponent(Graphics g)
                     {
+
+                        // this was to check if mouselistener was working by default, needs to be rewritten
                         System.out.println("jump value = " + jump);
                         if (jump>=0){
                             jump+=10;
@@ -60,6 +62,11 @@ public class FrogBar extends JFrame {
                             jump=-1;
                             System.out.println("jump too high:"+jump);
                         }
+                        else{
+                            System.out.println("no jump");
+                        }
+
+                        // Draw frog from froglist on the toolbar
                         for (Frog frog : frogList) {
                             int frog_nb = frogList.indexOf(frog) + 1 ;
                             BufferedImage i = null;
@@ -97,6 +104,7 @@ public class FrogBar extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         System.out.println("Jump!");
                         jump = 0;
+                        p.repaint();
                     }
                 });
                 window.add(p);
