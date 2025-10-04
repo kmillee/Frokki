@@ -1,6 +1,5 @@
 /**
  * Created: 01/10/2025
- *
  * Adapted from https://forums.oracle.com/ords/apexds/post/jpanel-border-with-rounded-corners-0946
  */
 

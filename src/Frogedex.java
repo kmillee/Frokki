@@ -14,12 +14,15 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Frogedex extends JFrame {
     private PondSimController controller;
+    private JPanel frogInfoPanel;
 
     Frogedex(PondSimController controller) {
 
@@ -28,21 +31,23 @@ public class Frogedex extends JFrame {
         this.setResizable(false);
         this.setTitle("Frogedex");
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
-        Frog frog = new Frog("media/frog_og.png", "The Frog", "Frog Species", "01/01/2025");
+        //Frog frog = new Frog("media/frog_og.png", "The Frog", "Frog Species", "01/01/2025");
 
         List<Frog> frogs = new ArrayList<>();
         for(int i = 0 ; i < 8 ; i++){
+            Frog frog = new Frog("media/frog_og.png", "The Frog "+ i, "Frog Species", "01/01/2025");
             frogs.add(frog);
         }
 
-        JPanel frogInfo = getFrogInfoPanel(frog);
-        frogInfo.setBackground(Color.BLUE);
+        frogInfoPanel = getFrogInfoPanel(frogs.getFirst());
         JPanel frogList = getFrogListPanel(frogs);
 
-        this.add(frogInfo);
-        this.add(Box.createHorizontalStrut(3));
-        this.add(new JSeparator(SwingConstants.VERTICAL));
-        this.add(Box.createHorizontalStrut(3));
+        JPanel separationPanel = new JPanel();
+        separationPanel.setBackground(UIManager.getColor("Component.borderColor"));
+        Utils.setFixedSize(separationPanel,5, 430);
+
+        this.add(frogInfoPanel);
+        this.add(separationPanel);
         this.add(frogList);
         this.setVisible(true);
         pack();
@@ -78,6 +83,7 @@ public class Frogedex extends JFrame {
         JLabel acquisitionLabel = new JLabel("Captured: " + frog.getAcquisitionDate());
         acquisitionLabel.setFont(fontsmall);
         acquisitionLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        acquisitionLabel.setBorder(new EmptyBorder(0,0,0,23));
 
         JLabel frogImageLabel = new JLabel(frogImage);
 
@@ -130,23 +136,23 @@ public class Frogedex extends JFrame {
         acquisitionPanel.add(acquisitionLabel);
 
         // --- Put everything in the frogInfoPanel
-        JPanel frogInfoPanel = new JPanel();
+        JPanel frogInfo = new JPanel();
         Border innerPadding = new EmptyBorder(0,58,0,58);
-        frogInfoPanel.setBorder(innerPadding);
+        frogInfo.setBorder(innerPadding);
 
+        frogInfo.setLayout(new BoxLayout(frogInfo, BoxLayout.Y_AXIS));
+        frogInfo.add(speciesLabel);
+        frogInfo.add(frogImagePanel);
+        frogInfo.add(nameLabel);
+        frogInfo.add(levelPanel);
+
+        JPanel frogInfoPanel =  new JPanel();
         frogInfoPanel.setLayout(new BoxLayout(frogInfoPanel, BoxLayout.Y_AXIS));
-        frogInfoPanel.add(speciesLabel);
-        frogInfoPanel.add(frogImagePanel);
-        frogInfoPanel.add(nameLabel);
-        frogInfoPanel.add(levelPanel);
+        frogInfoPanel.add(frogInfo);
+        frogInfoPanel.add(Box.createVerticalGlue());
+        frogInfoPanel.add(acquisitionPanel);
 
-        JPanel totalPanel =  new JPanel();
-        totalPanel.setLayout(new BoxLayout(totalPanel, BoxLayout.Y_AXIS));
-        totalPanel.add(frogInfoPanel);
-        totalPanel.add(Box.createVerticalGlue());
-        totalPanel.add(acquisitionPanel);
-
-        return totalPanel;
+        return frogInfoPanel;
     }
 
     /**
@@ -182,6 +188,17 @@ public class Frogedex extends JFrame {
         frogCard.add(frogImageLabel);
         frogCard.add(frogNameLabel);
         Utils.setFixedSize(frogCard, 108, 131);
+
+        frogCard.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Frogedex.this.getContentPane().remove(frogInfoPanel);
+                frogInfoPanel = getFrogInfoPanel(frog);
+                Frogedex.this.getContentPane().add(frogInfoPanel, 0);
+                Frogedex.this.revalidate();
+                Frogedex.this.repaint();
+            }
+        });
 
         return frogCard;
     }
