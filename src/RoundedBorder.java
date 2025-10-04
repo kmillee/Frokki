@@ -22,7 +22,7 @@ public class RoundedBorder implements Border {
      * @param color color of the border
      */
     public RoundedBorder(int radius, int thickness, Color color) {
-        this.radius = radius;
+        this.radius = radius * 2;
         this.thickness = thickness;
         this.color = color;
     }
