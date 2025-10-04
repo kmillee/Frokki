@@ -8,15 +8,15 @@
  */
 
 import com.formdev.flatlaf.FlatClientProperties;
-import com.formdev.flatlaf.ui.FlatLineBorder;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Frogedex extends JFrame {
     private PondSimController controller;
@@ -27,11 +27,23 @@ public class Frogedex extends JFrame {
         Utils.setFixedSize(this, 858, 430);
         this.setResizable(false);
         this.setTitle("Frogedex");
+        this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
+        Frog frog = new Frog("media/frog_og.png", "The Frog", "Frog Species", "01/01/2025");
 
-        Frog frog = new Frog("media/frog_og.png", "Bibi the Frog", "Frog Species", "01/01/2025");
+        List<Frog> frogs = new ArrayList<>();
+        for(int i = 0 ; i < 8 ; i++){
+            frogs.add(frog);
+        }
 
         JPanel frogInfo = getFrogInfoPanel(frog);
-        this.add(frogInfo,  BorderLayout.WEST);
+        frogInfo.setBackground(Color.BLUE);
+        JPanel frogList = getFrogListPanel(frogs);
+
+        this.add(frogInfo);
+        this.add(Box.createHorizontalStrut(3));
+        this.add(new JSeparator(SwingConstants.VERTICAL));
+        this.add(Box.createHorizontalStrut(3));
+        this.add(frogList);
         this.setVisible(true);
         pack();
     }
@@ -135,5 +147,139 @@ public class Frogedex extends JFrame {
         totalPanel.add(acquisitionPanel);
 
         return totalPanel;
+    }
+
+    /**
+     * Creates a frog card panel that is used to display a frog's picture and name
+     * @return
+     */
+    private JPanel getFrogCardPanel(Frog frog) {
+        // Load and resize image
+        ImageIcon frogImage = frog.getImage();
+        frogImage = Utils.resizeImageIcon(frogImage, 82, 82);
+        JLabel frogImageLabel = new JLabel(frogImage);
+        frogImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Create label for frog's name
+        JLabel frogNameLabel = new JLabel(frog.getName());
+        frogNameLabel.setFont(Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 14));
+        frogNameLabel.setHorizontalAlignment(JLabel.CENTER);
+        frogNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        frogNameLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+        // Panel for inner frog card
+        JPanel frogCard = new JPanel();
+        frogCard.setLayout(new BoxLayout(frogCard, BoxLayout.Y_AXIS));
+        // following line from https://github.com/JFormDesigner/FlatLaf/issues/367
+        frogCard.putClientProperty(FlatClientProperties.STYLE,
+                "[light]background: tint(@background,50%);" +
+                "[dark]background: shade(@background,15%);" +
+                "[light]border: 16,16,16,16,shade(@background,10%),,20;" +
+                "[dark]border: 16,16,16,16,tint(@background,10%),,20;"
+                );
+
+        // Add image and name
+        frogCard.add(frogImageLabel);
+        frogCard.add(frogNameLabel);
+        Utils.setFixedSize(frogCard, 108, 131);
+
+        return frogCard;
+    }
+
+    private JPanel getFrogListPanel(List<Frog> frogs) {
+        JPanel cardPanel = new JPanel(new CardLayout());
+        Utils.setFixedSize(cardPanel, 528, 430);
+        cardPanel.setBackground(Color.red);
+        int frogsPerPage = 6;
+        int totalPages = (int) Math.ceil((double) frogs.size() / frogsPerPage);
+
+        for(int pageIndex = 0 ; pageIndex < totalPages ; pageIndex++) {
+            JPanel page = getFrogListPagePanel(frogs, pageIndex,  frogsPerPage);
+            cardPanel.add(page, "Page " + pageIndex);
+        }
+
+        // Setup navigation layout
+        Font buttonFont = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Bold.ttf", 20);
+        JButton prevButton = new JButton("<");
+        prevButton.setFont(buttonFont);
+        prevButton.setMargin(new Insets(5, 0, 0, 0));
+        JButton nextButton = new JButton(">");
+        nextButton.setFont(buttonFont);
+        nextButton.setMargin(new Insets(5, 0, 0, 0));
+
+        JPanel navigationPanel = new JPanel();
+        navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.X_AXIS));
+        navigationPanel.setOpaque(false);
+        navigationPanel.add(Box.createHorizontalGlue());
+        navigationPanel.add(prevButton);
+        navigationPanel.add(Box.createHorizontalStrut(5));
+        navigationPanel.add(nextButton);
+        navigationPanel.add(Box.createHorizontalGlue());
+
+        // Make navigation functional
+        CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
+        final int[] currentPage = {0}; // track selected page index -> final int[] because it is necessary in lambda expressions
+
+
+        // Method to update enabled state of a button
+        Runnable updateButtonStates = () -> {
+            prevButton.setEnabled(currentPage[0]>0);
+            nextButton.setEnabled(currentPage[0]<totalPages-1);
+        };
+
+        prevButton.addActionListener(e -> {
+            if(currentPage[0] > 0){
+                currentPage[0]--;
+                cardLayout.show(cardPanel, "Page " + currentPage[0]);
+                updateButtonStates.run();
+            }
+        });
+
+        nextButton.addActionListener(e -> {
+            if(currentPage[0] < totalPages - 1){
+                currentPage[0]++;
+                cardLayout.show(cardPanel, "Page " + currentPage[0]);
+                updateButtonStates.run();
+            }
+        });
+
+        updateButtonStates.run();
+
+        // Encapsulate list and navigation in a single panel
+        JPanel frogListPanel = new JPanel();
+        frogListPanel.setLayout(new BorderLayout());
+        frogListPanel.setOpaque(false);
+        frogListPanel.add(cardPanel,  BorderLayout.CENTER);
+        frogListPanel.add(navigationPanel, BorderLayout.SOUTH);
+
+        return frogListPanel;
+    }
+
+    /**
+     * Creates a subpage for the list of all frogs
+     * @param frogs list of frogs
+     * @param pageIndex index of the page to display
+     * @param frogsPerPage number of frogs to display in a page
+     * @return list of frogs page
+     */
+    private JPanel getFrogListPagePanel(List<Frog> frogs, int pageIndex, int frogsPerPage) {
+        JPanel page = new JPanel();
+        Utils.setFixedSize(page, 368, 285);
+        JPanel cardList = new JPanel(new GridLayout(2, 3, 22,22));
+        cardList.setOpaque(false);
+
+        // Add up to 6 frogs to the current page
+        for(int i = pageIndex * frogsPerPage; i < Math.min((pageIndex+1) * frogsPerPage, frogs.size()); i++){
+            Frog frog =  frogs.get(i);
+            JPanel frogCard = getFrogCardPanel(frog);
+            cardList.add(frogCard);
+        }
+        // Fills up empty slots
+        while(cardList.getComponentCount() < frogsPerPage){
+            cardList.add(new JPanel());
+        }
+
+        page.add(cardList);
+        return page;
     }
 }
