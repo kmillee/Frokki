@@ -19,4 +19,18 @@ public class Utils {
             return new  Font("Arial", Font.PLAIN, (int)size);
         }
     }
+
+    public static void setFixedSize(JComponent component, int width, int height) {
+        component.setPreferredSize(new Dimension(width, height));
+        component.setMaximumSize(new Dimension(width, height));
+        component.setMinimumSize(new Dimension(width, height));
+        component.setSize(width, height);
+    }
+
+    public static void setFixedSize(JFrame frame, int width, int height) {
+        frame.setPreferredSize(new Dimension(width, height));
+        frame.setMaximumSize(new Dimension(width, height));
+        frame.setMinimumSize(new Dimension(width, height));
+        frame.setSize(width, height);
+    }
 }
