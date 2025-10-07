@@ -11,7 +11,11 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     public int cols;
     public int rows;
     public int cellSize;
+
+    // Media
     public Image image;
+    private Image reeveImg = new ImageIcon("media/reeve.jpg").getImage();
+    private Image lilyImg = new ImageIcon("media/lilypad.png").getImage();
 
     private ArrayList<Tile> grid;
 
@@ -22,10 +26,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     // Other
     private boolean multSelect = false;
-    private boolean dragging = false;
     private boolean ctrlPressed = false;
 
-
+    // ---- SETTING UP ----
     public Grid(int cellSize, String imagePath) {
 
         this.image = new ImageIcon(imagePath).getImage();
@@ -39,10 +42,19 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 grid.add(new Tile(j*cellSize,i*cellSize,cellSize,cellSize));
             }
         }
-//        System.out.println("grid: " + grid.toString());
-
+        installUI();
     }
 
+    public void installUI(){
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
+        this.addKeyListener(this);
+        this.requestFocus();
+    }
+
+
+
+    // ---- PAINT MECHANICS ----
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -50,7 +62,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         updateGrid(g);
     }
 
-    // draw image and grid on top of it, in the middle of the frame
+    // Draw image and grid on top of it, in the middle of the frame
     private void drawGrid(Graphics g, int rows, int cols, int cellSize, Image image) {
         Dimension frameSize = getParent().getSize();
         gridOrigin = new Point((frameSize.width - image.getWidth(null )) / 2, (frameSize.height - image.getHeight(null)) / 2);
@@ -85,9 +97,64 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 g.setColor(new Color(255, 143, 248,180));
                 g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
             }
+
+            if (tile.getFrog() != null){
+                ImageIcon frogIcon = tile.getFrog().getImage();
+                Image frogImg = frogIcon.getImage();
+                // change size
+                //frogImg = frogImg.getScaledInstance(tile.width -2, tile.height -2, Image.SCALE_DEFAULT);
+                g.drawImage(frogImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
+
+            }
+
+            if (tile.isLily()){
+                g.drawImage(lilyImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
+            }
+            if (tile.isReeve()){
+                g.drawImage(reeveImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
+            }
         }
     }
 
+
+    // ---- POND MODIFICATION
+    // random appearance of reeves, frog...
+
+    // Generalize function to any object?
+    //choose random tile and give it a frog
+    public void spawnFrog(){
+        Frog frog = new Frog("media/frog_sand.png");    // need to randomize frog by rarity
+        ArrayList<Tile> availableTiles = getAvailableTiles();
+        int ind = (int) (Math.random() * availableTiles.size());
+        //frog on tile #i
+        Tile tile = availableTiles.get(ind);
+        tile.setFrog(frog);
+
+        repaint();
+    }
+
+    public void spawnReeve(){
+        //choose random tile and give it a frog
+        ArrayList<Tile> availableTiles = getAvailableTiles();
+        int ind = (int) (Math.random() * availableTiles.size());
+
+        Tile tile = availableTiles.get(ind);
+        tile.setReeve(true);
+
+        repaint();
+    }
+
+    public void spawnLily(){
+        ArrayList<Tile> availableTiles = getAvailableTiles();
+        int ind = (int) (Math.random() * availableTiles.size());
+        Tile tile = availableTiles.get(ind);
+        tile.setLily(true);
+        repaint();
+    }
+
+
+
+    // ---- LISTENERS ----
 
     // Switches tile to selected when clicked
     @Override
@@ -123,7 +190,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         if (!ctrlPressed) {
             multSelect = false;
         }
-
     }
 
     @Override
@@ -197,5 +263,38 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         }
 
+    }
+
+    // ---- GETTERS & SETTERS ----
+
+    public ArrayList<Tile> getOccupiedTile(){
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile tile : grid) {
+            if (tile.isOccupied()) {
+                tiles.add(tile);
+            }
+        }
+        return tiles;
+    }
+
+    public ArrayList<Tile> getSelectedTiles(){
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile tile : grid) {
+            if (tile.isSelected()) {
+                tiles.add(tile);
+            }
+
+        }
+        return tiles;
+    }
+
+    public ArrayList<Tile> getAvailableTiles(){
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile tile : grid) {
+            if (!tile.isOccupied()) {
+                tiles.add(tile);
+            }
+        }
+        return tiles;
     }
 }

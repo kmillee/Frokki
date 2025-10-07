@@ -21,6 +21,7 @@ public class Pond extends JComponent {
     private JFrame frame;
     private ImageIcon pondImage;
     private String imagePath;
+    private Grid grid;
 
     public Pond(String imagePath) {
         // change image size
@@ -28,6 +29,7 @@ public class Pond extends JComponent {
         this.pondImage = new ImageIcon(imagePath);
         setUpFrame();
         setUpPond();
+        setUpDevMode();
 
         frame.setVisible(true);
         frame.pack();
@@ -43,14 +45,31 @@ public class Pond extends JComponent {
     }
 
     private void setUpPond(){
-        Grid grid = new Grid(25, imagePath);
+        grid = new Grid(25, imagePath);
         frame.add(grid, BorderLayout.CENTER);
         frame.pack();
-        grid.addMouseListener(grid);
-        grid.addMouseMotionListener(grid);
-        grid.addKeyListener(grid);
-        grid.requestFocus();
+        grid.installUI();
 
+    }
+
+    private void setUpDevMode(){
+        JPanel buttonBar = new JPanel();
+        buttonBar.setLayout(new FlowLayout());
+
+        JButton frogButton = new JButton("Frog");
+        JButton reeveButton = new JButton("Reeve");
+        JButton lilyButton = new JButton("Lilypad");
+
+        buttonBar.add(frogButton);
+        frogButton.addActionListener(e -> {grid.spawnFrog();});
+        buttonBar.add(reeveButton);
+        reeveButton.addActionListener(e -> {grid.spawnReeve();});
+        buttonBar.add(lilyButton);
+        lilyButton.addActionListener(e -> {grid.spawnLily();});
+
+
+
+        frame.add(buttonBar, BorderLayout.SOUTH);
     }
 
 
