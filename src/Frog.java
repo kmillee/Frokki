@@ -7,6 +7,7 @@ public class Frog {
     private ImageIcon image;
 
     private int experience;
+    private boolean active = false; // If active is true, it means the frog is on the toolbar
     // String rarity; ?
     // Point barPos; (to drag and drop them
     // on the bar, make them jump, interact)
@@ -55,5 +56,9 @@ public class Frog {
 
     public int getLevel(){
         return experience / Constants.EXPERIENCE_THRESHOLD;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
