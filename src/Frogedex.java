@@ -18,7 +18,6 @@ public class Frogedex {
     private FrogedexModel frogedexModel;
     private FrogedexView frogedexView;
     private JFrame frame;
-    private JPanel selectedFrogCard;
 
     Frogedex() {
         frogedexModel = new FrogedexModel();
@@ -38,6 +37,8 @@ public class Frogedex {
         }
 
         frogs.forEach(frogedexModel::addFrog);
+        frogs.get(1).setActive(true);
+        frogs.get(2).setActive(true);
         // End of testing
 
         frogedexView.installUI(this);
