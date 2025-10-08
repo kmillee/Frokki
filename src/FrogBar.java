@@ -30,8 +30,8 @@ public class FrogBar extends JWindow {
 
             // set the size of the window
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            setSize(screenSize.width, 100);
-            setLocation(0, screenSize.height - getHeight() - Constants.TASKBAR_FROG_SIZE);
+            setSize(screenSize.width, 2 * Constants.TASKBAR_FROG_SIZE);
+            setLocation(0, screenSize.height - getHeight() - 48);
         }
 
         private void setupLayeredPane(){
