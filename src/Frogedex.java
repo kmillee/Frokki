@@ -10,9 +10,7 @@
 import com.formdev.flatlaf.FlatClientProperties;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,19 +21,18 @@ import java.util.List;
 public class Frogedex extends JFrame {
     private PondSimController controller;
     private JPanel frogInfoPanel;
+    private JPanel selectedFrogCard;
 
     Frogedex(PondSimController controller) {
-
         this.controller = controller;
         Utils.setFixedSize(this, 858, 430);
         this.setResizable(false);
         this.setTitle("Frogedex");
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
-        //Frog frog = new Frog("media/frog_og.png", "The Frog", "Frog Species", "01/01/2025");
 
         List<Frog> frogs = new ArrayList<>();
-        for(int i = 0 ; i < 8 ; i++){
-            Frog frog = new Frog("media/frog_og.png", "The Frog "+ i, "Frog Species", "01/01/2025");
+        for(int i = 0 ; i < 13 ; i++){
+            Frog frog = new Frog("media/frog_" + i + ".png", "The Frog "+ i, "Frog Species", "01/01/2025");
             frogs.add(frog);
         }
 
@@ -91,6 +88,11 @@ public class Frogedex extends JFrame {
         progressBar.setValue(frog.getExperience());
         progressBar.putClientProperty(FlatClientProperties.STYLE, "arc: 20; horizontalSize: 170,10;");
 
+        // -- Button
+        JButton summonButton = new JButton("Summon");
+        summonButton.setFont(fontsmall);
+        summonButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         // --- Image subpanel
         JPanel frogImagePanel = new JPanel();
         Utils.setFixedSize(frogImagePanel, 206, 206);
@@ -129,9 +131,12 @@ public class Frogedex extends JFrame {
         levelPanel.add(levelXpPanel);
         levelPanel.add(progressBar);
 
-        // Acquisition date panel
+        // Acquisition date panel + summon button
         JPanel acquisitionPanel = new JPanel();
         acquisitionPanel.setLayout(new BoxLayout(acquisitionPanel, BoxLayout.X_AXIS));
+        acquisitionPanel.setBorder(new EmptyBorder(0, 20,10,0));
+
+        acquisitionPanel.add(summonButton);
         acquisitionPanel.add(Box.createHorizontalGlue());
         acquisitionPanel.add(acquisitionLabel);
 
@@ -192,6 +197,20 @@ public class Frogedex extends JFrame {
         frogCard.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if(selectedFrogCard != null) {
+                    selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
+                            "[light]background: tint(@background,50%);" +
+                            "[dark]background: shade(@background,15%);" +
+                            "[light]border: 16,16,16,16,shade(@background,10%),,20;" +
+                            "[dark]border: 16,16,16,16,tint(@background,10%),,20;");
+                }
+                selectedFrogCard = frogCard;
+                selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
+                        "[light]background: tint(@background,50%);" +
+                        "[dark]background: shade(@background,15%);" +
+                        "[light]border: 16,16,16,16,#ADD8E6,,20;" +
+                        "[dark]border: 16,16,16,16,#5F9EA0,,20;");
+
                 Frogedex.this.getContentPane().remove(frogInfoPanel);
                 frogInfoPanel = getFrogInfoPanel(frog);
                 Frogedex.this.getContentPane().add(frogInfoPanel, 0);
@@ -199,6 +218,8 @@ public class Frogedex extends JFrame {
                 Frogedex.this.repaint();
             }
         });
+
+        frogCard.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         return frogCard;
     }
@@ -223,6 +244,9 @@ public class Frogedex extends JFrame {
         JButton nextButton = new JButton(">");
         nextButton.setFont(buttonFont);
         nextButton.setMargin(new Insets(5, 0, 0, 0));
+
+        prevButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        nextButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         JPanel navigationPanel = new JPanel();
         navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.X_AXIS));
