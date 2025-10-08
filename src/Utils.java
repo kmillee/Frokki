@@ -6,7 +6,7 @@ public class Utils {
 
     public static ImageIcon resizeImageIcon(ImageIcon icon, int width, int height) {
         Image image = icon.getImage();
-        Image resizedImage = image.getScaledInstance(width, height, 4);
+        Image resizedImage = image.getScaledInstance(width, height,  Image.SCALE_DEFAULT);
         return new ImageIcon(resizedImage);
     }
 
