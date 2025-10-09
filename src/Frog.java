@@ -1,4 +1,8 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Frog {
 
@@ -12,6 +16,7 @@ public class Frog {
     // Point barPos; (to drag and drop them
     // on the bar, make them jump, interact)
 
+    private final List<ChangeListener> listeners = new ArrayList<ChangeListener>();
 
     public Frog(String imagePath, String name, String species, String acquisitionDate) {
         this.imagePath = imagePath;
@@ -60,9 +65,20 @@ public class Frog {
 
     public void setActive(boolean active) {
         this.active = active;
+        notifyChangeListeners();
     }
 
     public boolean isActive() {
         return active;
+    }
+
+    public void addChangeListeners(ChangeListener changeListener) {
+        listeners.add(changeListener);
+    }
+
+    public void notifyChangeListeners(){
+        for(ChangeListener listener : listeners){
+            listener.stateChanged(new ChangeEvent(this));
+        }
     }
 }
