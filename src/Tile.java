@@ -1,16 +1,18 @@
 import java.awt.*;
 
 public class Tile extends Rectangle{
+    public static int total = 0;
+
+
+    private int id;
     private boolean hovered;
     private boolean selected;
-    private boolean occupied;
+    private boolean occupied;   // already has a frog or a reeve
+    private boolean water;  // does this tile contains water)
 
     private Frog frog;
     private boolean reeve;
     private boolean lily;
-
-
-    // private Object object;  // does the tile contains lilypad/reeve
 
     public Tile(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -18,10 +20,18 @@ public class Tile extends Rectangle{
         hovered = false;
         occupied = false;
         frog = null;
+        id = total++;
     }
 
 
     // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     public boolean isHovered() {
         return hovered;
     }
@@ -61,7 +71,6 @@ public class Tile extends Rectangle{
 
     public void setLily(boolean lily) {
         this.lily = lily;
-        this.occupied = true;
     }
 
     public boolean isReeve() {
