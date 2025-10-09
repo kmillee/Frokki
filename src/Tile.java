@@ -8,17 +8,20 @@ public class Tile extends Rectangle{
     private boolean hovered;
     private boolean selected;
     private boolean occupied;   // already has a frog or a reeve
-    private boolean water;  // does this tile contains water)
-
     private Frog frog;
     private boolean reeve;
     private boolean lily;
+    private boolean rotten;
 
     public Tile(int x, int y, int width, int height) {
         super(x, y, width, height);
         selected = false;
         hovered = false;
         occupied = false;
+
+        lily = false;
+        reeve = false;
+        rotten = false;
         frog = null;
         id = total++;
     }
@@ -81,4 +84,15 @@ public class Tile extends Rectangle{
         this.reeve = reeve;
         this.occupied = true;
     }
+
+    public boolean isRotten() {
+        return rotten;
+    }
+    public void setRotten(boolean rotten) {
+        this.rotten = rotten;
+        this.lily = false;
+
+    }
+
+
 }
