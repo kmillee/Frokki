@@ -15,6 +15,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
     private Frogedex frogedex;
     private JPanel selectedFrogCard;
     private Point dragOffset;
+    private JButton summonButton;
 
     public FrogedexView() {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -96,7 +97,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         progressBar.putClientProperty(FlatClientProperties.STYLE, "arc: 20; horizontalSize: 170,10;");
 
         // -- Button
-        JButton summonButton = new JButton("Summon");
+        summonButton = new JButton("Summon");
         summonButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
         if(frog.isActive()) {
             summonButton.setText("Unsummon");
@@ -340,7 +341,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         Object source = e.getSource();
         if (source instanceof JButton button) {
             // Manage summoning of frogs
-            if (button.getText().equals("Summon") || button.getText().equals("Unsummon")) {
+            if (button.equals(summonButton)) {
                 Frog frog = frogedex.getSelectedFrog();
                 frog.setActive(!frog.isActive());
                 if (frog.isActive()) {
@@ -434,6 +435,12 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
                     // Test if the mouse is outside the frame before accepting the drag
                     if(!this.contains(e.getXOnScreen(), e.getYOnScreen())){
                         selectedFrog.setActive(true);
+                        summonButton.setText("Unsummon");
+                        summonButton.putClientProperty(FlatClientProperties.STYLE,
+                                "arc: 20;" +
+                                "background: #f6685e;" +
+                                "disabledBackground: #f6685e;" +
+                                "focusedBackground: #f6685e;");
                     }
                     dragOffset = null;
                 }
