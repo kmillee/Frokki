@@ -93,12 +93,36 @@ public class FrogedexView extends JPanel {
 
         // -- Button
         JButton summonButton = new JButton("Summon");
+
+        if(frog.isActive()) {
+            summonButton.setText("Unsummon");
+            summonButton.putClientProperty(FlatClientProperties.STYLE,
+                    "arc: 20;" +
+                    "background: #f6685e;" +
+                    "disabledBackground: #f6685e;" +
+                    "focusedBackground: #f6685e;");
+        }
+
         summonButton.setFont(fontsmall);
         summonButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+
         summonButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                frog.setActive(true);
+                frog.setActive(!frog.isActive());
+                if(frog.isActive()) {
+                    summonButton.setText("Unsummon");
+                    summonButton.putClientProperty(FlatClientProperties.STYLE,
+                            "arc: 20;" +
+                                    "background: #f6685e;" +
+                                    "disabledBackground: #f6685e;" +
+                                    "focusedBackground: #f6685e;");
+                } else {
+                    summonButton.setText("Summon");
+                    summonButton.putClientProperty(FlatClientProperties.STYLE, null); // reset style
+                    summonButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
+                }
             }
         });
 
@@ -213,6 +237,7 @@ public class FrogedexView extends JPanel {
         frogCard.add(frogNameLabel);
         Utils.setFixedSize(frogCard, 108, 131);
 
+        // Mouse listener that manages frog selecting (changing style of selected card)
         frogCard.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
