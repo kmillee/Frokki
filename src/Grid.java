@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 // Class handling input of the pond
 public class Grid extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
-    //TODO: highlight tile when cursor goes on it
-
+    // implement "remove object" and overlap reeve/tile
+    // start tool window
     public int cols;
     public int rows;
     public int cellSize;
@@ -18,6 +18,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private Image lilyImg = new ImageIcon("media/lilypad.png").getImage();
 
     private ArrayList<Tile> grid;
+    private ArrayList<Tile> water_grid;
+    private ArrayList<Tile> lily_grid;
+    private ArrayList<Tile> reeve_grid;
+    private ArrayList<Tile> frog_grid;
 
     // Relative position help
     private Point gridOrigin;
@@ -42,6 +46,18 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 grid.add(new Tile(j*cellSize,i*cellSize,cellSize,cellSize));
             }
         }
+
+        this.water_grid = new ArrayList<>();
+        for (Tile tile : grid){
+            if (Utils.contains(Constants.WATER_TILES, tile.getId())) {
+                water_grid.add(tile);
+            }
+        }
+
+        this.lily_grid = new ArrayList<>();
+        this.reeve_grid = new ArrayList<>();
+        this.frog_grid = new ArrayList<>();
+
         installUI();
     }
 
@@ -88,14 +104,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private void updateGrid(Graphics g) {
 
         for (Tile tile : grid) {
-            if (tile.isHovered()) {
-                g.setColor(new Color(255, 255, 255,100));
-                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
-            }
 
-            if (tile.isSelected()){
-                g.setColor(new Color(255, 143, 248,180));
-                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
+            if (tile.isLily()){
+                g.drawImage(lilyImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
             }
 
             if (tile.getFrog() != null){
@@ -106,14 +117,21 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 g.drawImage(frogImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
 
             }
-
-            if (tile.isLily()){
-                g.drawImage(lilyImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
-            }
             if (tile.isReeve()){
                 g.drawImage(reeveImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
             }
+
+            if (tile.isHovered()) {
+                g.setColor(new Color(255, 255, 255,100));
+                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
+            }
+
+            if (tile.isSelected()){
+                g.setColor(new Color(255, 143, 248,180));
+                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
+            }
         }
+
     }
 
 
@@ -123,33 +141,60 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     // Generalize function to any object?
     //choose random tile and give it a frog
     public void spawnFrog(){
-        Frog frog = new Frog("media/frog_sand.png");    // need to randomize frog by rarity
-        ArrayList<Tile> availableTiles = getAvailableTiles();
-        int ind = (int) (Math.random() * availableTiles.size());
-        //frog on tile #i
-        Tile tile = availableTiles.get(ind);
-        tile.setFrog(frog);
+        Frog frog = getRandomFrog();    // need to randomize frog by rarity
+        Tile tile = getRandomLilyTile();
+        if (tile != null){
+            tile.setFrog(frog);
+            frog_grid.add(tile);
+            repaint();
+        }
 
-        repaint();
+        else{
+            System.out.println("no lily pad available");
+        }
     }
 
     public void spawnReeve(){
-        //choose random tile and give it a frog
-        ArrayList<Tile> availableTiles = getAvailableTiles();
-        int ind = (int) (Math.random() * availableTiles.size());
+        Tile tile = getRandomAvailableTile();
+        if (tile != null){
+            tile.setReeve(true);
+            reeve_grid.add(tile);
+            repaint();
+        }
 
-        Tile tile = availableTiles.get(ind);
-        tile.setReeve(true);
-
-        repaint();
     }
 
     public void spawnLily(){
+        Tile tile = getRandomAvailableTile();
+        if (tile != null){
+            tile.setLily(true);
+            lily_grid.add(tile);
+            repaint();
+        }
+
+    }
+
+    private Tile getRandomAvailableTile(){
         ArrayList<Tile> availableTiles = getAvailableTiles();
+        if (availableTiles.isEmpty()) return null;
         int ind = (int) (Math.random() * availableTiles.size());
         Tile tile = availableTiles.get(ind);
-        tile.setLily(true);
-        repaint();
+        return tile;
+    }
+
+    private Tile getRandomLilyTile(){
+        ArrayList<Tile> availableTiles = getAvailableLilyTiles();
+        if (availableTiles.isEmpty()) return null;
+        int ind = (int) (Math.random() * availableTiles.size());
+        Tile tile = availableTiles.get(ind);
+        return tile;
+    }
+
+    private Frog getRandomFrog(){
+        int size = Constants.FROGS.size();
+        int random = (int) (Math.random() * size);
+
+        return Constants.FROGS.get(random);
     }
 
 
@@ -173,6 +218,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
 
         }
+//        getSelectedTilesId();
         repaint();
 
 
@@ -215,6 +261,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
 
         }
+//        getSelectedTilesId();
 
     }
 
@@ -285,16 +332,41 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
 
         }
+        System.out.println("Selected tiles: " + tiles);
+        return tiles;
+    }
+
+    public ArrayList<Integer> getSelectedTilesId(){
+        ArrayList<Integer> tiles = new ArrayList<>();
+        for (Tile tile : grid) {
+            if (tile.isSelected()) {
+                tiles.add(tile.getId());
+            }
+
+        }
+        System.out.println("Selected tiles: " + tiles);
         return tiles;
     }
 
     public ArrayList<Tile> getAvailableTiles(){
         ArrayList<Tile> tiles = new ArrayList<>();
         for (Tile tile : grid) {
-            if (!tile.isOccupied()) {
+            if (!tile.isOccupied() && water_grid.contains(tile)) {
                 tiles.add(tile);
             }
         }
         return tiles;
     }
+
+    public ArrayList<Tile> getAvailableLilyTiles(){
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile tile : grid) {
+            if (tile.isLily() && tile.getFrog() == null) {
+                tiles.add(tile);
+            }
+        }
+        return tiles;
+    }
+
+
 }

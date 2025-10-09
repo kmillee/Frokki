@@ -33,4 +33,12 @@ public class Utils {
         frame.setMinimumSize(new Dimension(width, height));
         frame.setSize(width, height);
     }
+
+    public static boolean contains(int[] list, int id){
+        if (list == null) return false;
+        for (int j : list) {
+            if (j == id) return true;
+        }
+        return false;
+    }
 }
