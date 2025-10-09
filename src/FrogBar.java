@@ -26,13 +26,10 @@ public class FrogBar extends JWindow {
         }
 
         private void setUpWindow() {
-            setBackground(new Color(255, 255, 255, 0));
-            // set the location
-
-            // set the size of the window
+            setBackground(new Color(255, 255, 255, 0)); // Transparent
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            setSize(screenSize.width, 2 * Constants.TASKBAR_FROG_SIZE);
-            setLocation(0, screenSize.height - getHeight() - 48);
+            setSize(screenSize.width, screenSize.height - Constants.TASKBAR_OFFSET);
+            setLocation(0, 0);
         }
 
         private void setupLayeredPane(){
