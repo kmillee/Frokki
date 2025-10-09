@@ -8,20 +8,17 @@ import java.util.ArrayList;
 public class Grid extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
     // implement "remove object" and overlap reeve/tile
     // start tool window
-    public int cols;
-    public int rows;
-    public int cellSize;
+    public int cols, rows, cellSize;
 
     // Media
     public Image image;
     private Image reeveImg = new ImageIcon("media/reeve.jpg").getImage();
     private Image lilyImg = new ImageIcon("media/lilypad.png").getImage();
+    private Image rottenImg = new ImageIcon("media/rotten.jpg").getImage();
 
-    private ArrayList<Tile> grid;
-    private ArrayList<Tile> water_grid;
-    private ArrayList<Tile> lily_grid;
-    private ArrayList<Tile> reeve_grid;
-    private ArrayList<Tile> frog_grid;
+
+    // Tile management
+    private ArrayList<Tile> grid, water_grid, lily_grid, reeve_grid, frog_grid, rotten_grid;
 
     // Relative position help
     private Point gridOrigin;
@@ -29,8 +26,11 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private int dy;
 
     // Other
+    private Timer timer;
     private boolean multSelect = false;
     private boolean ctrlPressed = false;
+
+
 
     // ---- SETTING UP ----
     public Grid(int cellSize, String imagePath) {
@@ -57,8 +57,13 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         this.lily_grid = new ArrayList<>();
         this.reeve_grid = new ArrayList<>();
         this.frog_grid = new ArrayList<>();
+        this.rotten_grid = new ArrayList<>();
 
         installUI();
+        setUpTimer();
+
+
+
     }
 
     public void installUI(){
@@ -68,6 +73,21 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         this.requestFocus();
     }
 
+    private void setUpTimer(){
+        int delay = (int) (Math.random() * Constants.MAX_DELAY);
+
+        System.out.println("setUpTimer:" +  delay);
+
+        timer = new Timer(delay, e -> {
+            System.out.println("rotten");
+            spawnRotten();
+            setUpTimer();
+        });
+
+        timer.setRepeats(false);
+        timer.start();
+
+    }
 
 
     // ---- PAINT MECHANICS ----
@@ -119,6 +139,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
             if (tile.isReeve()){
                 g.drawImage(reeveImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
+            }
+
+            if (tile.isRotten()){
+                g.drawImage(rottenImg, tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
             }
 
             if (tile.isHovered()) {
@@ -173,6 +197,23 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
 
     }
+
+    public void spawnRotten(){
+        Tile tile = getRandomLilyTile();
+        if (tile != null){
+            tile.setRotten(true);
+            lily_grid.remove(tile);
+            rotten_grid.add(tile);
+            repaint();
+        }
+
+        else{
+            System.out.println("no lily pad available");
+        }
+
+    }
+
+
 
     private Tile getRandomAvailableTile(){
         ArrayList<Tile> availableTiles = getAvailableTiles();
