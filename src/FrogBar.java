@@ -1,10 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.*;
 
@@ -13,8 +10,12 @@ public class FrogBar extends JWindow {
         private JLayeredPane layeredPane;
 
 
-        public FrogBar(Frogedex frogedex) throws IOException {
+        public FrogBar(Frogedex frogedex) {
             this.frogedex = frogedex;
+
+            for(Frog frog : frogedex.getFrogs()) {
+                frog.addChangeListeners(e -> updateFrogBar());
+            }
 
             setUpWindow();
             setupLayeredPane();
