@@ -5,12 +5,11 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.List;
 
-public class FrogedexView extends JPanel {
+public class FrogedexView extends JPanel implements MouseListener, MouseMotionListener {
     private JPanel frogListPanel;
     private JPanel frogInfoPanel;
     private Frogedex frogedex;
@@ -86,6 +85,10 @@ public class FrogedexView extends JPanel {
         acquisitionLabel.setBorder(new EmptyBorder(0,0,0,23));
 
         JLabel frogImageLabel = new JLabel(frogImage);
+        frogImageLabel.putClientProperty("isFrogImageLabel", true);
+        // Put mouseListener and motionListener on image to allow for drag and drop on toolbar
+        frogImageLabel.addMouseListener(this);
+        frogImageLabel.addMouseMotionListener(this);
 
         JProgressBar progressBar = new JProgressBar(0, Constants.EXPERIENCE_THRESHOLD);
         progressBar.setValue(frog.getExperience());
@@ -93,7 +96,7 @@ public class FrogedexView extends JPanel {
 
         // -- Button
         JButton summonButton = new JButton("Summon");
-
+        summonButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
         if(frog.isActive()) {
             summonButton.setText("Unsummon");
             summonButton.putClientProperty(FlatClientProperties.STYLE,
@@ -106,25 +109,8 @@ public class FrogedexView extends JPanel {
         summonButton.setFont(fontsmall);
         summonButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        summonButton.addMouseListener(this);
 
-        summonButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                frog.setActive(!frog.isActive());
-                if(frog.isActive()) {
-                    summonButton.setText("Unsummon");
-                    summonButton.putClientProperty(FlatClientProperties.STYLE,
-                            "arc: 20;" +
-                                    "background: #f6685e;" +
-                                    "disabledBackground: #f6685e;" +
-                                    "focusedBackground: #f6685e;");
-                } else {
-                    summonButton.setText("Summon");
-                    summonButton.putClientProperty(FlatClientProperties.STYLE, null); // reset style
-                    summonButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
-                }
-            }
-        });
 
         // --- Image subpanel
         JPanel frogImagePanel = new JPanel();
@@ -138,6 +124,7 @@ public class FrogedexView extends JPanel {
         frogImagePanel.setBorder(new CompoundBorder(outerBorder, paddingBorder));
 
         frogImagePanel.add(frogImageLabel);
+
 
 
         // --- Level subpanel
@@ -238,29 +225,10 @@ public class FrogedexView extends JPanel {
         Utils.setFixedSize(frogCard, 108, 131);
 
         // Mouse listener that manages frog selecting (changing style of selected card)
-        frogCard.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(selectedFrogCard != null){
-                    selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
-                            "[light]background: tint(@background,50%);" +
-                            "[dark]background: shade(@background,15%);" +
-                            "[light]border: 16,16,16,16,shade(@background,10%),,20;" +
-                            "[dark]border: 16,16,16,16,tint(@background,10%),,20;"
-                    );
-                }
-                selectedFrogCard = frogCard;
-                selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
-                        "[light]background: tint(@background,50%);" +
-                        "[dark]background: shade(@background,15%);" +
-                        "[light]border: 16,16,16,16,#ADD8E6,,20;" +
-                        "[dark]border: 16,16,16,16,#5F9EA0,,20;"
-                );
+        frogCard.putClientProperty("isFrogCard", true);
+        frogCard.putClientProperty("frog", frog); // Necessary to retrieve the frog's info in the mouse event
+        frogCard.addMouseListener(this);
 
-                // Notify controller about modification in selection
-                frogedex.selectFrog(frog);
-            }
-        });
 
         frogCard.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -364,5 +332,90 @@ public class FrogedexView extends JPanel {
 
         page.add(cardList);
         return page;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Object source = e.getSource();
+        if (source instanceof JButton button) {
+            // Manage summoning of frogs
+            if (button.getText().equals("Summon") || button.getText().equals("Unsummon")) {
+                Frog frog = frogedex.getSelectedFrog();
+                frog.setActive(!frog.isActive());
+                if (frog.isActive()) {
+                    button.setText("Unsummon");
+                    button.putClientProperty(FlatClientProperties.STYLE,
+                            "arc: 20;" +
+                            "background: #f6685e;" +
+                            "disabledBackground: #f6685e;" +
+                            "focusedBackground: #f6685e;");
+                } else {
+                    button.setText("Summon");
+                    button.putClientProperty(FlatClientProperties.STYLE, null); // reset style
+                    button.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
+                }
+            }
+        }
+        else if (source instanceof JPanel panel){
+            // Manage change of frog info + style of card when selected
+            if(Boolean.TRUE.equals(panel.getClientProperty("isFrogCard"))){
+                if(selectedFrogCard != null){
+                    selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
+                            "[light]background: tint(@background,50%);" +
+                                    "[dark]background: shade(@background,15%);" +
+                                    "[light]border: 16,16,16,16,shade(@background,10%),,20;" +
+                                    "[dark]border: 16,16,16,16,tint(@background,10%),,20;"
+                    );
+                }
+                selectedFrogCard = panel;
+                selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
+                        "[light]background: tint(@background,50%);" +
+                                "[dark]background: shade(@background,15%);" +
+                                "[light]border: 16,16,16,16,#ADD8E6,,20;" +
+                                "[dark]border: 16,16,16,16,#5F9EA0,,20;"
+                );
+
+                // Notify controller about modification in selection
+                Frog frog = (Frog) panel.getClientProperty("frog");
+                frogedex.selectFrog(frog);
+            }
+        }
+    }
+
+
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        Object source = e.getSource();
+        if(source instanceof JLabel label){
+            if(Boolean.TRUE.equals(label.getClientProperty("isFrogImageLabel"))){
+
+            }
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
     }
 }
