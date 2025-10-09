@@ -14,6 +14,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
     private JPanel frogInfoPanel;
     private Frogedex frogedex;
     private JPanel selectedFrogCard;
+    private Point dragOffset;
 
     public FrogedexView() {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -389,14 +390,55 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         Object source = e.getSource();
         if(source instanceof JLabel label){
             if(Boolean.TRUE.equals(label.getClientProperty("isFrogImageLabel"))){
+                dragOffset = e.getPoint();
+                // Create a small JWindow that just fits the frog image so that there is a visual guide of the drag
+                JWindow frogWindow = new JWindow();
+                frogWindow.setSize(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+                frogWindow.setBackground(new Color(0,0,0,0)); // transparent window
 
+                frogWindow.setLayout(new BorderLayout());
+
+                Icon icon = label.getIcon();
+                ImageIcon frogImage = (ImageIcon) icon;
+                frogImage = Utils.resizeImageIcon(frogImage, Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+
+                JLabel frogLabel = new JLabel(frogImage);
+                frogWindow.add(frogLabel, BorderLayout.CENTER);
+                frogWindow.setSize(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+
+                // Scale dragOffset because we resized window to be TASKBAR_FROG_SIZE
+                double scaleX = (double) frogWindow.getWidth() / (double) label.getWidth();
+                double scaleY = (double) frogWindow.getHeight() / (double) label.getHeight();
+                dragOffset.x = (int) (scaleX * dragOffset.x);
+                dragOffset.y = (int) (scaleY * dragOffset.y);
+
+                frogWindow.setLocation(e.getXOnScreen() - dragOffset.x, e.getYOnScreen() - dragOffset.y);
+                frogWindow.setVisible(true);
+
+                // Store the window so that we can use it in mouseDragged and mouseReleased
+                label.putClientProperty("frogWindow", frogWindow);
             }
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if(e.getSource() instanceof JLabel label){
+            if(Boolean.TRUE.equals(label.getClientProperty("isFrogImageLabel"))){
+                JWindow frogWindow = (JWindow) label.getClientProperty("frogWindow");
+                if(frogWindow != null){
+                    frogWindow.dispose(); // We can get rid of this window when the dragging is done
+                    label.putClientProperty("frogWindow", null);
+                    Frog selectedFrog = frogedex.getSelectedFrog();
 
+                    // Test if the mouse is outside the frame before accepting the drag
+                    if(!this.contains(e.getXOnScreen(), e.getYOnScreen())){
+                        selectedFrog.setActive(true);
+                    }
+                    dragOffset = null;
+                }
+            }
+        }
     }
 
     @Override
@@ -411,7 +453,12 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        if(e.getSource() instanceof JLabel label){
+            if(Boolean.TRUE.equals(label.getClientProperty("isFrogImageLabel"))){
+                JWindow frogWindow = (JWindow) label.getClientProperty("frogWindow");
+                if(frogWindow != null) frogWindow.setLocation(e.getXOnScreen() - dragOffset.x, e.getYOnScreen() - dragOffset.y);
+            }
+        }
     }
 
     @Override
