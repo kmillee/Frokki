@@ -1,3 +1,4 @@
+import Toolbox.Toolbox;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
@@ -8,10 +9,12 @@ public class Main {
         FlatLightLaf.setup();
         Constants.setUpFrogList();
 
-        Pond mainApp = new Pond("media/pond.png");
-
+        Pond pond = new Pond();
         Frogedex frogedex = new Frogedex();
         FrogBar frogbar = new FrogBar(frogedex);
+
+        pond.setFrogedex(frogedex);
+
         frogedex.show();
     }
 }

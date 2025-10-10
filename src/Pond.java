@@ -23,9 +23,11 @@ public class Pond extends JComponent {
     private String imagePath;
     private Grid grid;
 
-    public Pond(String imagePath) {
+    private Frogedex frogedex;
+
+    public Pond() {
         // change image size
-        this.imagePath = imagePath;
+        this.imagePath = Constants.POND_IMAGE;
         this.pondImage = new ImageIcon(imagePath);
         setUpFrame();
         setUpPond();
@@ -45,7 +47,7 @@ public class Pond extends JComponent {
     }
 
     private void setUpPond(){
-        grid = new Grid(25, imagePath);
+        grid = new Grid(this, Constants.CELL_SIZE, imagePath);
         frame.add(grid, BorderLayout.CENTER);
         frame.pack();
         grid.installUI();
@@ -67,12 +69,22 @@ public class Pond extends JComponent {
         buttonBar.add(lilyButton);
         lilyButton.addActionListener(e -> {grid.spawnLily();});
 
-
+        JButton showToolButton = new JButton("Show Tool");
+        buttonBar.add(showToolButton);
+        showToolButton.addActionListener(e -> {
+            grid.getToolbox().show();
+        });
 
         frame.add(buttonBar, BorderLayout.SOUTH);
     }
 
+    public Frogedex getFrogedex() {
+        return frogedex;
+    }
 
+    public void setFrogedex(Frogedex frogedex) {
+        this.frogedex = frogedex;
+    }
 
 }
 

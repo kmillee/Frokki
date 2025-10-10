@@ -26,6 +26,12 @@ public class Tile extends Rectangle{
         id = total++;
     }
 
+    public void clean(){
+        lily = false;
+        reeve = false;
+        rotten = false;
+        frog = null;
+    }
 
     // Getters and Setters
     public int getId() {

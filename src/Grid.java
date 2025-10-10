@@ -1,3 +1,5 @@
+import Toolbox.Toolbox;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,9 +8,10 @@ import java.util.ArrayList;
 
 // Class handling input of the pond
 public class Grid extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
-    // implement "remove object" and overlap reeve/tile
-    // start tool window
-    public int cols, rows, cellSize;
+
+    // Basic variable
+    public final int cols, rows, cellSize;
+    private Pond pond;
 
     // Media
     public Image image;
@@ -18,22 +21,25 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
 
     // Tile management
-    private ArrayList<Tile> grid, water_grid, lily_grid, reeve_grid, frog_grid, rotten_grid;
+    private final ArrayList<Tile> grid, water_grid, lily_grid, reeve_grid, frog_grid, rotten_grid;
 
     // Relative position help
     private Point gridOrigin;
-    private int dx;
-    private int dy;
+    private int dx, dy;
+
+    // Tools
+    private Toolbox toolbox;
+    private Frogedex frogedex;
 
     // Other
     private Timer timer;
-    private boolean multSelect = false;
-    private boolean ctrlPressed = false;
+    private boolean multSelect, ctrlPressed = false;
 
 
 
     // ---- SETTING UP ----
-    public Grid(int cellSize, String imagePath) {
+    public Grid(Pond pond, int cellSize, String imagePath) {
+        this.pond = pond;
 
         this.image = new ImageIcon(imagePath).getImage();
         this.cellSize = cellSize ;
@@ -59,10 +65,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         this.frog_grid = new ArrayList<>();
         this.rotten_grid = new ArrayList<>();
 
+        this.toolbox = new Toolbox();
+
         installUI();
         setUpTimer();
-
-
 
     }
 
@@ -76,10 +82,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private void setUpTimer(){
         int delay = (int) (Math.random() * Constants.MAX_DELAY);
 
-        System.out.println("setUpTimer:" +  delay);
+//        System.out.println("setUpTimer:" +  delay);
 
         timer = new Timer(delay, e -> {
-            System.out.println("rotten");
+//            System.out.println("rotten");
             spawnRotten();
             setUpTimer();
         });
@@ -159,11 +165,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
 
-    // ---- POND MODIFICATION
-    // random appearance of reeves, frog...
-
-    // Generalize function to any object?
-    //choose random tile and give it a frog
+    // ---- POND MODIFICATION ----
+    // SPAWN & DELETE
     public void spawnFrog(){
         Frog frog = getRandomFrog();    // need to randomize frog by rarity
         Tile tile = getRandomLilyTile();
@@ -208,35 +211,47 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
 
         else{
-            System.out.println("no lily pad available");
+//            System.out.println("no lily pad available");
+        }
+
+    }
+
+    public void useNet(Tile tile){
+        if (tile.getFrog() != null){
+
+            pond.getFrogedex().getModel().addFrog(tile.getFrog());
+            frog_grid.remove(tile);
+            tile.setFrog(null);
+
+            repaint();
+        }
+
+
+    }
+
+    public void useBell(Tile tile){
+        // compute mouseSpeed + distance with croc?
+
+    }
+
+    public void useGrab(Tile tile){
+        // put rotten lily pad in the bin
+        // move lily pad around
+    }
+
+    public void useScissors(Tile tile){
+        if (tile.isReeve()){
+            tile.clean();
+            reeve_grid.remove(tile);
+
+            repaint();
         }
 
     }
 
 
 
-    private Tile getRandomAvailableTile(){
-        ArrayList<Tile> availableTiles = getAvailableTiles();
-        if (availableTiles.isEmpty()) return null;
-        int ind = (int) (Math.random() * availableTiles.size());
-        Tile tile = availableTiles.get(ind);
-        return tile;
-    }
 
-    private Tile getRandomLilyTile(){
-        ArrayList<Tile> availableTiles = getAvailableLilyTiles();
-        if (availableTiles.isEmpty()) return null;
-        int ind = (int) (Math.random() * availableTiles.size());
-        Tile tile = availableTiles.get(ind);
-        return tile;
-    }
-
-    private Frog getRandomFrog(){
-        int size = Constants.FROGS.size();
-        int random = (int) (Math.random() * size);
-
-        return Constants.FROGS.get(random);
-    }
 
 
 
@@ -245,14 +260,30 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     // Switches tile to selected when clicked
     @Override
     public void mouseClicked(MouseEvent e) {
-//        System.out.println("mouseClicked");
+        System.out.println("mouseClicked");
+        System.out.println("Current Tool: " + toolbox.getCurrentTool());
         dx = gridOrigin.x;
         dy = gridOrigin.y;
         Point gridCursor = new Point(e.getX() - dx, e.getY() - dy);
 
         for (Tile tile : grid) {
             if (tile.contains(gridCursor)) {
-                tile.setSelected(true);
+                switch (toolbox.getCurrentTool()) {
+                    case Toolbox.Tool.BELL:
+                        useBell(tile);
+                        break;
+                    case Toolbox.Tool.SCISSORS:
+                        useScissors(tile);
+                        break;
+                    case Toolbox.Tool.GRAB:
+                        useGrab(tile);
+                        break;
+                    case Toolbox.Tool.NET:
+                        useNet(tile);
+                        break;
+                    default:
+                        tile.setSelected(true);
+                }
             }
             else if (!multSelect) {
                 tile.setSelected(false);
@@ -355,6 +386,14 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     // ---- GETTERS & SETTERS ----
 
+    public Toolbox getToolbox(){
+        return toolbox;
+    }
+
+    public void setToolbox(Toolbox toolbox){
+        this.toolbox = toolbox;
+    }
+
     public ArrayList<Tile> getOccupiedTile(){
         ArrayList<Tile> tiles = new ArrayList<>();
         for (Tile tile : grid) {
@@ -407,6 +446,28 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
         }
         return tiles;
+    }
+
+
+    private Tile getRandomAvailableTile(){
+        ArrayList<Tile> availableTiles = getAvailableTiles();
+        if (availableTiles.isEmpty()) return null;
+        int ind = (int) (Math.random() * availableTiles.size());
+        return availableTiles.get(ind);
+    }
+
+    private Tile getRandomLilyTile(){
+        ArrayList<Tile> availableTiles = getAvailableLilyTiles();
+        if (availableTiles.isEmpty()) return null;
+        int ind = (int) (Math.random() * availableTiles.size());
+        return availableTiles.get(ind);
+    }
+
+    private Frog getRandomFrog(){
+        int size = Constants.FROGS.size();
+        int random = (int) (Math.random() * size);
+
+        return Constants.FROGS.get(random);
     }
 
 

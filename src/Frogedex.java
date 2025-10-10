@@ -66,4 +66,7 @@ public class Frogedex {
     public List<Frog> getFrogs() {
         return frogedexModel.getFrogs();
     }
+
+    public FrogedexModel getModel() { return frogedexModel; }
+
 }
