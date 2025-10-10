@@ -1,13 +1,12 @@
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Frog {
-
-
-    private String imagePath, name, species, acquisitionDate;
+    private String imagePath, name, species, acquisitionDate; // Name should be unique
     private ImageIcon image;
 
     private int experience;

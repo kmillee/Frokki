@@ -12,6 +12,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     private final Frog frog;
     private boolean isDragging = false;
     private Point dragOffset;
+    private Point position; // Position on the taskbar
     public FrogComponent(Frog frog){
         this.frog = frog;
         Utils.setFixedSize(this, Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);

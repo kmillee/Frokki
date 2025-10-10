@@ -10,8 +10,13 @@ import java.util.List;
 public class FrogedexModel {
     private List<Frog> frogs;
     private Frog selectedFrog; // Frog that is selected in the list view, i.e. its info should be displayed
-    private List<ChangeListener> listeners = new ArrayList<>();
+    private List<FrogedexChangeListener> listeners = new ArrayList<>();
 
+    public enum ChangeType {
+        ADD_FROG,
+        SELECT_FROG,
+        OTHER
+    }
     public FrogedexModel(){
         this.frogs = new ArrayList<Frog>();
         Frog defaultFrog = new Frog("media" + File.separator + "frog_1.png");
@@ -25,7 +30,7 @@ public class FrogedexModel {
     public void addFrog(Frog frog){
         this.frogs.add(frog);
         if(selectedFrog == null && !frogs.isEmpty()) setSelectedFrog(frogs.getFirst());
-        notifyChangeListener();
+        notifyChangeListener(ChangeType.ADD_FROG, frog);
     }
 
     public Frog getSelectedFrog() {
@@ -34,16 +39,21 @@ public class FrogedexModel {
 
     public void setSelectedFrog(Frog selectedFrog) {
         this.selectedFrog = selectedFrog;
-        notifyChangeListener();
+        notifyChangeListener(ChangeType.SELECT_FROG, selectedFrog);
     }
 
-    public void addChangeListener(ChangeListener listener){
+    public void addChangeListener(FrogedexChangeListener listener){
         listeners.add(listener);
     }
 
-    public void notifyChangeListener(){
-        for(ChangeListener listener : listeners){
-            listener.stateChanged(new ChangeEvent(this));
+
+    private void notifyChangeListener(ChangeType changeType, Frog frog){
+        FrogedexChangeEvent changeEvent = new FrogedexChangeEvent(this, changeType, frog);
+        for(FrogedexChangeListener listener : listeners){
+            listener.stateChanged(changeEvent);
         }
+    }
+    public void notifyChangeListener(){
+        notifyChangeListener(ChangeType.OTHER, null);
     }
 }

@@ -16,6 +16,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
     private JPanel selectedFrogCard;
     private Point dragOffset;
     private JButton summonButton;
+    private int pageIndex=0;
 
     public FrogedexView() {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -237,17 +238,52 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         return frogCard;
     }
 
-    private JPanel getFrogListPanel(java.util.List<Frog> frogs) {
-        JPanel cardPanel = new JPanel(new CardLayout());
-        Utils.setFixedSize(cardPanel, 528, 430);
-        int frogsPerPage = 6;
-        int totalPages = (int) Math.ceil((double) frogs.size() / frogsPerPage);
+    public void addFrogToList(Frog frog){
+        JPanel frogCard = getFrogCardPanel(frog);
+        JPanel cardPanel = (JPanel) frogListPanel.getComponent(0); // Card panel that contains pages
+        int totalPages = cardPanel.getComponentCount();
 
-        for(int pageIndex = 0 ; pageIndex < totalPages ; pageIndex++) {
-            JPanel page = getFrogListPagePanel(frogs, pageIndex,  frogsPerPage);
-            cardPanel.add(page, "Page " + pageIndex);
+        // Get the last page (we want to add the new frog there)
+        JPanel lastPage = (JPanel)  cardPanel.getComponent(totalPages-1);
+        JPanel cardList = (JPanel) lastPage.getComponent(0); // The grid layout that contains the frog cards inside the page
+
+        // We iterate through all elements of the list to check for empty spaces
+        for(Component c : cardList.getComponents()){
+            if(c instanceof JPanel panel ){
+                System.out.println(panel.getClientProperty("isEmpty"));
+            }
+            if(c instanceof JPanel panel && Boolean.TRUE.equals(panel.getClientProperty("isEmpty"))) {
+                panel.removeAll(); // Remove that panel
+                panel.setLayout(new BorderLayout());
+                panel.add(frogCard, BorderLayout.CENTER);
+                panel.putClientProperty("isEmpty", false);
+                panel.revalidate();
+                panel.repaint();
+                return;
+            }
         }
 
+        // If no empty space was found, this mean we need to create a new page
+        JPanel newPage = getFrogListPagePanel(List.of(frog), 0, 6);
+        cardPanel.add(newPage, "Page " + totalPages);
+
+        updateNavigationPanel(cardPanel);
+        revalidate();
+        repaint();
+    }
+
+    private void updateNavigationPanel(JPanel cardPanel) {
+        int totalPages = cardPanel.getComponentCount();
+        JPanel navigationPanel = createNavigationPanel(cardPanel, totalPages);
+
+        // Remove the old navigation panel and add the updated one
+        frogListPanel.remove(frogListPanel.getComponent(1)); // navigation panel is at index 1
+        frogListPanel.add(navigationPanel, BorderLayout.SOUTH);
+
+        revalidate();
+        repaint();
+    }
+    private JPanel createNavigationPanel(JPanel cardPanel, int totalPages) {
         // Setup navigation layout
         Font buttonFont = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Bold.ttf", 20);
         JButton prevButton = new JButton("<");
@@ -271,7 +307,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
 
         // Make navigation functional
         CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
-        final int[] currentPage = {0}; // track selected page index -> final int[] because it is necessary in lambda expressions
+        final int[] currentPage = {pageIndex}; // track selected page index -> final int[] because it is necessary in lambda expressions
 
 
         // Method to update enabled state of a button
@@ -283,6 +319,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         prevButton.addActionListener(e -> {
             if(currentPage[0] > 0){
                 currentPage[0]--;
+                pageIndex = currentPage[0];
                 cardLayout.show(cardPanel, "Page " + currentPage[0]);
                 updateButtonStates.run();
             }
@@ -291,12 +328,30 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         nextButton.addActionListener(e -> {
             if(currentPage[0] < totalPages - 1){
                 currentPage[0]++;
+                pageIndex = currentPage[0];
                 cardLayout.show(cardPanel, "Page " + currentPage[0]);
                 updateButtonStates.run();
             }
         });
 
         updateButtonStates.run();
+
+        return navigationPanel;
+    }
+
+    private JPanel getFrogListPanel(java.util.List<Frog> frogs) {
+        JPanel cardPanel = new JPanel(new CardLayout());
+        Utils.setFixedSize(cardPanel, 528, 430);
+        int frogsPerPage = 6;
+        int totalPages = (int) Math.ceil((double) frogs.size() / frogsPerPage);
+
+        for(int pageIndex = 0 ; pageIndex < totalPages ; pageIndex++) {
+            JPanel page = getFrogListPagePanel(frogs, pageIndex,  frogsPerPage);
+            cardPanel.add(page, "Page " + pageIndex);
+        }
+
+        JPanel navigationPanel = createNavigationPanel(cardPanel, totalPages);
+
 
         // Encapsulate list and navigation in a single panel
         JPanel frogListPanel = new JPanel();
@@ -325,11 +380,16 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         for(int i = pageIndex * frogsPerPage; i < Math.min((pageIndex+1) * frogsPerPage, frogs.size()); i++){
             Frog frog =  frogs.get(i);
             JPanel frogCard = getFrogCardPanel(frog);
+            frogCard.putClientProperty("isEmpty", false);
             cardList.add(frogCard);
         }
         // Fills up empty slots
         while(cardList.getComponentCount() < frogsPerPage){
-            cardList.add(new JPanel());
+            JPanel emptyCard = new JPanel();
+            //Utils.setFixedSize(emptyCard, 108, 131); // Match FrogCard size
+            emptyCard.putClientProperty("isEmpty", true);
+            Utils.setFixedSize(emptyCard, 0, 0);
+            cardList.add(emptyCard);
         }
 
         page.add(cardList);

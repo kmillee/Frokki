@@ -44,10 +44,21 @@ public class Frogedex {
         frogedexView.installUI(this);
 
         frogedexModel.addChangeListener(e -> {
-            Frog selectedFrog = frogedexModel.getSelectedFrog();
-            if(selectedFrog != null) {
-                frogedexView.updateFrogInfo(selectedFrog);
-            }
+           switch (e.getChangeType()) {
+               case ADD_FROG -> {
+                   Frog newFrog = e.getFrog();
+                   if(newFrog != null) {
+                       frogedexView.addFrogToList(newFrog);
+                   }
+               }
+               case SELECT_FROG -> {
+                   Frog selectedFrog = e.getFrog();
+                   if(selectedFrog != null) {
+                       frogedexView.updateFrogInfo(selectedFrog);
+                   }
+               }
+               default -> {}
+           }
         });
     }
 
@@ -67,6 +78,8 @@ public class Frogedex {
         return frogedexModel.getFrogs();
     }
 
-    public FrogedexModel getModel() { return frogedexModel; }
+    public void addFrog(Frog frog) {
+        frogedexModel.addFrog(frog);
+    }
 
 }

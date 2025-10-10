@@ -219,7 +219,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     public void useNet(Tile tile){
         if (tile.getFrog() != null){
 
-            pond.getFrogedex().getModel().addFrog(tile.getFrog());
+            pond.getFrogedex().addFrog(tile.getFrog());
             frog_grid.remove(tile);
             tile.setFrog(null);
 
