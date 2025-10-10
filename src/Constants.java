@@ -18,7 +18,7 @@ public class Constants {
 
     // FROGBAR CONSTANTS
     public static final int TASKBAR_FROG_SIZE = 100;
-
+    public static final int TASKBAR_OFFSET = 48;
 
     // POND CONSTANTS
     public static final String POND_IMAGE =  "media/pond.png";
