@@ -45,6 +45,7 @@ public class Animation {
      * Stops the animation if it is currently running.
      */
     public void stop() {
+        System.out.println("Stopping animation");
         if(isRunning) {
             timer.stop();
             timer =  null;

@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +51,11 @@ public class Frog {
         return name;
     }
 
-    public String getSpecies(){
+    public String getSpeciesName(){
         return species.toString();
+    }
+    public FrogSpecies getSpecies() {
+        return species;
     }
 
     public String getAcquisitionDate(){
@@ -122,5 +124,9 @@ public class Frog {
         for(ChangeListener listener : listeners){
             listener.stateChanged(new ChangeEvent(this));
         }
+    }
+
+    public void setImage(ImageIcon image) {
+        this.image = image;
     }
 }

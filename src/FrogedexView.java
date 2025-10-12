@@ -88,7 +88,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         Font fontsmall = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 14);
 
         // -- Setup labels
-        JLabel speciesLabel = new JLabel(frog.getSpecies());
+        JLabel speciesLabel = new JLabel(frog.getSpeciesName());
         speciesLabel.setFont(fontSpecies);
         speciesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 

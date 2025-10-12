@@ -59,10 +59,12 @@ public class FrogBar extends JWindow {
          */
         public void updateFrogBar(){
             // Get current positions of frogs in the bar for consistency
+            Map<Frog, FrogComponent> existingComponents = new  HashMap<>();
             Map<Frog, Point> frogPositions = new HashMap<Frog, Point>();
             for(Component component : layeredPane.getComponents()){
                 if(component instanceof FrogComponent frogComponent){
                     frogPositions.put(frogComponent.getFrog(), frogComponent.getPosition());
+                    existingComponents.put(frogComponent.getFrog(), frogComponent);
                 }
             }
 
@@ -72,17 +74,20 @@ public class FrogBar extends JWindow {
             int posX = 0;
             for(Frog frog: frogedex.getFrogs()){
                 if(frog.isActive()) {
+                    //FrogComponent frogComponent = existingComponents.getOrDefault(frog, new FrogComponent(frog));
                     FrogComponent frogComponent = new FrogComponent(frog);
+
                     layeredPane.add(frogComponent);
                     Point position = frogPositions.getOrDefault(frog, new Point(posX, 0));
                     frogComponent.setBottomLeftAnchor(position.x, position.y);
+
+
                     posX += Constants.TASKBAR_FROG_SIZE + 20;
                     if(posX+Constants.TASKBAR_FROG_SIZE > getWidth()){
                         posX = 0;
                     }
                 }
             }
-
             layeredPane.revalidate();
             layeredPane.repaint();
         }

@@ -39,7 +39,6 @@ public class PhysicsBody{
         this.bodyHeight = bodyHeight;
 
         if(timer == null){
-            System.out.println("timer in");
             timer = new Timer(16, e -> update(0.016));
             timer.start();
         }
@@ -82,7 +81,6 @@ public class PhysicsBody{
      * Stops the physics body simulation.
      */
     public void stop(){
-        System.out.println("PhysicsBody stop");
         velY = 0;
         velX = 0;
         active = false;
@@ -90,6 +88,7 @@ public class PhysicsBody{
             timer.stop();
             timer = null;
         }
+        notifyChangeListener();
     }
 
     public void addChangeListener(ChangeListener listener){

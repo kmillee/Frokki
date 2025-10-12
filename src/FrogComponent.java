@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,6 +38,10 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         addMouseMotionListener(this);
 
         physicsBody.addChangeListener(e -> {
+            if(!physicsBody.isActive()){
+                frog.loadAnimation("idle");
+            }
+
             Container parent = getParent();
             if(parent != null) {
                 anchorX = physicsBody.getX();
@@ -44,6 +49,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             }
             repaint();
         });
+
 
         Animation animation = frog.getAnimation();
         if(animation != null){
@@ -72,7 +78,6 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         this.anchorY = yFromBottom;
         Container parent = getParent();
         if(parent != null){
-            System.out.println(this.anchorX + " " + this.anchorY);
             updateLocationFromAnchor(parent);
         }
     }
@@ -96,6 +101,17 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     public void mousePressed(MouseEvent e) {
         isDragging = true;
         dragOffset = e.getPoint();
+
+        // stop idle animation
+        Animation animation = frog.getAnimation();
+        if(animation != null && animation.isRunning()){
+            animation.stop();
+        }
+//
+        frog.setImage(new ImageIcon("media" + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png"));
+//
+//
+        repaint();
     }
 
     @Override
@@ -116,7 +132,6 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     public void mouseDragged(MouseEvent e) {
         // Moves the frog component based on dragging input from the user
         if(isDragging){
-            physicsBody.stop();
             // Check that the frog doesn't go out of bounds of the parent
             Container parent = getParent();
             if(parent == null) return; // Should not happen
@@ -179,6 +194,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         ImageIcon frogImage;
         Animation animation = this.frog.getAnimation();
         Dimension frameSize;
+
         if(animation != null && animation.isRunning()){
             frogImage = animation.getCurrentFrame();
             frameSize = animation.getFrameSize();
