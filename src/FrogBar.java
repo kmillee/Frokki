@@ -2,7 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.imageio.*;
 
 public class FrogBar extends JWindow {
@@ -46,20 +47,30 @@ public class FrogBar extends JWindow {
         }
 
         public void updateFrogBar(){
-            layeredPane.removeAll(); // Clear the bar
+            Map<Frog, Point> frogPositions = new HashMap<Frog, Point>();
 
-            // Add active frogs to the frog bar
-            List<Frog> frogs = frogedex.getFrogs();
-            int posX = 10; // initial x position for frog's placement
-
-            for(Frog frog : frogs){
-                if(frog.isActive()){
-                    FrogComponent frogComponent = new FrogComponent(frog);
-                    frogComponent.setBottomLeftAnchor(posX, 0);
-                    layeredPane.add(frogComponent);
-                    posX += Constants.TASKBAR_FROG_SIZE + 20;
+            for(Component component : layeredPane.getComponents()){
+                if(component instanceof FrogComponent frogComponent){
+                    frogPositions.put(frogComponent.getFrog(), frogComponent.getPosition());
                 }
             }
+
+            layeredPane.removeAll(); // Clear the bar
+
+            int posX = 0;
+            for(Frog frog: frogedex.getFrogs()){
+                if(frog.isActive()) {
+                    FrogComponent frogComponent = new FrogComponent(frog);
+                    layeredPane.add(frogComponent);
+                    Point position = frogPositions.getOrDefault(frog, new Point(posX, 0));
+                    frogComponent.setBottomLeftAnchor(position.x, position.y);
+                    posX += Constants.TASKBAR_FROG_SIZE + 20;
+                    if(posX+Constants.TASKBAR_FROG_SIZE > getWidth()){
+                        posX = 0;
+                    }
+                }
+            }
+
             layeredPane.revalidate();
             layeredPane.repaint();
         }

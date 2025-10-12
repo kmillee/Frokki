@@ -12,16 +12,26 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     private final Frog frog;
     private boolean isDragging = false;
     private Point dragOffset;
-    private Point position; // Position on the taskbar
-
     private int anchorX = 0;
     private int anchorY = 0;
+
+    private PhysicsBody physicsBody = new PhysicsBody();
+
     public FrogComponent(Frog frog){
         this.frog = frog;
         setSize(Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
         setOpaque(false);
         addMouseListener(this);
         addMouseMotionListener(this);
+
+        physicsBody.addChangeListener(e -> {
+            Container parent = getParent();
+            if(parent != null) {
+                anchorX = physicsBody.getX();
+                anchorY = parent.getHeight() - physicsBody.getY() - getHeight();
+            }
+            repaint();
+        });
 
         Animation animation = frog.getAnimation();
         if(animation != null){
@@ -66,12 +76,17 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     @Override
     public void mouseReleased(MouseEvent e) {
         isDragging = false;
+        Container parent = getParent();
+        if(parent != null){
+            physicsBody.start(getX(), getY(), 0, 0, parent.getHeight(), getHeight());
+        }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         // Moves the frog component based on dragging input from the user
         if(isDragging){
+            physicsBody.stop();
             // Check that the frog doesn't go out of bounds of the parent
             Container parent = getParent();
             if(parent == null) return; // Should not happen
@@ -120,6 +135,13 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         g2d.dispose();
     }
 
+    public Point getPosition(){
+        return new Point(anchorX, anchorY);
+    }
+
+    public Frog getFrog() {
+        return frog;
+    }
 
     @Override
     public void mouseEntered(MouseEvent e) {
