@@ -15,10 +15,22 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     private Point position; // Position on the taskbar
     public FrogComponent(Frog frog){
         this.frog = frog;
-        Utils.setFixedSize(this, Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
-
+        //Utils.setFixedSize(this, Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
+        setSize(Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
         addMouseListener(this);
         addMouseMotionListener(this);
+
+        //frog.addChangeListeners(e -> repaint());
+
+        Animation animation = frog.getAnimation();
+        if(animation != null){
+            animation.addChangeListener(e -> {
+                Dimension frameSize = animation.getFrameSize();
+                setSize(frameSize);
+                revalidate();
+                repaint();
+            });
+        }
     }
 
 
@@ -65,8 +77,18 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         Graphics2D g2d = (Graphics2D) g;
 
         // Draw the frog
-        ImageIcon frogImage = frog.getImage();
-        g2d.drawImage(frogImage.getImage(), 0,0,getWidth(), getHeight(), null);
+        ImageIcon frogImage;
+        Animation animation = this.frog.getAnimation();
+        Dimension frameSize;
+        if(animation != null && animation.isRunning()){
+            frogImage = animation.getCurrentFrame();
+            frameSize = animation.getFrameSize();
+        } else {
+            frogImage = frog.getImage();
+            frameSize = new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+        }
+        setSize(frameSize);
+        g2d.drawImage(frogImage.getImage(), 0,0,frameSize.width, frameSize.height, null);
 
         g2d.dispose();
     }

@@ -32,7 +32,7 @@ public class Frogedex {
         // Just for testing, should be removed later on
         List<Frog> frogs = new ArrayList<>();
         for(int i = 0 ; i < 13 ; i++){
-            Frog frog = new Frog("media/frog_" + i + ".png", "The Frog "+ i, "Frog Species", "01/01/2025");
+            Frog frog = new Frog("media/frog_" + i + ".png", "The Frog "+ i, FrogSpecies.getSpecies(i), "01/01/2025");
             frogs.add(frog);
         }
 

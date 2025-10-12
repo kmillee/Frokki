@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
 
@@ -8,6 +10,23 @@ public class Utils {
         Image image = icon.getImage();
         Image resizedImage = image.getScaledInstance(width, height,  Image.SCALE_DEFAULT);
         return new ImageIcon(resizedImage);
+    }
+
+    public static ImageIcon resizeKeepingRatio(ImageIcon icon, int maxWidth, int maxHeight) {
+        Image image = icon.getImage();
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+
+        double widthRatio = (double) maxWidth / width;
+        double heightRatio = (double) maxHeight / height;
+        double scaleRatio = Math.min(widthRatio, heightRatio);
+
+        int newWidth = (int) (width * scaleRatio);
+        int newHeight = (int) (height * scaleRatio);
+
+        // Resize image
+        Image scaledImage =  image.getScaledInstance(newWidth, newHeight,  Image.SCALE_DEFAULT);
+        return new ImageIcon(scaledImage);
     }
 
     public static Font loadFont(String fontPath, float size) {
@@ -40,5 +59,20 @@ public class Utils {
             if (j == id) return true;
         }
         return false;
+    }
+
+    public static List<ImageIcon> loadFrames(String directoryPath){
+        List<ImageIcon> frames = new ArrayList<ImageIcon>();
+        File directory = new File(directoryPath);
+
+        if(directory.exists() && directory.isDirectory()){
+            File[] files = directory.listFiles();
+            if(files != null){
+                for(File file: files){
+                    frames.add(new ImageIcon(file.getAbsolutePath()));
+                }
+            }
+        }
+        return frames;
     }
 }

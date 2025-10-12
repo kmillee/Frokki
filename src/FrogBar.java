@@ -21,6 +21,12 @@ public class FrogBar extends JWindow {
             setupLayeredPane();
             updateFrogBar();
 
+            // Setup animation idle
+            for(int i = 0 ; i < frogedex.getFrogs().size() ; i++){
+                Frog frog = frogedex.getFrogs().get(i);
+                frog.loadAnimation("idle");
+            }
+
             setVisible(true);
             setAlwaysOnTop(true);    // To always appear regardless of user activity
         }
