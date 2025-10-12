@@ -9,6 +9,9 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.List;
 
+/*
+ * View component of the Frogedex, responsible for the UI
+ */
 public class FrogedexView extends JPanel implements MouseListener, MouseMotionListener {
     private JPanel frogListPanel;
     private JPanel frogInfoPanel;
@@ -18,10 +21,19 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
     private JButton summonButton;
     private int pageIndex=0;
 
+
+    /**
+     * Constructor for a FrogedexView. 
+     */ 
     public FrogedexView() {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         Utils.setFixedSize(this, 858, 430);
     }
+
+    /**
+     * Installs the UI components of the FrogedexView.
+     * @param frogedex The Frogedex controller.
+     */
     public void installUI(Frogedex frogedex) {
         this.frogedex = frogedex;
         List<Frog> frogs = frogedex.getFrogs();
@@ -41,6 +53,10 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         this.add(frogListPanel);
     }
 
+    /**
+     * Updates the frog info panel to display the information of the given frog.
+     * @param frog The frog whose information is to be displayed.
+     */
     public void updateFrogInfo(Frog frog){
         remove(frogInfoPanel);
         frogInfoPanel = getFrogInfoPanel(frog);
@@ -49,6 +65,11 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         repaint();
     }
 
+    /**
+     * Creates a panel displaying detailed information about a frog.
+     * @param frog The frog whose information is to be displayed.
+     * @return A JPanel containing the frog's information.
+     */
     private JPanel getFrogInfoPanel(Frog frog){
         JPanel frogInfoPanel =  new JPanel();
         frogInfoPanel.setLayout(new BoxLayout(frogInfoPanel, BoxLayout.Y_AXIS));
@@ -89,7 +110,8 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
 
         JLabel frogImageLabel = new JLabel(frogImage);
         frogImageLabel.putClientProperty("isFrogImageLabel", true);
-        // Put mouseListener and motionListener on image to allow for drag and drop on toolbar
+
+        // Put mouseListener and motionListener on image to allow for drag and drop on toolbar of frog
         frogImageLabel.addMouseListener(this);
         frogImageLabel.addMouseMotionListener(this);
 
@@ -181,9 +203,10 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
 
         return frogInfoPanel;
     }
+
     /**
      * Creates a frog card panel that is used to display a frog's picture and name
-     * @return
+     * @return A JPanel representing a frog card
      */
     private JPanel getFrogCardPanel(Frog frog) {
         // Load and resize image
@@ -238,6 +261,10 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         return frogCard;
     }
 
+    /**
+     * Adds a new frog to the list of frogs in the FrogedexView.
+     * @param frog The frog to be added.
+     */
     public void addFrogToList(Frog frog){
         JPanel frogCard = getFrogCardPanel(frog);
         JPanel cardPanel = (JPanel) frogListPanel.getComponent(0); // Card panel that contains pages
@@ -272,6 +299,10 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         repaint();
     }
 
+    /**
+     * Updates the navigation panel based on the number of pages in the card panel.
+     * @param cardPanel The card panel containing the pages of frogs.
+     */
     private void updateNavigationPanel(JPanel cardPanel) {
         int totalPages = cardPanel.getComponentCount();
         JPanel navigationPanel = createNavigationPanel(cardPanel, totalPages);
@@ -283,6 +314,13 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         revalidate();
         repaint();
     }
+
+    /**
+     * Creates a navigation panel with previous and next buttons to navigate through pages.
+     * @param cardPanel The card panel containing the pages of frogs.
+     * @param totalPages The total number of pages.
+     * @return A JPanel representing the navigation panel.
+     */
     private JPanel createNavigationPanel(JPanel cardPanel, int totalPages) {
         // Setup navigation layout
         Font buttonFont = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Bold.ttf", 20);
@@ -339,6 +377,11 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         return navigationPanel;
     }
 
+    /**
+     * Creates the panel for displaying the list of frogs.
+     * @param frogs The list of frogs to display.
+     * @return A JPanel containing the frog list.
+     */
     private JPanel getFrogListPanel(java.util.List<Frog> frogs) {
         JPanel cardPanel = new JPanel(new CardLayout());
         Utils.setFixedSize(cardPanel, 528, 430);
@@ -400,7 +443,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
     public void mouseClicked(MouseEvent e) {
         Object source = e.getSource();
         if (source instanceof JButton button) {
-            // Manage summoning of frogs
+            // Manages summoning of frogs
             if (button.equals(summonButton)) {
                 Frog frog = frogedex.getSelectedFrog();
                 frog.setActive(!frog.isActive());
@@ -419,7 +462,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
             }
         }
         else if (source instanceof JPanel panel){
-            // Manage change of frog info + style of card when selected
+            // Manages change of frog info + style of card when selected
             if(Boolean.TRUE.equals(panel.getClientProperty("isFrogCard"))){
                 if(selectedFrogCard != null){
                     selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,

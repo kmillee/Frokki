@@ -1,3 +1,4 @@
+// Enum representing different species of frogs
 public enum FrogSpecies {
     BLUE,
     GREEN,

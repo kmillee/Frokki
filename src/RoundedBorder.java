@@ -6,7 +6,9 @@
 import javax.swing.border.Border;
 import java.awt.*;
 
-
+/**
+ * This class represents a rounded border that can be applied to Swing components.
+ */
 public class RoundedBorder implements Border {
 
     private final int radius;

@@ -6,12 +6,26 @@ import java.util.List;
 
 public class Utils {
 
+    /**
+     * Resizes an ImageIcon to the specified width and height.
+     * @param icon The ImageIcon to resize.
+     * @param width The desired width.
+     * @param height The desired height.
+     * @return The resized ImageIcon.
+     */
     public static ImageIcon resizeImageIcon(ImageIcon icon, int width, int height) {
         Image image = icon.getImage();
         Image resizedImage = image.getScaledInstance(width, height,  Image.SCALE_DEFAULT);
         return new ImageIcon(resizedImage);
     }
 
+    /**
+     * Resizes an ImageIcon while keeping its aspect ratio.
+     * @param icon The ImageIcon to resize.
+     * @param maxWidth The maximum desired width.
+     * @param maxHeight The maximum desired height.
+     * @return The resized ImageIcon.
+     */
     public static ImageIcon resizeKeepingRatio(ImageIcon icon, int maxWidth, int maxHeight) {
         Image image = icon.getImage();
         int width = image.getWidth(null);
@@ -29,6 +43,12 @@ public class Utils {
         return new ImageIcon(scaledImage);
     }
 
+    /**
+     * Loads a font from the specified path and size.
+     * @param fontPath The path to the font file.
+     * @param size The desired font size.
+     * @return The loaded Font, or a default font if loading fails.
+     */
     public static Font loadFont(String fontPath, float size) {
         try {
             Font font = Font.createFont(Font.TRUETYPE_FONT, new File("media" + File.separator + fontPath));
@@ -39,6 +59,12 @@ public class Utils {
         }
     }
 
+    /**
+     * Sets a fixed size for a JComponent.
+     * @param component The component to set the size for
+     * @param width The desired width
+     * @param height The desired height
+     */
     public static void setFixedSize(JComponent component, int width, int height) {
         component.setPreferredSize(new Dimension(width, height));
         component.setMaximumSize(new Dimension(width, height));
@@ -46,12 +72,19 @@ public class Utils {
         component.setSize(width, height);
     }
 
+    /**
+     * Sets a fixed size for a JFrame.
+     * @param frame The frame to set the size for
+     * @param width The desired width
+     * @param height The desired height
+     */
     public static void setFixedSize(JFrame frame, int width, int height) {
         frame.setPreferredSize(new Dimension(width, height));
         frame.setMaximumSize(new Dimension(width, height));
         frame.setMinimumSize(new Dimension(width, height));
         frame.setSize(width, height);
     }
+
 
     public static boolean contains(int[] list, int id){
         if (list == null) return false;
@@ -61,6 +94,11 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Loads all image frames from a specified directory.
+     * @param directoryPath The path to the directory containing the image frames.
+     * @return A list of ImageIcons representing the image frames.
+     */
     public static List<ImageIcon> loadFrames(String directoryPath){
         List<ImageIcon> frames = new ArrayList<ImageIcon>();
         File directory = new File(directoryPath);

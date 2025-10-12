@@ -5,6 +5,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Vector;
 
+/**
+ * This class represents a physics body that can be used to simulate simple physics
+ */
 public class PhysicsBody{
     private double x, y; // Top-left position
     private double velX, velY; // velocity
@@ -17,6 +20,15 @@ public class PhysicsBody{
     // Change listeners
     private final java.util.List<ChangeListener> listeners = new ArrayList<>();
 
+    /**
+     * Starts the physics body simulation with the given parameters.
+     * @param startX The initial x position
+     * @param startY The initial y position
+     * @param vx The initial x velocity
+     * @param vY The initial y velocity
+     * @param parentHeight The height of the parent container
+     * @param bodyHeight The height of the physics body
+     */
     public void start(double startX, double startY, double vx, double vY, int parentHeight, int bodyHeight){
         this.x = startX;
         this.y = startY;
@@ -33,6 +45,10 @@ public class PhysicsBody{
         }
     }
 
+    /**
+     * Updates the physics body position.
+     * @param dt The time since the last update
+     */
     public void update(double dt){
         if(!active) return;
 
@@ -62,6 +78,9 @@ public class PhysicsBody{
         return active;
     }
 
+    /**
+     * Stops the physics body simulation.
+     */
     public void stop(){
         System.out.println("PhysicsBody stop");
         velY = 0;
