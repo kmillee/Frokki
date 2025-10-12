@@ -11,8 +11,8 @@ import java.util.Vector;
 public class PhysicsBody{
     private double x, y; // Top-left position
     private double velX, velY; // velocity
-    private double friction = 1;
-    private double gravity = 9.81 * 200;
+    private double friction = 0.9;
+    private double gravity = 9.81 * 500;
     private boolean active = false;
     private Timer timer;
     private int parentHeight, bodyHeight;

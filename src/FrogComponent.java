@@ -3,8 +3,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.LinkedList;
+import java.util.List;
 
-// TODO: Animate frog, frog should fall back down if y != 0 in parent
+
 /**
  * This class represent an individual frog in the frogBar. 
  */
@@ -15,7 +17,13 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     private int anchorX = 0;
     private int anchorY = 0;
 
+    // -- Physics related
     private PhysicsBody physicsBody = new PhysicsBody();
+    private final List<Point> mousePositions = new LinkedList<>();
+    private final List<Long> timestamps = new LinkedList<>();
+    private static final int max_size = 7; // We record only max_size mousePositons and time
+    private double velocityX = 0;
+    private double velocityY = 0;
 
     /**
      * Constructor for a FrogComponent.
@@ -95,8 +103,13 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         isDragging = false;
         Container parent = getParent();
         if(parent != null){
-            physicsBody.start(getX(), getY(), 0, 0, parent.getHeight(), getHeight());
+            physicsBody.start(getX(), getY(), velocityX*5, -velocityY, parent.getHeight(), getHeight());
         }
+
+        mousePositions.clear();
+        timestamps.clear();
+        velocityX = 0;
+        velocityY = 0;
     }
 
     @Override
@@ -107,6 +120,35 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             // Check that the frog doesn't go out of bounds of the parent
             Container parent = getParent();
             if(parent == null) return; // Should not happen
+
+            // Get current mouse position and time (used to compute speed)
+            Point currentMousePosition = e.getPoint();
+            long currentTime = System.currentTimeMillis();
+
+            mousePositions.add(currentMousePosition);
+            timestamps.add(currentTime);
+
+            if(mousePositions.size() > max_size){
+                mousePositions.removeFirst();
+                timestamps.removeFirst();
+            }
+            // Compute speed
+            if(mousePositions.size() > 1){
+                Point oldestPosition = mousePositions.getFirst();
+                Point newestPosition = mousePositions.getLast();
+                long oldestTime = timestamps.getFirst();
+                long newestTime = timestamps.getLast();
+
+                int dx = newestPosition.x - oldestPosition.x;
+                int dy = newestPosition.y - oldestPosition.y;
+                long dt = newestTime - oldestTime;
+
+                if(dt > 0) {
+                    velocityX = dx / (dt/1000.0);
+                    velocityY = dy / (dt/1000.0);
+                }
+            }
+
             Rectangle parentBounds = parent.getBounds();
 
             // Compute new position
