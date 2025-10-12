@@ -6,7 +6,7 @@ import java.awt.event.MouseMotionListener;
 
 // TODO: Animate frog, frog should fall back down if y != 0 in parent
 /**
- * This class represent an individual frog in the frogBar.
+ * This class represent an individual frog in the frogBar. 
  */
 public class FrogComponent extends JComponent implements MouseListener, MouseMotionListener {
     private final Frog frog;
@@ -17,6 +17,10 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
 
     private PhysicsBody physicsBody = new PhysicsBody();
 
+    /**
+     * Constructor for a FrogComponent.
+     * @param frog The frog to be represented by this component. Must not be null.
+     */
     public FrogComponent(Frog frog){
         this.frog = frog;
         setSize(Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
@@ -48,6 +52,13 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         }
     }
 
+    /**
+     * Sets the bottom-left anchor point of the frog component relative to its parent container.
+     * @param x The x-coordinate of the bottom-left anchor point.
+     * @param yFromBottom The y-coordinate of the bottom-left anchor point measured from 
+     * the bottom of the parent container. If the value is 0, the frog is at the bottom of
+     * the parent container.
+     */
     public void setBottomLeftAnchor(int x, int yFromBottom){
         this.anchorX = x;
         this.anchorY = yFromBottom;
@@ -57,6 +68,12 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             updateLocationFromAnchor(parent);
         }
     }
+
+    /**
+     * Updates the location of the frog component based on its anchor point. 
+     * There is clamping to ensure the frog does not go out of bounds of the parent container.
+     * @param parent The parent container of the frog component. Must not be null.
+     */
     private void updateLocationFromAnchor(Container parent){
         int topLeftX = anchorX;
         int topLeftY = parent.getHeight() - anchorY - getHeight();
@@ -135,10 +152,19 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         g2d.dispose();
     }
 
+    
+    /**
+     * Gets the current bottom-left anchor position of the frog component.
+     * @return The current bottom-left anchor position.
+     */
     public Point getPosition(){
         return new Point(anchorX, anchorY);
     }
 
+    /**
+     * Gets the frog associated with this component.
+     * @return The frog associated with this component.
+     */
     public Frog getFrog() {
         return frog;
     }
@@ -157,6 +183,16 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     }
     @Override
     public void mouseClicked(MouseEvent e) {
+        // TODO: frog jump
+        if(e.getClickCount() == 2){
+        }
+    }
 
+    /**
+     * Gets the physics body associated with this frog component.
+     * @return The physics body associated with this frog component.
+     */
+    public PhysicsBody getPhysicsBody() {
+        return physicsBody;
     }
 }

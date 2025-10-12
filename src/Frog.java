@@ -6,6 +6,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a Frog object.
+ */
 public class Frog {
     private String imagePath, name, acquisitionDate; // Name should be unique
     private ImageIcon image;
@@ -25,6 +28,10 @@ public class Frog {
         this.experience = 50;
     }
 
+    /**
+     * Constructor for a Frog with default values.
+     * @param imagePath The path to the image representing the frog.
+     */
     public Frog(String imagePath){
         this(imagePath, "John Toad", FrogSpecies.GREEN, "00/00/0000");
     }
@@ -70,6 +77,10 @@ public class Frog {
         return active;
     }
 
+    /**
+     * Starts an animation for the frog.
+     * @param animation The animation to be set for the frog.
+     */
     public void setAnimation(Animation animation) {
         this.animation = animation;
         if(animation != null) {
@@ -82,6 +93,10 @@ public class Frog {
         return this.animation;
     }
 
+    /**
+     * Loads an animation for the frog based on its species and the specified animation type.
+     * @param animationType The type of animation to load.
+     */
     public void loadAnimation(String animationType){
         String animationPath = "media" + File.separator + "animation_sprite" +
                 File.separator + animationType + File.separator + species.toInt();
