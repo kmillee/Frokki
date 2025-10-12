@@ -51,11 +51,11 @@ public class FrogBar extends JWindow {
             // Add active frogs to the frog bar
             List<Frog> frogs = frogedex.getFrogs();
             int posX = 10; // initial x position for frog's placement
-            int posY = getHeight() - Constants.TASKBAR_FROG_SIZE;
+
             for(Frog frog : frogs){
                 if(frog.isActive()){
                     FrogComponent frogComponent = new FrogComponent(frog);
-                    frogComponent.setBounds(posX,posY, Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
+                    frogComponent.setBottomLeftAnchor(posX, 0);
                     layeredPane.add(frogComponent);
                     posX += Constants.TASKBAR_FROG_SIZE + 20;
                 }

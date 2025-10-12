@@ -94,7 +94,7 @@ public class Frog {
             resizedFrames.add(image);
         }
         if(!resizedFrames.isEmpty()){
-            Animation animation = new Animation(resizedFrames, 100);
+            Animation animation = new Animation(resizedFrames, 200);
             setAnimation(animation);
         }
     }

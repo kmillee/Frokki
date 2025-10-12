@@ -13,26 +13,48 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     private boolean isDragging = false;
     private Point dragOffset;
     private Point position; // Position on the taskbar
+
+    private int anchorX = 0;
+    private int anchorY = 0;
     public FrogComponent(Frog frog){
         this.frog = frog;
-        //Utils.setFixedSize(this, Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
         setSize(Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
+        setOpaque(false);
         addMouseListener(this);
         addMouseMotionListener(this);
-
-        //frog.addChangeListeners(e -> repaint());
 
         Animation animation = frog.getAnimation();
         if(animation != null){
             animation.addChangeListener(e -> {
                 Dimension frameSize = animation.getFrameSize();
                 setSize(frameSize);
+                Container parent =  getParent();
+                if(parent != null){
+                    updateLocationFromAnchor(parent);
+                }
                 revalidate();
                 repaint();
             });
         }
     }
 
+    public void setBottomLeftAnchor(int x, int yFromBottom){
+        this.anchorX = x;
+        this.anchorY = yFromBottom;
+        Container parent = getParent();
+        if(parent != null){
+            System.out.println(this.anchorX + " " + this.anchorY);
+            updateLocationFromAnchor(parent);
+        }
+    }
+    private void updateLocationFromAnchor(Container parent){
+        int topLeftX = anchorX;
+        int topLeftY = parent.getHeight() - anchorY - getHeight();
+
+        topLeftX = Math.max(0, Math.min(topLeftX, parent.getWidth() - getWidth()));
+        topLeftY = Math.max(0, Math.min(topLeftY, parent.getHeight() - getHeight()));
+        setLocation(topLeftX, topLeftY);
+    }
 
 
     @Override
@@ -68,6 +90,9 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             newY = Math.max(0, Math.min(newY, parentBounds.height - getHeight()));
 
             setLocation(newX, newY);
+
+            anchorX = newX;
+            anchorY = parent.getHeight() - newY - getHeight();
         }
     }
 
@@ -88,7 +113,9 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             frameSize = new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
         }
         setSize(frameSize);
-        g2d.drawImage(frogImage.getImage(), 0,0,frameSize.width, frameSize.height, null);
+        Container parent = getParent();
+        if(parent != null){ updateLocationFromAnchor(parent);}
+        g2d.drawImage(frogImage.getImage(), 0,0, getWidth(), getHeight(), null);
 
         g2d.dispose();
     }
