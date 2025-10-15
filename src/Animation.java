@@ -15,7 +15,7 @@ public class Animation {
     private final int frameDelay; // delay between two frames in ms
     private Timer timer;
     private boolean isRunning;
-    private List<ChangeListener> listeners = new ArrayList<>();
+    public List<ChangeListener> listeners = new ArrayList<>();
 
     /**
      * Constructor for an Animation.
@@ -38,6 +38,7 @@ public class Animation {
             });
             timer.start();
             isRunning = true;
+            System.out.println("Animation started");
         }
     }
 
@@ -45,11 +46,11 @@ public class Animation {
      * Stops the animation if it is currently running.
      */
     public void stop() {
-        System.out.println("Stopping animation");
         if(isRunning) {
             timer.stop();
             timer =  null;
             isRunning = false;
+            System.out.println("Animation stopped");
         }
     }
 

@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -19,7 +20,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     private int anchorY = 0;
 
     // -- Physics related
-    private PhysicsBody physicsBody = new PhysicsBody();
+    private PhysicsBody physicsBody;
     private final List<Point> mousePositions = new LinkedList<>();
     private final List<Long> timestamps = new LinkedList<>();
     private static final int max_size = 7; // We record only max_size mousePositons and time
@@ -32,14 +33,20 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
      */
     public FrogComponent(Frog frog){
         this.frog = frog;
+        physicsBody = new PhysicsBody();
         setSize(Constants.TASKBAR_FROG_SIZE,Constants.TASKBAR_FROG_SIZE);
         setOpaque(false);
         addMouseListener(this);
         addMouseMotionListener(this);
 
         physicsBody.addChangeListener(e -> {
-            if(!physicsBody.isActive()){
-                frog.loadAnimation("idle");
+            // Make the idle animation start when frog has finished falling
+            if(!physicsBody.isActive()) {
+                Animation animation = frog.getAnimation();
+                if(animation == null) {
+                    frog.loadAnimation("idle");
+                }
+                frog.startAnimation();
             }
 
             Container parent = getParent();
@@ -50,20 +57,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             repaint();
         });
 
-
-        Animation animation = frog.getAnimation();
-        if(animation != null){
-            animation.addChangeListener(e -> {
-                Dimension frameSize = animation.getFrameSize();
-                setSize(frameSize);
-                Container parent =  getParent();
-                if(parent != null){
-                    updateLocationFromAnchor(parent);
-                }
-                revalidate();
-                repaint();
-            });
-        }
+        frog.addChangeListeners(e -> attachAnimationListener());
     }
 
     /**
@@ -192,21 +186,25 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
 
         // Draw the frog
         ImageIcon frogImage;
-        Animation animation = this.frog.getAnimation();
         Dimension frameSize;
 
-        if(animation != null && animation.isRunning()){
+        Animation animation = this.frog.getAnimation();
+
+        if (animation != null && animation.isRunning()) {
             frogImage = animation.getCurrentFrame();
             frameSize = animation.getFrameSize();
         } else {
             frogImage = frog.getImage();
             frameSize = new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
         }
+
         setSize(frameSize);
         Container parent = getParent();
-        if(parent != null){ updateLocationFromAnchor(parent);}
-        g2d.drawImage(frogImage.getImage(), 0,0, getWidth(), getHeight(), null);
+        if (parent != null) {
+            updateLocationFromAnchor(parent);
+        }
 
+        g2d.drawImage(frogImage.getImage(), 0, 0, getWidth(), getHeight(), null);
         g2d.dispose();
     }
 
@@ -252,5 +250,25 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
      */
     public PhysicsBody getPhysicsBody() {
         return physicsBody;
+    }
+
+    public void reset(){
+        frog.removeAnimation();
+    }
+
+    private void attachAnimationListener() {
+        Animation animation = frog.getAnimation();
+        if (animation != null) {
+            animation.addChangeListener(event -> {
+                Dimension frameSize = animation.getFrameSize();
+                setSize(frameSize);
+                Container parent = getParent();
+                if (parent != null) {
+                    updateLocationFromAnchor(parent);
+                }
+                revalidate();
+                repaint();
+            });
+        }
     }
 }

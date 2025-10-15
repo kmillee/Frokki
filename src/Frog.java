@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Frog {
     private String imagePath, name, acquisitionDate; // Name should be unique
-    private ImageIcon image;
+    private ImageIcon image; // This image is the image used as frog profile
     private FrogSpecies species;
     private int experience;
     private boolean active = false; // If active is true, it means the frog is on the toolbar
@@ -83,14 +83,17 @@ public class Frog {
      * Starts an animation for the frog.
      * @param animation The animation to be set for the frog.
      */
-    public void setAnimation(Animation animation) {
+    private void setAnimation(Animation animation) {
         this.animation = animation;
-        if(animation != null) {
+        notifyChangeListeners();
+    }
+
+    public void startAnimation(){
+        if(!animation.isRunning()){
             animation.start();
             notifyChangeListeners();
         }
     }
-
     public Animation getAnimation() {
         return this.animation;
     }
@@ -121,12 +124,19 @@ public class Frog {
     }
 
     public void notifyChangeListeners(){
-        for(ChangeListener listener : listeners){
+        // Create a copy to avoid ConcurrentModificationException
+        List<ChangeListener> listenersCopy =  new ArrayList<>(listeners);
+        for(ChangeListener listener : listenersCopy){
             listener.stateChanged(new ChangeEvent(this));
         }
     }
 
     public void setImage(ImageIcon image) {
         this.image = image;
+    }
+
+    public void removeAnimation(){
+        animation.stop();
+        this.animation = null;
     }
 }

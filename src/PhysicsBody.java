@@ -17,8 +17,17 @@ public class PhysicsBody{
     private Timer timer;
     private int parentHeight, bodyHeight;
 
+    public final int id;
+    private static int idCounter = 0;
+
     // Change listeners
     private final java.util.List<ChangeListener> listeners = new ArrayList<>();
+
+
+
+    public PhysicsBody(){
+        this.id = ++idCounter;
+    }
 
     /**
      * Starts the physics body simulation with the given parameters.
@@ -42,6 +51,7 @@ public class PhysicsBody{
             timer = new Timer(16, e -> update(0.016));
             timer.start();
         }
+        System.out.println("Timer instance: " + timer + " for PhysicsBody ID: " + id);
     }
 
     /**
@@ -64,6 +74,7 @@ public class PhysicsBody{
             y = parentHeight - bodyHeight;
             stop();
         }
+
     }
 
     public int getX(){
@@ -96,6 +107,7 @@ public class PhysicsBody{
     }
 
     private void notifyChangeListener(){
+        System.out.println("Notifying ChangeListener for PhysicsBody ID: " + id);
         for(ChangeListener listener : listeners){
             listener.stateChanged(new ChangeEvent(this));
         }
