@@ -23,6 +23,7 @@ public class FrogBar extends JWindow {
 
             for (Frog frog : frogedex.getFrogs()) {
                 frog.addChangeListeners(e -> updateFrogBar());
+
             }
 
             setUpWindow();

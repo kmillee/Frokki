@@ -101,10 +101,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         if(animation != null && animation.isRunning()){
             animation.stop();
         }
-//
-        frog.setImage(new ImageIcon("media" + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png"));
-//
-//
+
         repaint();
     }
 
@@ -193,7 +190,11 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         if (animation != null && animation.isRunning()) {
             frogImage = animation.getCurrentFrame();
             frameSize = animation.getFrameSize();
-        } else {
+        } else if(physicsBody.isActive()) {
+            frogImage = (new ImageIcon("media" + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png"));
+            frameSize = new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+        }
+        else {
             frogImage = frog.getImage();
             frameSize = new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
         }
