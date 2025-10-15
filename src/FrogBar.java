@@ -94,9 +94,7 @@ public class FrogBar extends JWindow {
                 if(component instanceof FrogComponent frogComponent){
                     Frog frog = frogComponent.getFrog();
                     if(frog.getAnimation() == null){
-                        frog.loadAnimation("idle");
-                        //frogComponent.attachAnimationListener();
-                        frog.startAnimation();
+                        frog.idle();
                     }
                 }
             }

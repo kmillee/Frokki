@@ -26,7 +26,6 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     private static final int max_size = 7; // We record only max_size mousePositons and time
     private double velocityX = 0;
     private double velocityY = 0;
-
     /**
      * Constructor for a FrogComponent.
      * @param frog The frog to be represented by this component. Must not be null.
@@ -44,7 +43,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             if(!physicsBody.isActive()) {
                 Animation animation = frog.getAnimation();
                 if(animation == null) {
-                    frog.loadAnimation("idle");
+                    frog.idle();
                 }
                 frog.startAnimation();
             }
@@ -109,10 +108,8 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     public void mouseReleased(MouseEvent e) {
         isDragging = false;
         Container parent = getParent();
-        if(parent != null){
+        if(parent != null)
             physicsBody.start(getX(), getY(), velocityX*5, -velocityY, parent.getHeight(), getHeight());
-        }
-
         mousePositions.clear();
         timestamps.clear();
         velocityX = 0;
@@ -241,8 +238,6 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     @Override
     public void mouseClicked(MouseEvent e) {
         // TODO: frog jump
-        if(e.getClickCount() == 2){
-        }
     }
 
     /**

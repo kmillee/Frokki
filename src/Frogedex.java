@@ -38,7 +38,7 @@ public class Frogedex {
 
         frogs.forEach(frogedexModel::addFrog);
         frogs.get(1).setActive(true);
-        frogs.get(2).setActive(true);
+        //frogs.get(2).setActive(true);
         // End of testing
 
         frogedexView.installUI(this);
