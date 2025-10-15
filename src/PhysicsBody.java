@@ -13,7 +13,7 @@ public class PhysicsBody{
     private double velX, velY; // velocity
     private double friction = 0.9;
     private double gravity = 9.81 * 500;
-    private boolean active = false;
+    private boolean active = false; // Indicates if a body is moving or not
     private Timer timer;
     private int parentHeight, bodyHeight;
 
@@ -84,6 +84,10 @@ public class PhysicsBody{
         return (int)y;
     }
 
+    /**
+     * Used to know whether the body is still in movement or not
+     * @return true if the body is still moving, false otherwise
+     */
     public boolean isActive(){
         return active;
     }
@@ -107,7 +111,6 @@ public class PhysicsBody{
     }
 
     private void notifyChangeListener(){
-        System.out.println("Notifying ChangeListener for PhysicsBody ID: " + id);
         for(ChangeListener listener : listeners){
             listener.stateChanged(new ChangeEvent(this));
         }

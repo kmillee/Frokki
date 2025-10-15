@@ -102,7 +102,7 @@ public class Frog {
      * Loads an animation for the frog based on its species and the specified animation type.
      * @param animationType The type of animation to load.
      */
-    public void loadAnimation(String animationType){
+    private void loadAnimation(String animationType){
         String animationPath = "media" + File.separator + "animation_sprite" +
                 File.separator + animationType + File.separator + species.toInt();
         List<ImageIcon> frames = Utils.loadFrames(animationPath);
@@ -117,6 +117,24 @@ public class Frog {
             Animation animation = new Animation(resizedFrames, 200);
             setAnimation(animation);
         }
+    }
+
+    public void jump() {
+        if(animation != null && animation.isRunning()){
+            animation.stop();
+        }
+
+        loadAnimation("jump");
+        startAnimation();
+    }
+
+    public void idle(){
+        if(animation != null && animation.isRunning()){
+            animation.stop();
+        }
+
+        loadAnimation("idle");
+        startAnimation();
     }
 
     public void addChangeListeners(ChangeListener changeListener) {
