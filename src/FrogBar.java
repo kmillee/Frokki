@@ -11,94 +11,80 @@ import javax.imageio.*;
  * A frog is considered active if it is on top of the taskbar.
  */
 public class FrogBar extends JWindow {
-        private final Frogedex frogedex;
-        private JLayeredPane layeredPane;
+    private JLayeredPane layeredPane;
+    private Map<Frog, FrogComponent> frogComponents = new HashMap<>();
 
-        /**
-         * Constructor for a FrogBar.
-         * @param frogedex The Frogedex containing the frogs to be displayed in the FrogBar.
-         */
-        public FrogBar(Frogedex frogedex) {
-            this.frogedex = frogedex;
+    /**
+     * Constructor for a FrogBar.
+     *
+     * @param frogedex The Frogedex containing the frogs to be displayed in the FrogBar.
+     */
+    public FrogBar(Frogedex frogedex) {
+        for (Frog frog : frogedex.getFrogs()) {
+            frog.addChangeListeners(e -> onStateChanged(frog));
 
-            for (Frog frog : frogedex.getFrogs()) {
-                frog.addChangeListeners(e -> updateFrogBar());
-
-            }
-
-            setUpWindow();
-            setupLayeredPane();
-            updateFrogBar();
-
-
-            setVisible(true);
-            setAlwaysOnTop(true);    // To always appear regardless of user activity
-        }
-        
-        private void setUpWindow() {
-            setBackground(new Color(255, 255, 255, 0)); // Transparent
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            setSize(screenSize.width, screenSize.height - Constants.TASKBAR_OFFSET);
-            setLocation(0, 0);
         }
 
-        private void setupLayeredPane(){
-            layeredPane = new JLayeredPane();
-            layeredPane.setOpaque(false);
-            layeredPane.setLayout(null); // allows absolute positioning
-            add(layeredPane);
+        setUpWindow();
+        setupLayeredPane();
+
+
+        for (Frog frog : frogedex.getFrogs()) {
+            if (frog.isActive()) addFrog(frog);
         }
 
-        /**
-         * Updates the FrogBar to reflect the current active frogs and their positions.
-         * The positions of the frogs already in the bar are preserved.
-         */
-        public void updateFrogBar(){
-            // Get current positions of frogs in the bar for consistency
-            Map<Frog, FrogComponent> existingComponents = new  HashMap<>();
+        setVisible(true);
+        setAlwaysOnTop(true);    // To always appear regardless of user activity
+    }
 
-            for(Component component : layeredPane.getComponents()){
-                if(component instanceof FrogComponent frogComponent){
-                    existingComponents.put(frogComponent.getFrog(), frogComponent);
-                }
-            }
-            
-            // Add active frogs to the bar
-            int posX = 0;
-            for(Frog frog: frogedex.getFrogs()){
-                FrogComponent frogComponent = existingComponents.get(frog);
-                if(frog.isActive()) {
-                    if(frogComponent == null){
-                        frogComponent = new FrogComponent(frog);
-                        layeredPane.add(frogComponent);
-                        Point position = new Point(posX, 0);
-                        frogComponent.setBottomLeftAnchor(position.x, position.y);
+    private void setUpWindow() {
+        setBackground(new Color(255, 255, 255, 0)); // Transparent
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(screenSize.width, screenSize.height - Constants.TASKBAR_OFFSET);
+        setLocation(0, 0);
+    }
 
-                        posX += Constants.TASKBAR_FROG_SIZE + 20;
-                        if(posX+Constants.TASKBAR_FROG_SIZE > getWidth()){
-                            posX = 0;
-                        }
-                    }
+    private void setupLayeredPane() {
+        layeredPane = new JLayeredPane();
+        layeredPane.setOpaque(false);
+        layeredPane.setLayout(null); // allows absolute positioning
+        add(layeredPane);
+    }
 
-                    // Get rid of component if the frog is not active anymore
+    private void onStateChanged(Frog frog) {
+        if (frog.isActive()) {
+            if (!frogComponents.containsKey(frog)) addFrog(frog);
+        } else {
+            if (frogComponents.containsKey(frog)) removeFrog(frog);
+        }
+    }
 
-                } else {
-                    if(frogComponent != null) {
-                        layeredPane.remove(frogComponent);
-                    }
-                }
-            }
+    public void addFrog(Frog frog) {
+        // Necessary to make sure frogComponent is only created once.
+        SwingUtilities.invokeLater(() -> {
+            if (frogComponents.containsKey(frog)) return;
+            System.out.println("adding frog");
+            FrogComponent frogComponent = new FrogComponent(frog);
+            frogComponents.put(frog, frogComponent);
+            layeredPane.add(frogComponent);
+            Point position = new Point(0, 0);
+            frogComponent.setBottomLeftAnchor(position.x, position.y);
 
-            // Load animation if needed
-            for(Component component : layeredPane.getComponents()){
-                if(component instanceof FrogComponent frogComponent){
-                    Frog frog = frogComponent.getFrog();
-                    if(frog.getAnimation() == null){
-                        frog.idle();
-                    }
-                }
-            }
+            if (frog.getAnimation() == null) frog.idle();
+
+            layeredPane.revalidate();
+            layeredPane.repaint();
+        });
+    }
+
+    public void removeFrog(Frog frog) {
+        FrogComponent frogComponent = frogComponents.get(frog);
+        if (frogComponent != null) {
+            layeredPane.remove(frogComponents.get(frog));
+            frogComponents.remove(frog);
             layeredPane.revalidate();
             layeredPane.repaint();
         }
+    }
+
 }
