@@ -12,7 +12,7 @@ import javax.imageio.*;
  */
 public class FrogBar extends JWindow {
     private JLayeredPane layeredPane;
-    private Map<Frog, FrogComponent> frogComponents = new HashMap<>();
+    private final Map<Frog, FrogComponent> frogComponents = new HashMap<>();
 
     /**
      * Constructor for a FrogBar.
@@ -27,7 +27,6 @@ public class FrogBar extends JWindow {
 
         setUpWindow();
         setupLayeredPane();
-
 
         for (Frog frog : frogedex.getFrogs()) {
             if (frog.isActive()) addFrog(frog);
@@ -59,15 +58,13 @@ public class FrogBar extends JWindow {
         }
     }
 
-    public void addFrog(Frog frog) {
+    public void addFrog(Frog frog, Point position){
         // Necessary to make sure frogComponent is only created once.
         SwingUtilities.invokeLater(() -> {
             if (frogComponents.containsKey(frog)) return;
-            System.out.println("adding frog");
             FrogComponent frogComponent = new FrogComponent(frog);
             frogComponents.put(frog, frogComponent);
             layeredPane.add(frogComponent);
-            Point position = new Point(0, 0);
             frogComponent.setBottomLeftAnchor(position.x, position.y);
 
             if (frog.getAnimation() == null) frog.idle();
@@ -75,6 +72,10 @@ public class FrogBar extends JWindow {
             layeredPane.revalidate();
             layeredPane.repaint();
         });
+    }
+
+    public void addFrog(Frog frog) {
+        addFrog(frog, new Point(0,0));
     }
 
     public void removeFrog(Frog frog) {

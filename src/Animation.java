@@ -38,7 +38,6 @@ public class Animation {
             });
             timer.start();
             isRunning = true;
-            System.out.println("Animation started");
         }
     }
 
@@ -50,7 +49,6 @@ public class Animation {
             timer.stop();
             timer =  null;
             isRunning = false;
-            System.out.println("Animation stopped");
         }
     }
 

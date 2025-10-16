@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class ThrownState implements FrogState{
     private final FrogComponent frogComponent;
@@ -21,10 +22,6 @@ public class ThrownState implements FrogState{
 
     @Override
     public void mouseDragged(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
     }
 
     @Override
@@ -49,5 +46,16 @@ public class ThrownState implements FrogState{
     @Override
     public void exitState() {
 
+    }
+
+    @Override
+    public ImageIcon getCurrentImage() {
+        Frog frog = frogComponent.getFrog();
+        return new ImageIcon("media" + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png");
+    }
+
+    @Override
+    public Dimension getCurrentSize() {
+        return new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
     }
 }

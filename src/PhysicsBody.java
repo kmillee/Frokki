@@ -51,7 +51,7 @@ public class PhysicsBody{
             timer = new Timer(16, e -> update(0.016));
             timer.start();
         }
-        System.out.println("Timer instance: " + timer + " for PhysicsBody ID: " + id);
+        System.out.println("PhysicsBody started");
     }
 
     /**
@@ -104,6 +104,7 @@ public class PhysicsBody{
             timer = null;
         }
         notifyChangeListener();
+        System.out.println("PhysicsBody stopped");
     }
 
     public void addChangeListener(ChangeListener listener){

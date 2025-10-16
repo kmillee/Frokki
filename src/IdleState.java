@@ -9,8 +9,7 @@ public class IdleState implements FrogState{
     }
     @Override
     public void mousePressed(MouseEvent e) {
-        frogComponent.setState(new DraggingState(frogComponent));
-
+        frogComponent.setState(new DraggingState(frogComponent,  System.currentTimeMillis()));
     }
 
     @Override
@@ -23,10 +22,6 @@ public class IdleState implements FrogState{
 
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
 
     @Override
     public void update() {
@@ -55,8 +50,26 @@ public class IdleState implements FrogState{
         Animation animation = frog.getAnimation();
         if(animation != null && animation.isRunning()){
             animation.stop();
-//            frog.removeAnimation();
         }
+    }
+
+    @Override
+    public ImageIcon getCurrentImage() {
+        Animation animation = frogComponent.getFrog().getAnimation();
+        if(animation != null){
+            return animation.getCurrentFrame();
+        }
+        return frogComponent.getFrog().getImage(); // Default
+    }
+
+    @Override
+    public Dimension getCurrentSize() {
+        Frog frog = frogComponent.getFrog();
+        Animation animation = frog.getAnimation();
+        if(animation != null){
+            return animation.getFrameSize();
+        }
+        return new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
     }
 
 

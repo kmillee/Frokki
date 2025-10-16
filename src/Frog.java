@@ -149,10 +149,6 @@ public class Frog {
         }
     }
 
-    public void setImage(ImageIcon image) {
-        this.image = image;
-    }
-
     public void removeAnimation(){
         animation.stop();
         this.animation = null;
