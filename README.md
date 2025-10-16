@@ -1,6 +1,13 @@
 # Pond_Simulator
 forgs
 
+* TODO:
+  - add popup when catching a frog to ask for its name (implement random name thing)
+  - set timer and maximum nb of things in the pond
+  - add sounds (frogs, scissors...)
+  - toolbox decorate frame (+ handle close and moving operation)
+  - do pixel art assets
+
 - Frog bar
     - display selected frog onto task bar
     - Drag and drop to add frog to frog bar

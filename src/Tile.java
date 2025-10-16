@@ -100,5 +100,9 @@ public class Tile extends Rectangle{
 
     }
 
+    public boolean isMovable(){
+        return (rotten || (lily && frog == null));
+    }
+
 
 }
