@@ -13,6 +13,6 @@ public class Main {
 
         pond.setFrogedex(frogedex);
 
-        frogedex.show();
+        //frogedex.show();
     }
 }

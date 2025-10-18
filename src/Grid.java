@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 // Class handling input of the pond
@@ -17,6 +19,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private Image reeveImg = new ImageIcon("media/pond/reeve.jpg").getImage();
     private Image lilyImg = new ImageIcon("media/pond/lilypad.png").getImage();
     private Image rottenImg = new ImageIcon("media/pond/rotten.jpg").getImage();
+    private Image crocoImg = new ImageIcon("media/pond/croco.png").getImage();
 
 
     // Tile management
@@ -29,11 +32,28 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     // Tools
     private Toolbox toolbox;
     private Frogedex frogedex;
+    private Sound bellsound = new Sound("media/sound/bell.wav");
 
     // Other
     private Timer timer;
     private boolean multSelect, ctrlPressed = false;
     private Tile grabbedTile;
+    private boolean croco; // check to block frog spawn
+
+    // BELL MECHANICS
+    class MouseData {
+        Point position;
+        long time;
+        MouseData(Point p, long t){
+            position = p;
+            time = t;
+        }
+    }
+
+    private final LinkedList<MouseData> history = new LinkedList<>();
+    private long lastMoveTime = 0;
+    private boolean currentlyJiggling = false;
+
 
 
 
@@ -69,6 +89,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         installUI();
         setUpTimer();
+        setBell();
 
     }
 
@@ -152,6 +173,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 g.drawImage(rottenImg, tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
             }
 
+            if (tile.isCroco()){
+                g.drawImage(crocoImg, tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
+            }
+
             // Color tile with low opacity when hovering
             if (tile.isHovered()) {
 
@@ -192,6 +217,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     // ---- POND MODIFICATION ----
     // SPAWN & DELETE
     public void spawnFrog(){
+        if (croco){
+            System.out.print("no forg while croco is here!");
+            return;
+        }
         Frog frog = getRandomFrog();    // need to randomize frog by rarity
         Tile tile = getRandomLilyTile();
         if (tile != null){
@@ -239,6 +268,16 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     }
 
+    public void spawnCroco(){
+        Tile tile = getRandomAvailableTile();
+        if (tile != null){
+            tile.setCroco(true);
+            croco = true;
+            clearFrogs();
+            repaint();
+        }
+    }
+
 
     // ---- TOOLS ----
 
@@ -257,21 +296,29 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     }
 
-    public void useBell(Tile tile){
+    public void setBell(){
         // TODO
         // compute mouseSpeed + distance with croc?
+        System.out.print("choosing bell");
+        bellsound = new Sound("media/sound/bell.wav");
+        // Timer to periodically check for inactivity
+        Timer checkTimer = new Timer(50, e -> checkInactivity());
+        checkTimer.start();
+    }
 
+    private void checkInactivity() {
+        long now = System.currentTimeMillis();
+        if (currentlyJiggling && (now - lastMoveTime > Constants.INACTIVITY_MS)) {
+            currentlyJiggling = false;
+            System.out.println("stopped jiggling");
+            bellsound.pause();
 
+        }
     }
 
     // Actual work done in listeners
-    public void useGrab(Tile tile){
+    public void useGrab(){
         Utils.setCustomCursor(Constants.GRAB_BEFORE_IMG, this);
-
-        //while grabbing:
-        // setCustomCursor(Constants.GRAB_BEFORE_IMG);
-        // put rotten lily pad in the bin
-        // move lily pad around
     }
 
     // Remove reeve from tiles
@@ -285,6 +332,34 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             repaint();
         }
 
+    }
+
+    private boolean isJiggling() {
+        if (history.size() < 2) return false;
+
+        // compute average absolute velocity
+        double totalDist = 0;
+        long totalTime = history.getLast().time - history.getFirst().time;
+
+        for (int i = 1; i < history.size(); i++) {
+            Point p1 = history.get(i - 1).position;
+            Point p2 = history.get(i).position;
+            totalDist += p1.distance(p2);
+        }
+
+        double speed = totalDist / Math.max(totalTime, 1); // pixels/ms
+
+        // TODO: detect direction changes too (for "jiggly" effect)
+        int directionChanges = 0;
+        for (int i = 2; i < history.size(); i++) {
+            double dx1 = history.get(i - 1).position.x - history.get(i - 2).position.x;
+            double dx2 = history.get(i).position.x - history.get(i - 1).position.x;
+            if (dx1 * dx2 < 0) directionChanges++;
+        }
+        System.out.println("directionChanges: " + directionChanges);
+        System.out.println("Speed: " + speed);
+
+        return speed > Constants.SPEED_THRESHOLD /*&& directionChanges > 2*/;
     }
 
 
@@ -305,13 +380,12 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             if (tile.contains(gridCursor)) {
                 switch (toolbox.getCurrentTool()) {
                     case Toolbox.Tool.BELL:
-                        useBell(tile);
                         break;
                     case Toolbox.Tool.SCISSORS:
                         useScissors(tile);
                         break;
                     case Toolbox.Tool.GRAB:
-                        useGrab(tile);
+                        useGrab();
                         break;
                     case Toolbox.Tool.NET:
                         useNet(tile);
@@ -363,17 +437,12 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         if (!ctrlPressed) {
             multSelect = false;
         }
-//        System.out.println("mouse released at: " + e.getX() + ", " + e.getY());
-//        System.out.println("bin in: " + toolbox.getBinRectangle());
-//        System.out.println(toolbox.getBinRectangle().contains(e.getX(), e.getY()));
 
         Point gridCursor = new Point(e.getX() - gridOrigin.x, e.getY() - gridOrigin.y);
         if (toolbox.getCurrentTool() == Toolbox.Tool.GRAB_WHILE) {
 
             //mouse released outside of bin
             if (!(toolbox.getBinRectangle().contains(e.getX(), e.getY()))) {
-//                System.out.println("mouse in: " + e.getX() + ", " + e.getY());
-//                System.out.println("bin in: " + toolbox.getBinRectangle());
 
                 for (Tile tile : grid) {
 
@@ -472,6 +541,27 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         if (toolbox.getCurrentTool() != Toolbox.Tool.NONE){
             Utils.setCustomCursor(toolbox.getToolIcon(toolbox.getCurrentTool()), this);
         }
+
+        // Bell mechanics
+        if (toolbox.getCurrentTool() == Toolbox.Tool.BELL){
+
+            long now = System.currentTimeMillis();
+            history.add(new MouseData(e.getPoint(), now));
+            lastMoveTime = now;
+
+            // remove old data
+            while (!history.isEmpty() && (now - history.getFirst().time > Constants.MAX_HISTORY_MS)) {
+                history.removeFirst();
+            }
+
+            boolean jigglingNow = isJiggling();
+            if (jigglingNow && !currentlyJiggling) {
+                System.out.println("Bell rings!");
+                bellsound.play();
+
+            }
+            currentlyJiggling = jigglingNow;
+       }
 
         // System.out.println("mouse moved: " + dx + " " + dy);
 
@@ -602,6 +692,14 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         return Constants.FROGS.get(random);
     }
+
+    private void clearFrogs(){
+        for (Tile tile : frog_grid){
+            tile.setFrog(null);
+        }
+        frog_grid.clear();
+    }
+
 
 
 }

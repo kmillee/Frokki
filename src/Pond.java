@@ -62,6 +62,7 @@ public class Pond extends JComponent {
         JButton reeveButton = new JButton("Reeve");
         JButton lilyButton = new JButton("Lilypad");
 
+
         buttonBar.add(frogButton);
         frogButton.addActionListener(e -> {grid.spawnFrog();});
         buttonBar.add(reeveButton);
@@ -73,6 +74,12 @@ public class Pond extends JComponent {
         buttonBar.add(showToolButton);
         showToolButton.addActionListener(e -> {
             grid.getToolbox().show();
+        });
+
+        JButton crocoButton = new JButton("Croco");
+        buttonBar.add(crocoButton);
+        crocoButton.addActionListener(e -> {
+            grid.spawnCroco();
         });
 
         frame.add(buttonBar, BorderLayout.SOUTH);

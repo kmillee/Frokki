@@ -12,6 +12,7 @@ public class Tile extends Rectangle{
     private boolean reeve;
     private boolean lily;
     private boolean rotten;
+    private boolean croco;
 
     public Tile(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -22,6 +23,7 @@ public class Tile extends Rectangle{
         lily = false;
         reeve = false;
         rotten = false;
+        croco = false;
         frog = null;
         id = total++;
     }
@@ -90,6 +92,15 @@ public class Tile extends Rectangle{
         this.reeve = reeve;
         this.occupied = true;
     }
+
+    public boolean isCroco() {
+        return croco;
+    }
+
+    public void setCroco(boolean croco) {
+        this.croco = croco;
+    }
+
 
     public boolean isRotten() {
         return rotten;

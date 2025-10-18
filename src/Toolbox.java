@@ -142,19 +142,19 @@ public class Toolbox implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (currentTool == Tool.GRAB_WHILE){
-            Point binPos = grabButton.getLocation();
-            Rectangle binRect = new Rectangle(binPos.x, binPos.y, grabButton.getWidth(), grabButton.getHeight());
-            System.out.println(binRect);
-            System.out.println("put into the bin");
-            //todo contains cursor
-
-        }
-        else{
-            System.out.println("Not grabbing anything, current tool: " + currentTool);
-
-        }
-        System.out.println("mouse release in toolbox");
+//        if (currentTool == Tool.GRAB_WHILE){
+//            Point binPos = grabButton.getLocation();
+//            Rectangle binRect = new Rectangle(binPos.x, binPos.y, grabButton.getWidth(), grabButton.getHeight());
+////            System.out.println(binRect);
+////            System.out.println("put into the bin");
+//            //todo contains cursor
+//
+//        }
+//        else{
+//            System.out.println("Not grabbing anything, current tool: " + currentTool);
+//
+//        }
+//        System.out.println("mouse release in toolbox");
 
     }
 
