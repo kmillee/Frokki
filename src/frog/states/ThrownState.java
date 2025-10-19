@@ -1,9 +1,16 @@
+package frog.states;
+
+import frog.Frog;
+import frog.FrogComponent;
+import frog.FrogState;
+import main.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-public class ThrownState implements FrogState{
+public class ThrownState implements FrogState {
     private final FrogComponent frogComponent;
     private final double velocityX;
     private final double velocityY;

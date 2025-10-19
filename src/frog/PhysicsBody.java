@@ -1,9 +1,9 @@
+package frog;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * This class represents a physics body that can be used to simulate simple physics

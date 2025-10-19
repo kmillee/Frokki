@@ -1,3 +1,5 @@
+package frog;
+
 // Enum representing different species of frogs
 public enum FrogSpecies {
     BLUE,

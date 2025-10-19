@@ -1,3 +1,9 @@
+package UI;
+
+import main.Constants;
+import main.Utils;
+import pond.Tile;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -34,7 +40,7 @@ public class Toolbox implements MouseListener, MouseMotionListener {
         frame.requestFocus();
     }
     public void setUpFrame(){
-        frame = new JFrame("Toolbox");
+        frame = new JFrame("UI.Toolbox");
         frame.setPreferredSize(new Dimension(250,100));
         frame.setLocationRelativeTo(null);
 

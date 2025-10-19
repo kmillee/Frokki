@@ -1,3 +1,5 @@
+package frogedex;
+
 import java.util.EventListener;
 
 public interface FrogedexChangeListener extends EventListener {

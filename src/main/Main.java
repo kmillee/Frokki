@@ -1,4 +1,9 @@
+package main;
+
 import com.formdev.flatlaf.FlatLightLaf;
+import frog.FrogBar;
+import frogedex.Frogedex;
+import pond.Pond;
 
 import java.io.IOException;
 

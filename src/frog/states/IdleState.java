@@ -1,8 +1,16 @@
+package frog.states;
+
+import UI.Animation;
+import frog.Frog;
+import frog.FrogComponent;
+import frog.FrogState;
+import main.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class IdleState implements FrogState{
+public class IdleState implements FrogState {
     private final FrogComponent frogComponent;
     public IdleState(FrogComponent frogComponent) {
         this.frogComponent = frogComponent;

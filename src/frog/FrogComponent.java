@@ -1,15 +1,19 @@
+package frog;
+
+import frog.states.IdleState;
+import main.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 
 public class FrogComponent extends JComponent implements MouseListener, MouseMotionListener {
     private final Frog frog;
     private FrogState currentState;
-    int anchorX;
-    int anchorY;
+    private int anchorX;
+    private int anchorY;
     private int direction = 1; // Use to get the direction of the frog, supposed to be either 1 or -1
 
     Timer experienceTimer;
@@ -60,6 +64,10 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         return frog;
     }
 
+    public void setAnchor(int x, int y){
+        anchorX = x;
+        anchorY = y;
+    }
     public PhysicsBody getPhysicsBody(){
         return this.physicsBody;
     }

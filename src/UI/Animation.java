@@ -1,3 +1,5 @@
+package UI;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -18,7 +20,7 @@ public class Animation {
     public List<ChangeListener> listeners = new ArrayList<>();
 
     /**
-     * Constructor for an Animation.
+     * Constructor for an UI.Animation.
      * @param frames The list of frames for the animation.
      * @param frameDelay The delay between two frames in milliseconds.
      */

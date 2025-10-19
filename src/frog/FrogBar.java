@@ -1,13 +1,15 @@
+package frog;
+
+import frogedex.Frogedex;
+import main.Constants;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.*;
 
 /**
- * This class represents the FrogBar, a window that displays active frogs.
+ * This class represents the frog.FrogBar, a window that displays active frogs.
  * A frog is considered active if it is on top of the taskbar.
  */
 public class FrogBar extends JWindow {
@@ -15,9 +17,9 @@ public class FrogBar extends JWindow {
     private final Map<Frog, FrogComponent> frogComponents = new HashMap<>();
 
     /**
-     * Constructor for a FrogBar.
+     * Constructor for a frog.FrogBar.
      *
-     * @param frogedex The Frogedex containing the frogs to be displayed in the FrogBar.
+     * @param frogedex The frogedex.Frogedex containing the frogs to be displayed in the frog.FrogBar.
      */
     public FrogBar(Frogedex frogedex) {
         for (Frog frog : frogedex.getFrogs()) {

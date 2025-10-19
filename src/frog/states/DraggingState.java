@@ -1,3 +1,11 @@
+package frog.states;
+
+import UI.Animation;
+import frog.Frog;
+import frog.FrogComponent;
+import frog.FrogState;
+import main.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -5,8 +13,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DraggingState implements FrogState{
-    private final FrogComponent  frogComponent;
+public class DraggingState implements FrogState {
+    private final FrogComponent frogComponent;
     private Point dragOffset;
     private final List<Point> mousePositions = new LinkedList<>();
     private final List<Long> timestamps = new LinkedList<>();
@@ -68,8 +76,8 @@ public class DraggingState implements FrogState{
         newY = Math.max(0, Math.min(newY, parentBounds.height - frogComponent.getHeight()));
 
         frogComponent.setLocation(newX, newY);
-        frogComponent.anchorX = newX;
-        frogComponent.anchorY = parent.getHeight() - newY - frogComponent.getHeight();
+
+        frogComponent.setAnchor(newX, parent.getHeight() - newY - frogComponent.getHeight());
     }
     private void recordMouseMovement(MouseEvent e){
         Point currentMousePosition = e.getPoint();

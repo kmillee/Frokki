@@ -1,12 +1,10 @@
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
+package pond;
+
+import frogedex.Frogedex;
+import main.Constants;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class Pond extends JComponent {
 
@@ -39,7 +37,7 @@ public class Pond extends JComponent {
 
     private void setUpFrame() {
         frame = new JFrame();
-        frame.setTitle("Pond");
+        frame.setTitle("pond.Pond");
 //        frame.setUndecorated(true);
         frame.setPreferredSize(new Dimension(1100, 600));
 //        setBackground(new Color(255, 255, 255,40));
@@ -58,7 +56,7 @@ public class Pond extends JComponent {
         JPanel buttonBar = new JPanel();
         buttonBar.setLayout(new FlowLayout());
 
-        JButton frogButton = new JButton("Frog");
+        JButton frogButton = new JButton("frog.Frog");
         JButton reeveButton = new JButton("Reeve");
         JButton lilyButton = new JButton("Lilypad");
 

@@ -1,4 +1,9 @@
+package frog;
+
+import UI.Animation;
 import com.google.gson.annotations.Expose;
+import main.Constants;
+import main.Utils;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -8,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents a Frog object.
+ * This class represents a frog.Frog object.
  */
 public class Frog {
     @Expose
@@ -39,7 +44,7 @@ public class Frog {
     }
 
     /**
-     * Constructor for a Frog with default values.
+     * Constructor for a frog.Frog with default values.
      * @param imagePath The path to the image representing the frog.
      */
     public Frog(String imagePath){

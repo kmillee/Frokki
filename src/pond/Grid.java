@@ -1,4 +1,12 @@
-import javax.sound.sampled.Clip;
+package pond;
+
+import UI.Toolbox;
+import frog.Frog;
+import frogedex.Frogedex;
+import main.Constants;
+import main.Utils;
+import sound.Sound;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -22,7 +30,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private Image crocoImg = new ImageIcon("media/pond/croco.png").getImage();
 
 
-    // Tile management
+    // pond.Tile management
     private final ArrayList<Tile> grid, water_grid, lily_grid, reeve_grid, frog_grid, rotten_grid;
 
     // Relative position help
@@ -375,7 +383,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         long now = System.currentTimeMillis();
 //        System.out.println("\n##############\nchecking inactivity");
 //        System.out.println("Last move:" + (now -  lastMoveTime) + "ms ago");
-//        System.out.println("Inactivity threshold: " + Constants.INACTIVITY_MS);
+//        System.out.println("Inactivity threshold: " + main.Constants.INACTIVITY_MS);
 
         if (alreadyJiggling && (now - lastMoveTime > Constants.INACTIVITY_MS)) {
             alreadyJiggling = false;
@@ -425,7 +433,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 //        System.out.println("Total dist in the last move: " + totalDist);
 //        System.out.println("Total time in the last move: " + totalTime);
 //        System.out.println("Speed: " + speed);
-//        System.out.println("Jiggles: " + (speed > Constants.SPEED_THRESHOLD));
+//        System.out.println("Jiggles: " + (speed > main.Constants.SPEED_THRESHOLD));
 
         return speed > Constants.SPEED_THRESHOLD /*&& directionChanges > 2*/;
     }

@@ -1,6 +1,7 @@
+package frogedex;
 /**
  * Created: 01/10/2025
- * This class is responsible for creating and displaying the "Frogedex", a frame
+ * This class is responsible for creating and displaying the "frogedex.Frogedex", a frame
  * that displays all the frogs a player owns.
  * The left panel displays a frog's information (species, picture, name, experience
  * level, acquisition date). The right part displays a list of all the frogs the
@@ -8,10 +9,12 @@
  */
 
 
+import frog.Frog;
+import main.Constants;
+import main.Utils;
+
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
-import java.io.*;
 import java.util.List;
 
 public class Frogedex {
@@ -20,11 +23,11 @@ public class Frogedex {
     private JFrame frame;
 
     private Timer saveTimer;
-    Frogedex() {
+    public Frogedex() {
         frogedexModel = FrogedexModel.loadFromFile(Constants.SAVE_FILE);
         frogedexView = new FrogedexView();
 
-        frame = new JFrame("Frogedex");
+        frame = new JFrame("frogedex.Frogedex");
         frame.setLayout(new BorderLayout());
         frame.add(frogedexView, BorderLayout.CENTER);
         Utils.setFixedSize(frame, 858, 430);

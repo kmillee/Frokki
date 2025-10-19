@@ -1,3 +1,5 @@
+package sound;
+
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +18,7 @@ public class Sound {
 
     public void setFile(String soundFileName) {
         try {
-            // Main bell loop
+            // main.Main bell loop
             File file = new File(soundFileName);
             sound = AudioSystem.getAudioInputStream(file);
             clip = AudioSystem.getClip();

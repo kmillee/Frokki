@@ -1,20 +1,23 @@
+package frogedex;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import frog.Frog;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages the data for the Frogedex (i.e. collection of frogs)
+ * Manages the data for the frogedex.Frogedex (i.e. collection of frogs)
  */
 public class FrogedexModel {
     @Expose
     private List<Frog> frogs;
     @Expose
     private String selectedFrogName;
-    private Frog selectedFrog; // Frog that is selected in the list view, i.e. its info should be displayed
+    private Frog selectedFrog; // frog.Frog that is selected in the list view, i.e. its info should be displayed
     private List<FrogedexChangeListener> listeners = new ArrayList<>();
 
     public enum ChangeType {
@@ -81,9 +84,9 @@ public class FrogedexModel {
     }
 
     /**
-     * Loads Frogedex data from a file
+     * Loads frogedex.Frogedex data from a file
      * @param fileName file to load data from
-     * @return reconstructed FrogedexModel
+     * @return reconstructed frogedex.FrogedexModel
      */
     public static FrogedexModel loadFromFile(String fileName){
         try(Reader reader = new FileReader(fileName)){
