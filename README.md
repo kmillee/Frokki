@@ -1,49 +1,51 @@
 # Pond_Simulator
 forgs
 
-* TODO:
-  - add popup when catching a frog to ask for its name (implement random name thing)
-  - set timer and maximum nb of things in the pond
-  - add sounds (frogs, scissors...)
-  - toolbox decorate frame (+ handle close and moving operation)
-  - do pixel art assets
-
-- Frog bar
-    - display selected frog onto task bar
-    - Drag and drop to add frog to frog bar
-    - left click on frog, it jumps
-    - right click, show frog-related options
-    - snakes appear when a snake is in the pond
-
-- Menu: icon in system tray, when click on it it opens option/the menu
-    - Tools menu
-        - net -> catch frogs
-        - shears -> cut of reeds
-        - bait -> place on lilypad to attract frogs
-        - hand -> remove rotten lilypads
-        - bell -> scare off snakes
-        - bin -> appears when hand is selected, to collect lilypads
-    - Settings menu
-        - Volume
-        - snake on/off
-        - clean pond: 
-    - Frog menu
-        - left panel: selected frog information
-        - right panel: list of all collected frogs
-    - Quit
-    - Tips
-
-- Pond:
-    - transparent window that displays a pond
-    - frogs appear randomly on lilypads
-    - lilypads appear randomly
-    - reed appear randomly
-    - lilypad can start to rot
-    - duck appear rarely, when click on it, it appears in the task bar
-    - snakes appear rarely
+## TODO:
+  - [ ] add popup when catching a frog to ask for its name (implement random name thing)
+  - [ ] set timer and maximum nb of things in the pond
+  - [ ] add sounds (frogs, scissors...)
+  - [ ] toolbox decorate frame (+ handle close and moving operation)
+  - [ ] do pixel art assets
 
 
-- Serializer/deserializer: json file to store locally player's data 
+- [ ] Frog bar
+    - [x] display selected frog onto task bar
+    - [x] Drag and drop to add frog to frog bar
+    - [x] left click on frog, it jumps
+    - [ ] right click, show frog-related options
+    - [ ] crocodile appear when a snake is in the pond
+
+- [ ] Menu: 
+  - [ ] icon in system tray, when click on it opens option/the menu
+  - [ ] Tools menu
+      - [x] net -> catch frogs
+      - [ ] shears -> cut of reeds
+      - [ ] bait -> place on lilypad to attract frogs
+      - [ ] hand -> remove rotten lilypads
+      - [ ] bell -> scare off crocodile
+      - [ ] bin -> appears when hand is selected, to collect lilypads
+  - [ ] Settings menu
+      - [ ] Volume
+      - [ ] snake on/off
+      - [ ] clean pond: 
+  - [x] Frog menu
+      - [x] left panel: selected frog information
+      - [x] right panel: list of all collected frogs
+  - [ ] Quit
+  - [ ] Tips
+
+- [ ] Pond:
+    - [x] transparent window that displays a pond
+    - [ ] frogs appear randomly on lilypads
+    - [ ] lilypads appear randomly
+    - [ ] reed appear randomly
+    - [ ] lilypad can start to rot
+    - [ ] duck appear rarely, when click on it, it appears in the task bar
+    - [ ] crocodile appear rarely
+
+
+- [x] Serializer/deserializer: json file to store locally player's data 
 
 
 https://www.codecademy.com/article/mvc-architecture-model-view-controller
