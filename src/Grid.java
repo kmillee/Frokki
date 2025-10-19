@@ -1,7 +1,7 @@
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -18,7 +18,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     public Image grabbed_img; // image of currently grabbed item
     private Image reeveImg = new ImageIcon("media/pond/reeve.jpg").getImage();
     private Image lilyImg = new ImageIcon("media/pond/lilypad.png").getImage();
-    private Image rottenImg = new ImageIcon("media/pond/rotten.jpg").getImage();
+    private Image rottenImg = new ImageIcon("media/pond/rotten.png").getImage();
     private Image crocoImg = new ImageIcon("media/pond/croco.png").getImage();
 
 
@@ -52,7 +52,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     private final LinkedList<MouseData> history = new LinkedList<>();
     private long lastMoveTime = 0;
-    private boolean currentlyJiggling = false;
+    private boolean alreadyJiggling = false;
+    private final int CROCO_COOLDOWN = 500; // croco only runs once per second
+    private long lastCrocoTime = 0;
 
 
 
@@ -208,6 +210,33 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             if (tile.isSelected()){
                 g.setColor(new Color(255, 143, 248,180));
                 g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
+
+                Tile left = getLeftTile(tile);
+                Tile right = getRightTile(tile);
+                Tile up = getUpperTile(tile);
+                Tile down = getLowerTile(tile);
+
+                if(left!=null){
+                    g.setColor(new Color(100,255,100,100));
+                    g.fillRect(left.x + dx, left.y + dy, tile.width, tile.height);
+                }
+
+                if(right!=null){
+                    g.setColor(new Color(147, 114, 3, 228));
+                    g.fillRect(right.x + dx, right.y + dy, tile.width, tile.height);
+                }
+
+                if(up!=null){
+                    g.setColor(new Color(0, 255, 205,100));
+                    g.fillRect(up.x + dx, up.y + dy, tile.width, tile.height);
+                }
+
+                if(down!=null){
+
+                    g.setColor(Color.yellow);
+                    g.fillRect(down.x + dx, down.y + dy, tile.width, tile.height);
+                }
+
             }
         }
 
@@ -278,6 +307,41 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
     }
 
+    private void scareCroco(Point cursor){
+        for (Tile tile : grid){
+            if (tile.isCroco()){
+                // find running direction
+                float croco_x = tile.x + cellSize / 2;
+                float croco_y = tile.y + cellSize / 2;
+                float dx = cursor.x - croco_x;
+                float dy = cursor.y - croco_y;
+
+                int moveX, moveY;
+                Tile neighbor;
+                if (Math.abs(dx) > Math.abs(dy)){
+                    neighbor = (dx > 0) ? getLeftTile(tile) : getRightTile(tile); // left or right
+                }
+                else{
+                    neighbor = (dy > 0) ? getUpperTile(tile) : getLowerTile(tile); // up or down
+                }
+
+                tile.setCroco(false);
+                if (neighbor != null){
+                    neighbor.setCroco(true);
+                    repaint();
+                    System.out.println("moving croco");
+                }
+                else{
+                    croco = false;
+                    System.out.println("croco out");
+                }
+
+
+            }
+        }
+
+    }
+
 
     // ---- TOOLS ----
 
@@ -297,26 +361,32 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     public void setBell(){
-        // TODO
-        // compute mouseSpeed + distance with croc?
+
         System.out.print("choosing bell");
         bellsound = new Sound("media/sound/bell.wav");
-        // Timer to periodically check for inactivity
-        Timer checkTimer = new Timer(50, e -> checkInactivity());
+
+        // Timer to check for inactivity
+        Timer checkTimer = new Timer(30, e -> checkInactivity());
         checkTimer.start();
     }
 
+    // Activated periodically to stop bell when it is still
     private void checkInactivity() {
         long now = System.currentTimeMillis();
-        if (currentlyJiggling && (now - lastMoveTime > Constants.INACTIVITY_MS)) {
-            currentlyJiggling = false;
+//        System.out.println("\n##############\nchecking inactivity");
+//        System.out.println("Last move:" + (now -  lastMoveTime) + "ms ago");
+//        System.out.println("Inactivity threshold: " + Constants.INACTIVITY_MS);
+
+        if (alreadyJiggling && (now - lastMoveTime > Constants.INACTIVITY_MS)) {
+            alreadyJiggling = false;
             System.out.println("stopped jiggling");
             bellsound.pause();
-
         }
+
+
     }
 
-    // Actual work done in listeners
+    // Only used to change the cursor, the actual work is done in listeners
     public void useGrab(){
         Utils.setCustomCursor(Constants.GRAB_BEFORE_IMG, this);
     }
@@ -335,9 +405,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     private boolean isJiggling() {
-        if (history.size() < 2) return false;
+        if (history.size() < 10) return false;
 
-        // compute average absolute velocity
+        // compute average speed
         double totalDist = 0;
         long totalTime = history.getLast().time - history.getFirst().time;
 
@@ -349,15 +419,13 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         double speed = totalDist / Math.max(totalTime, 1); // pixels/ms
 
-        // TODO: detect direction changes too (for "jiggly" effect)
-        int directionChanges = 0;
-        for (int i = 2; i < history.size(); i++) {
-            double dx1 = history.get(i - 1).position.x - history.get(i - 2).position.x;
-            double dx2 = history.get(i).position.x - history.get(i - 1).position.x;
-            if (dx1 * dx2 < 0) directionChanges++;
-        }
-        System.out.println("directionChanges: " + directionChanges);
-        System.out.println("Speed: " + speed);
+        if (totalTime > Constants.INACTIVITY_MS) return false;
+        if (totalDist < 20) return false;
+
+//        System.out.println("Total dist in the last move: " + totalDist);
+//        System.out.println("Total time in the last move: " + totalTime);
+//        System.out.println("Speed: " + speed);
+//        System.out.println("Jiggles: " + (speed > Constants.SPEED_THRESHOLD));
 
         return speed > Constants.SPEED_THRESHOLD /*&& directionChanges > 2*/;
     }
@@ -439,6 +507,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
 
         Point gridCursor = new Point(e.getX() - gridOrigin.x, e.getY() - gridOrigin.y);
+
+        boolean placed = false; // check if the grabbed object has already been placed
         if (toolbox.getCurrentTool() == Toolbox.Tool.GRAB_WHILE) {
 
             //mouse released outside of bin
@@ -453,18 +523,18 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                         } else if (grabbed_img == rottenImg) {
                             tile.setRotten(true);
                         }
-                    }
-
-                    // user try to set a grabbed object on an unavailable tile
-                    else {
-                        if (grabbed_img == lilyImg) {
-                            grabbedTile.setLily(true);
-                        } else if (grabbed_img == rottenImg) {
-                            grabbedTile.setRotten(true);
-                        }
-
+                        placed = true;
                     }
                 }
+                // user try to set a grabbed object on an unavailable tile
+                if (!placed) {
+                    if (grabbed_img == lilyImg) {
+                        grabbedTile.setLily(true);
+                    } else if (grabbed_img == rottenImg) {
+                        grabbedTile.setRotten(true);
+                    }
+                }
+
             }
 //            else{
 //                System.out.println("mouse in bin!  " + e.getX() + ", " + e.getY());
@@ -478,6 +548,12 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         if (toolbox.getCurrentTool() == Toolbox.Tool.GRAB_WHILE) {
             toolbox.setCurrentTool(Toolbox.Tool.GRAB);
         }
+
+        // bell sound stop
+        bellsound.pause();
+        alreadyJiggling = false;
+        System.out.print("Mouse released.");
+
     }
 
     // update the grabbed tile if we threw it in the bin
@@ -499,6 +575,39 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     // It will also display the grabbed object is low opacity on hovered tiles
     @Override
     public void mouseDragged(MouseEvent e) {
+        // Bell mechanics
+        if (toolbox.getCurrentTool() == Toolbox.Tool.BELL){
+
+            long now = System.currentTimeMillis();
+            history.add(new MouseData(e.getPoint(), now));
+            lastMoveTime = now;
+
+            // remove old data
+            while (!history.isEmpty() && (now - history.getFirst().time > Constants.MAX_HISTORY_MS)) {
+                history.removeFirst();
+//                System.out.println("Old data removed, size og the list: " + history.size());
+            }
+
+            boolean jigglingNow = isJiggling();
+//            System.out.println("Is jiggling: " + jigglingNow);
+
+            if (jigglingNow){
+                if (now - lastCrocoTime > CROCO_COOLDOWN) {
+                    scareCroco(e.getPoint());
+                    lastCrocoTime = now;
+                }
+                if (!alreadyJiggling) {
+                    bellsound.play();
+                }
+            }
+//            else if (alreadyJiggling){
+//                bellsound.clip.loop(0);
+//            }
+
+
+            alreadyJiggling = jigglingNow;
+        }
+
         if ((ctrlPressed) ||(SwingUtilities.isRightMouseButton(e))) {
             Point gridCursor = new Point(e.getX() - dx, e.getY() - dy);
             // System.out.println("mouseMoved: " + e.getPoint());
@@ -542,28 +651,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             Utils.setCustomCursor(toolbox.getToolIcon(toolbox.getCurrentTool()), this);
         }
 
-        // Bell mechanics
-        if (toolbox.getCurrentTool() == Toolbox.Tool.BELL){
 
-            long now = System.currentTimeMillis();
-            history.add(new MouseData(e.getPoint(), now));
-            lastMoveTime = now;
 
-            // remove old data
-            while (!history.isEmpty() && (now - history.getFirst().time > Constants.MAX_HISTORY_MS)) {
-                history.removeFirst();
-            }
-
-            boolean jigglingNow = isJiggling();
-            if (jigglingNow && !currentlyJiggling) {
-                System.out.println("Bell rings!");
-                bellsound.play();
-
-            }
-            currentlyJiggling = jigglingNow;
-       }
-
-        // System.out.println("mouse moved: " + dx + " " + dy);
+//         System.out.println("mouse moved: " + e.getX() + " " + e.getY());
 
         Point gridCursor = new Point(e.getX() - dx, e.getY() - dy);
         for (Tile tile : grid) {
@@ -635,7 +725,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
 
         }
-        System.out.println("Selected tiles: " + tiles);
+//        System.out.println("Selected tiles: " + tiles);
         return tiles;
     }
 
@@ -647,7 +737,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
 
         }
-        System.out.println("Selected tiles: " + tiles);
+//        System.out.println("Selected tiles: " + tiles);
         return tiles;
     }
 
@@ -700,6 +790,32 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         frog_grid.clear();
     }
 
+    private Tile getUpperTile(Tile tile){
+        int up_id = tile.getId() - cols;
+        if (up_id < 0) return null;
+
+        return grid.get(up_id);
+    }
+
+    private Tile getLowerTile(Tile tile){
+        int down_id = tile.getId() + cols;
+        if (down_id >= grid.size()) return null;
+        return grid.get(down_id);
+    }
+
+    private Tile getRightTile(Tile tile){
+        if (tile.getId() % cols == cols - 1) {  // already right-most column
+            return null;
+        }
+        return grid.get(tile.getId()+1);
+    }
+
+    private Tile getLeftTile(Tile tile){
+        if (tile.getId() % cols == 0) {  // already left-most column
+            return null;
+        }
+        return grid.get(tile.getId()-1);
+    }
 
 
 }

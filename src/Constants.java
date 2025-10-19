@@ -33,17 +33,17 @@ public class Constants {
     public static final int MAX_OBJECTS = 30; // Maximum number of objects on pond simultaneously (reeve, lily pads & rotten lily pads)
 
     // TOOLBAR SHARED MEDIA
-    public static ImageIcon SCISSORS_IMG = new ImageIcon("media/tool/scissors.jpg");
-    public static ImageIcon NET_IMG = new ImageIcon("media/tool/net.jpg");
+    public static ImageIcon SCISSORS_IMG = new ImageIcon("media/tool/scissors.png");
+    public static ImageIcon NET_IMG = new ImageIcon("media/tool/net.png");
     public static ImageIcon GRAB_BEFORE_IMG = new ImageIcon("media/tool/grab_before.png");
     public static ImageIcon GRAB_WHILE_IMG = new ImageIcon("media/tool/grab_while.png");
-    public static ImageIcon BIN_IMG = new ImageIcon("media/tool/bin.jpg");
-    public static ImageIcon BELL_IMG = new ImageIcon("media/tool/bell.jpg");
+    public static ImageIcon BIN_IMG = new ImageIcon("media/tool/bin.png");
+    public static ImageIcon BELL_IMG = new ImageIcon("media/tool/bell.png");
 
     // BELL SPEED CONSTANTS
-    public static final int MAX_HISTORY_MS = 1000; // look at last xx ms of movement
-    public static final int INACTIVITY_MS = 250;   // how long to wait before "stopped"
-    public static final double SPEED_THRESHOLD = 1; // pixel/ms
+    public static final int MAX_HISTORY_MS = 500; // look at last xx ms of movement
+    public static final int INACTIVITY_MS = 200;   // how long to wait before "stopped"
+    public static final double SPEED_THRESHOLD = 0.5; // pixel/ms
 
 
 }
