@@ -24,7 +24,7 @@ public class Frog {
         this.name = name;
         this.species = species;
         this.acquisitionDate = acquisitionDate;
-        this.experience = 50;
+        this.experience = 0;
     }
 
     /**
@@ -73,6 +73,14 @@ public class Frog {
     public void setActive(boolean active) {
         this.active = active;
         notifyChangeListeners();
+    }
+
+    public void increaseExperience() {
+        this.experience++;
+        notifyChangeListeners(); // Notify general listeners
+        for (ChangeListener listener : listeners) {
+            listener.stateChanged(new  ChangeEvent(this));
+        }
     }
 
     public boolean isActive() {

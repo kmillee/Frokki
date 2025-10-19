@@ -82,6 +82,7 @@ public class FrogBar extends JWindow {
         FrogComponent frogComponent = frogComponents.get(frog);
         if (frogComponent != null) {
             layeredPane.remove(frogComponents.get(frog));
+            frogComponent.stopTimer();
             frogComponents.remove(frog);
             layeredPane.revalidate();
             layeredPane.repaint();

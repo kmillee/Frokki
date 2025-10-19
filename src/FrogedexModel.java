@@ -15,6 +15,7 @@ public class FrogedexModel {
     public enum ChangeType {
         ADD_FROG,
         SELECT_FROG,
+        EXPERIENCE_UPDATE,
         OTHER
     }
     public FrogedexModel(){
@@ -47,7 +48,7 @@ public class FrogedexModel {
     }
 
 
-    private void notifyChangeListener(ChangeType changeType, Frog frog){
+    public void notifyChangeListener(ChangeType changeType, Frog frog){
         FrogedexChangeEvent changeEvent = new FrogedexChangeEvent(this, changeType, frog);
         for(FrogedexChangeListener listener : listeners){
             listener.stateChanged(changeEvent);

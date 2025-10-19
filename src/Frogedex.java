@@ -38,10 +38,17 @@ public class Frogedex {
 
         frogs.forEach(frogedexModel::addFrog);
         frogs.get(1).setActive(true);
-        //frogs.get(2).setActive(true);
-        // End of testing
+        // Remove that after
 
         frogedexView.installUI(this);
+
+        frogedexModel.getFrogs().forEach(frog -> {
+            frog.addChangeListeners(e -> {
+                if (e.getSource() instanceof Frog updatedFrog) {
+                    frogedexModel.notifyChangeListener(FrogedexModel.ChangeType.EXPERIENCE_UPDATE, updatedFrog);
+                }
+            });
+        });
 
         frogedexModel.addChangeListener(e -> {
            switch (e.getChangeType()) {
@@ -55,6 +62,12 @@ public class Frogedex {
                    Frog selectedFrog = e.getFrog();
                    if(selectedFrog != null) {
                        frogedexView.updateFrogInfo(selectedFrog);
+                   }
+               }
+               case EXPERIENCE_UPDATE -> {
+                   Frog frog =  e.getFrog();
+                   if(frog != null && getSelectedFrog().equals(frog)) {
+                       frogedexView.updateFrogInfo(frog);
                    }
                }
                default -> {}
@@ -81,5 +94,5 @@ public class Frogedex {
     public void addFrog(Frog frog) {
         frogedexModel.addFrog(frog);
     }
-
+    
 }

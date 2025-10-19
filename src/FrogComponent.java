@@ -12,6 +12,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     int anchorY;
     private int direction = 1; // Use to get the direction of the frog, supposed to be either 1 or -1
 
+    Timer experienceTimer;
     private final PhysicsBody physicsBody;
     public FrogComponent(Frog frog) {
         this.frog = frog;
@@ -39,6 +40,12 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             }
             repaint();
         });
+
+        experienceTimer = new Timer(5000, e -> {
+            frog.increaseExperience();
+        });
+        experienceTimer.setRepeats(true);
+        experienceTimer.start();
 
         frog.addChangeListeners(e -> repaint());
     }
@@ -164,6 +171,10 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
 
     public int getDirection(){
         return direction;
+    }
+
+    public void stopTimer(){
+        experienceTimer.stop();
     }
 
 }
