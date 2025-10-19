@@ -113,4 +113,13 @@ public class Utils {
         }
         return frames;
     }
+
+
+    public static void setCustomCursor(ImageIcon cursor, Container container){
+        // Set a custom cursor
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Cursor customCursor = toolkit.createCustomCursor(cursor.getImage(), new Point(0, 0), "Custom Cursor");
+        container.setCursor(customCursor);
+    }
+
 }

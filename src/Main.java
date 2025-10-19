@@ -1,7 +1,5 @@
-import Toolbox.Toolbox;
 import com.formdev.flatlaf.FlatLightLaf;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class Main {
@@ -15,6 +13,6 @@ public class Main {
 
         pond.setFrogedex(frogedex);
 
-        frogedex.show();
+        //frogedex.show();
     }
 }
