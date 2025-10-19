@@ -11,7 +11,7 @@
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.List;
 
 public class Frogedex {
@@ -19,8 +19,9 @@ public class Frogedex {
     private FrogedexView frogedexView;
     private JFrame frame;
 
+    private Timer saveTimer;
     Frogedex() {
-        frogedexModel = new FrogedexModel();
+        frogedexModel = FrogedexModel.loadFromFile(Constants.SAVE_FILE);
         frogedexView = new FrogedexView();
 
         frame = new JFrame("Frogedex");
@@ -29,18 +30,14 @@ public class Frogedex {
         Utils.setFixedSize(frame, 858, 430);
         frame.setResizable(false);
 
-        // Just for testing, should be removed later on
-        List<Frog> frogs = new ArrayList<>();
-        for(int i = 0 ; i < 13 ; i++){
-            Frog frog = new Frog("media/frog_" + i + ".png", "The Frog "+ i, FrogSpecies.getSpecies(i), "01/01/2025");
-            frogs.add(frog);
-        }
-
-        frogs.forEach(frogedexModel::addFrog);
-        frogs.get(1).setActive(true);
-        // Remove that after
-
         frogedexView.installUI(this);
+        setupListeners();
+
+        saveTimer = new Timer(60000, e -> onFrogDataChanged());
+        saveTimer.start();
+    }
+
+    public void setupListeners(){
 
         frogedexModel.getFrogs().forEach(frog -> {
             frog.addChangeListeners(e -> {
@@ -51,30 +48,39 @@ public class Frogedex {
         });
 
         frogedexModel.addChangeListener(e -> {
-           switch (e.getChangeType()) {
-               case ADD_FROG -> {
-                   Frog newFrog = e.getFrog();
-                   if(newFrog != null) {
-                       frogedexView.addFrogToList(newFrog);
-                   }
-               }
-               case SELECT_FROG -> {
-                   Frog selectedFrog = e.getFrog();
-                   if(selectedFrog != null) {
-                       frogedexView.updateFrogInfo(selectedFrog);
-                   }
-               }
-               case EXPERIENCE_UPDATE -> {
-                   Frog frog =  e.getFrog();
-                   if(frog != null && getSelectedFrog().equals(frog)) {
-                       frogedexView.updateFrogInfo(frog);
-                   }
-               }
-               default -> {}
-           }
+            switch (e.getChangeType()) {
+                case ADD_FROG -> {
+                    Frog newFrog = e.getFrog();
+                    if(newFrog != null) {
+                        frogedexView.addFrogToList(newFrog);
+                    }
+                }
+                case SELECT_FROG -> {
+                    Frog selectedFrog = e.getFrog();
+                    if(selectedFrog != null) {
+                        frogedexView.updateFrogInfo(selectedFrog);
+                    }
+                }
+                case EXPERIENCE_UPDATE -> {
+                    Frog frog =  e.getFrog();
+                    if(frog != null && getSelectedFrog().equals(frog)) {
+                        frogedexView.updateFrogInfo(frog);
+
+                    }
+                }
+                default -> {}
+            }
         });
     }
 
+    public void saveData(){
+        System.out.println("Saving data...");
+        frogedexModel.saveToFile(Constants.SAVE_FILE);
+    }
+
+    public void onFrogDataChanged(){
+        saveData();
+    }
     public void show(){
         frame.setVisible(true);
     }

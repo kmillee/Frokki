@@ -45,5 +45,6 @@ public class Constants {
     public static final int INACTIVITY_MS = 200;   // how long to wait before "stopped"
     public static final double SPEED_THRESHOLD = 0.5; // pixel/ms
 
-
+    // File paths
+    public static final String SAVE_FILE = "frogedex_data.json";
 }

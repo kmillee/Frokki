@@ -1,3 +1,5 @@
+import com.google.gson.annotations.Expose;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -9,16 +11,25 @@ import java.util.List;
  * This class represents a Frog object.
  */
 public class Frog {
+    @Expose
     private String imagePath, name, acquisitionDate; // Name should be unique
     private ImageIcon image; // This image is the image used as frog profile
+    @Expose
     private FrogSpecies species;
+    @Expose
     private int experience;
+    @Expose
     private boolean active = false; // If active is true, it means the frog is on the toolbar
     private Animation animation;
 
-    private final List<ChangeListener> listeners = new ArrayList<ChangeListener>();
+    private final List<ChangeListener> listeners;
+
+    public Frog(){
+        this.listeners = new ArrayList<>();
+    }
 
     public Frog(String imagePath, String name, FrogSpecies species, String acquisitionDate) {
+        this();
         this.imagePath = imagePath;
         this.image = new ImageIcon(imagePath);
         this.name = name;
@@ -127,14 +138,6 @@ public class Frog {
         }
     }
 
-    public void jump() {
-        if(animation != null && animation.isRunning()){
-            animation.stop();
-        }
-
-        loadAnimation("jump");
-        startAnimation();
-    }
 
     public void idle(){
         if(animation != null && animation.isRunning()){
@@ -159,6 +162,12 @@ public class Frog {
 
     public void removeAnimation(){
         animation.stop();
+        this.animation = null;
+    }
+
+    public void reconstruct() {
+        if(imagePath != null)
+            this.image = new ImageIcon(imagePath);
         this.animation = null;
     }
 }

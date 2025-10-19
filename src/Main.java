@@ -13,6 +13,13 @@ public class Main {
 
         pond.setFrogedex(frogedex);
 
-        //frogedex.show();
+        frogedex.show();
+
+        // -- the following code was taken from https://stackoverflow.com/a/5824066
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                frogedex.saveData();
+            }
+        }, "Shutdown-thread"));
     }
 }
