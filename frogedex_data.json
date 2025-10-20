@@ -1,0 +1,29 @@
+{
+  "frogs": [
+    {
+      "imagePath": "media\\frog_1.png",
+      "name": "John Toad",
+      "acquisitionDate": "00/00/0000",
+      "species": "GREEN",
+      "experience": 16,
+      "active": true
+    },
+    {
+      "imagePath": "media/frog_10.png",
+      "name": "The frog.Frog 10",
+      "acquisitionDate": "01/01/2025",
+      "species": "ALBINOS",
+      "experience": 0,
+      "active": false
+    },
+    {
+      "imagePath": "media/frog_4.png",
+      "name": "The frog.Frog 4",
+      "acquisitionDate": "01/01/2025",
+      "species": "VIOLET",
+      "experience": 0,
+      "active": false
+    }
+  ],
+  "selectedFrogName": "John Toad"
+}
