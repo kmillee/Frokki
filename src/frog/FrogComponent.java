@@ -29,7 +29,14 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     Timer experienceTimer;
     private final PhysicsBody physicsBody;
     private boolean displayFrogInfo = false;
+
+    // -- layout related
     private JPanel frogInfoPanel;
+    private JLabel levelLabel;
+    private JLabel xpLabel;
+    private JProgressBar progressBar;
+
+    // -- Listener
     private List<ChangeListener> listeners = new ArrayList<>(); // Mainly used to communicate to FrogBar that frog info panel should be updated
 
     public FrogComponent(Frog frog) {
@@ -67,7 +74,10 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         experienceTimer.setRepeats(true);
         experienceTimer.start();
 
-        frog.addChangeListeners(e -> repaint());
+        frog.addChangeListeners(e -> {
+            updateFrogInfoPanel();
+            repaint();
+        });
 
 
     }
@@ -188,13 +198,13 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         JLabel frogName =  new JLabel(frog.getName());
         frogName.setFont(fontFrogNameTitle);
 
-        JLabel levelLabel = new JLabel("Lvl" + frog.getLevel());
+        levelLabel = new JLabel("Lvl" + frog.getLevel());
         levelLabel.setFont(fontsmall);
 
-        JLabel xpLabel = new JLabel(frog.getExperience() + "/100XP");
+        xpLabel = new JLabel(frog.getExperience() + "/100XP");
         xpLabel.setFont(fontsmall);
 
-        JProgressBar progressBar = new JProgressBar(0, Constants.EXPERIENCE_THRESHOLD);
+        progressBar = new JProgressBar(0, Constants.EXPERIENCE_THRESHOLD);
         progressBar.setValue(frog.getExperience());
         progressBar.putClientProperty(FlatClientProperties.STYLE, "arc: 20; horizontalSize: 125,10;");
 
@@ -239,6 +249,12 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         displayFrogInfo.setSize(206, 156);
         displayFrogInfo.setOpaque(false);
         return displayFrogInfo;
+    }
+
+    private void updateFrogInfoPanel(){
+        if(levelLabel != null) levelLabel.setText("Lvl" + frog.getLevel());
+        if(xpLabel != null) xpLabel.setText(frog.getExperience() + "/100XP");
+        if(progressBar != null) progressBar.setValue(frog.getExperience());
     }
 
 
