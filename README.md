@@ -13,7 +13,7 @@ forgs
     - [x] display selected frog onto task bar
     - [x] Drag and drop to add frog to frog bar
     - [x] left click on frog, it jumps
-    - [ ] right click, show frog-related options
+    - [x] right click, show frog-related options
     - [ ] crocodile appear when a snake is in the pond
 
 - [ ] Menu: 
