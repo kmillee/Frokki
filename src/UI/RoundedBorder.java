@@ -31,7 +31,6 @@ public class RoundedBorder implements Border {
 
     public RoundedBorder(int radius, int thickness, Color borderColor, Color backgroundColor){
         this(radius, thickness, borderColor);
-        System.out.println("RoundedBorder Constructor with backgroudn");
         this.backgroundColor = backgroundColor;
     }
 
