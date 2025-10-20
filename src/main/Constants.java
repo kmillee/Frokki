@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Constants {
 
-    public static final String RESOURCES_PATH = "src" + File.separator + "main" +File.separator + "resources" + File.separator;
+    public static final String RESOURCES_PATH = "src" +File.separator + "resources";
     /** Total experience needed to reach the next level */
     public static final int EXPERIENCE_THRESHOLD = 100;
 
@@ -53,5 +53,5 @@ public class Constants {
     public static final double SPEED_THRESHOLD = 0.5; // pixel/ms
 
     // File paths
-    public static final String DATA_FILE = RESOURCES_PATH + File.separator + "Filefrogedex_data.json";
+    public static final String DATA_FILE = RESOURCES_PATH + File.separator + "frogedex_data.json";
 }
