@@ -41,7 +41,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
 
 
-    // pond.Tile management
+    // Tile management
     private final ArrayList<Tile> grid, water_grid, lily_grid, reed_grid, frog_grid, rotten_grid;
 
     // Relative position help
@@ -70,10 +70,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     private final LinkedList<MouseData> history = new LinkedList<>();
-    private long lastMoveTime = 0;
     private boolean alreadyJiggling = false;
-    private final int CROCO_COOLDOWN = 500; // croco only runs once per second
-    private long lastCrocoTime = 0;
     private Timer crocoTimer;
     private Point lastCursorPoint;
 
@@ -284,23 +281,35 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
     }
 
+
     public void spawnReed(){
-        Tile tile = getRandomAvailableTile();
-        if (tile != null){
-            tile.setReed(true);
-            reed_grid.add(tile);
-            repaint();
+
+        if (getObjectTotal() >= Constants.MAX_OBJECTS){
+            System.out.println("Too many objects in the pond already");
+        }
+        else{
+            Tile tile = getRandomAvailableTile();
+            if (tile != null){
+                tile.setReed(true);
+                reed_grid.add(tile);
+                repaint();
+            }
         }
     }
 
     public void spawnLily(){
-        Tile tile = getRandomAvailableTile();
-        if (tile != null){
-            tile.setLily(true);
-            lily_grid.add(tile);
-            repaint();
+        if (getObjectTotal() >= Constants.MAX_OBJECTS){
+            System.out.println("Too many objects in the pond already");
+            return;
         }
-
+        else{
+            Tile tile = getRandomAvailableTile();
+            if (tile != null){
+                tile.setLily(true);
+                lily_grid.add(tile);
+                repaint();
+            }
+        }
     }
 
     public void spawnRotten(){
@@ -312,9 +321,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             repaint();
         }
 
-        else{
-//            System.out.println("no lily pad available");
-        }
+//        else{
+////            System.out.println("no lily pad available");
+//        }
 
     }
 
@@ -365,8 +374,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         for (Tile tile : grid){
             if (tile.isCroco()){
                 // find running direction
-                float croco_x = tile.x + cellSize / 2;
-                float croco_y = tile.y + cellSize / 2;
+                float croco_x = tile.x + (float) cellSize / 2;
+                float croco_y = tile.y + (float) cellSize / 2;
                 float dx = cursor.x - croco_x;
                 float dy = cursor.y - croco_y;
 
@@ -606,7 +615,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
             long now = System.currentTimeMillis();
             history.add(new MouseData(e.getPoint(), now));
-            lastMoveTime = now;
             lastCursorPoint = e.getPoint(); // save latest cursor for croco
 
             // remove old data
@@ -655,13 +663,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         // update grabbed object position
         Point gridCursor = new Point(e.getX() - dx, e.getY() - dy);
         for (Tile tile : grid) {
-            if (tile.contains(gridCursor)) {
-                // System.out.println(tile);
-                tile.setHovered(true);
-            }
-            else{
-                tile.setHovered(false);
-            }
+            // System.out.println(tile);
+            tile.setHovered(tile.contains(gridCursor));
 
         }
         repaint();
@@ -682,12 +685,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         Point gridCursor = new Point(e.getX() - dx, e.getY() - dy);
         for (Tile tile : grid) {
-            if (tile.contains(gridCursor)) {
-                tile.setHovered(true);
-            }
-            else{
-                tile.setHovered(false);
-            }
+            tile.setHovered(tile.contains(gridCursor));
         }
         repaint();
 
@@ -841,6 +839,17 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
         return grid.get(tile.getId()-1);
     }
+
+    private int getObjectTotal(){
+        int total = 0;
+        for (Tile tile : grid){
+            if (tile.isLily() ||tile.isReed() || tile.isRotten()){
+                total++;
+            }
+        }
+        return total;
+    }
+
 
 
 }
