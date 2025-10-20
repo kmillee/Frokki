@@ -4,6 +4,7 @@ package frog.frogbar;
 import frog.Frog;
 import frog.FrogComponent;
 import frogedex.Frogedex;
+import frogedex.FrogedexModel;
 import main.Constants;
 
 import javax.swing.*;
@@ -25,9 +26,28 @@ public class FrogBarController extends JWindow {
         setUpWindow();
         setupFrogListeners(frogedex);
         initializeActiveFrogs(frogedex);
+        setupFrogedexListeners(frogedex);
         startUpdateTimer();
         setVisible(true);
         setAlwaysOnTop(true);
+    }
+
+    private void setupFrogedexListeners(Frogedex frogedex) {
+        // Listen for when frogs are added to the Frogedex
+        frogedex.addChangeListener(e -> {
+            if(e.getChangeType() == FrogedexModel.ChangeType.ADD_FROG){
+                Frog newFrog = e.getFrog();
+                if(newFrog != null){
+                    setupFrogListener(newFrog);
+                    if(newFrog.isActive())
+                        addFrog(newFrog);
+                }
+            }
+        });
+    }
+
+    private void setupFrogListener(Frog frog) {
+        frog.addChangeListeners(e -> onFrogStateChanged(frog));
     }
 
     private void setUpWindow() {
@@ -39,9 +59,9 @@ public class FrogBarController extends JWindow {
         add(view.getLayeredPane());
     }
 
-    private void setupFrogListeners(Frogedex frogedex){
+    public void setupFrogListeners(Frogedex frogedex){
         for(Frog frog : frogedex.getFrogs()){
-            frog.addChangeListeners(e -> onFrogStateChanged(frog));
+            setupFrogListener(frog);
         }
     }
 

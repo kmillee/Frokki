@@ -15,8 +15,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.List;
 
-/*
- * View component of the frogedex.Frogedex, responsible for the UI
+/**
+ * View component of the Frogedex, responsible for the UI
  */
 public class FrogedexView extends JPanel implements MouseListener, MouseMotionListener {
     private JPanel frogListPanel;

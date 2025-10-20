@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages the data for the frogedex.Frogedex (i.e. collection of frogs)
+ * Manages the data for the Frogedex (i.e. collection of frogs)
  */
 public class FrogedexModel {
     @Expose
@@ -66,10 +66,6 @@ public class FrogedexModel {
         for(FrogedexChangeListener listener : listeners){
             listener.stateChanged(changeEvent);
         }
-    }
-
-    public void notifyChangeListener(){
-        notifyChangeListener(ChangeType.OTHER, null);
     }
 
     public void saveToFile(String path){

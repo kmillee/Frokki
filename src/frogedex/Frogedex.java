@@ -36,18 +36,21 @@ public class Frogedex {
         frogedexView.installUI(this);
         setupListeners();
 
-        saveTimer = new Timer(60000, e -> onFrogDataChanged());
+        saveTimer = new Timer(60000, e -> onFrogDataChanged()); // Auto-save data every minute
         saveTimer.start();
     }
 
-    public void setupListeners(){
-        frogedexModel.getFrogs().forEach(frog -> {
-            frog.addChangeListeners(e -> {
-                if (e.getSource() instanceof Frog updatedFrog) {
-                    frogedexModel.notifyChangeListener(FrogedexModel.ChangeType.EXPERIENCE_UPDATE, updatedFrog);
-                }
-            });
+    private void setupFrogListeners(Frog frog) {
+        frog.addChangeListeners(e -> {
+            if (e.getSource() instanceof Frog updatedFrog) {
+                frogedexModel.notifyChangeListener(FrogedexModel.ChangeType.EXPERIENCE_UPDATE, updatedFrog);
+            }
         });
+
+
+    }
+    public void setupListeners(){
+        frogedexModel.getFrogs().forEach(this::setupFrogListeners);
 
         frogedexModel.addChangeListener(e -> {
             switch (e.getChangeType()) {
@@ -102,5 +105,8 @@ public class Frogedex {
     public void addFrog(Frog frog) {
         frogedexModel.addFrog(frog);
     }
-    
+
+    public void addChangeListener(FrogedexChangeListener e) {
+        frogedexModel.addChangeListener(e);
+    }
 }
