@@ -7,6 +7,7 @@ import main.Constants;
 import main.Utils;
 import sound.Sound;
 
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -558,11 +559,14 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             toolbox.setCurrentTool(Toolbox.Tool.GRAB);
         }
 
-        // bell sound stop
-        bellsound.pause();
-        endbellsound.play();
+        if (toolbox.getCurrentTool() == Toolbox.Tool.BELL) {
+            // bell sound stop
+            bellsound.pause();
+            endbellsound.play();
 
-        alreadyJiggling = false;
+            alreadyJiggling = false;
+        }
+
 //        System.out.println("Mouse released.");
 
     }

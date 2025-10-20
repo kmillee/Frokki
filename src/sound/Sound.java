@@ -8,10 +8,6 @@ public class Sound {
     public Clip clip;
     private AudioInputStream sound;
 
-    private Clip clipEnd;
-    private AudioInputStream endSound;
-    private FloatControl gainControl;
-
     public Sound(String filename) {
         setFile(filename);
     }
