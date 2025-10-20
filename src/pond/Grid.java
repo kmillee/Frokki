@@ -53,6 +53,13 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private final Sound bellsound = new Sound("media/sound/bell.wav");
     private final Sound endbellsound = new Sound("media/sound/bell_short.wav");
 
+    // Timers
+    private Timer reedLilyTimer;
+    private Timer rotTimer;
+    private Timer crocoSpawnTimer;
+    private Timer frogSpawnTimer;
+
+
     // Other
     private Timer timer;
     private boolean multSelect, ctrlPressed = false;
@@ -109,7 +116,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         this.toolbox = new Toolbox();
 
         installUI();
-        setUpTimer();
+        setUpTimers();
     }
 
     public void installUI(){
@@ -120,21 +127,79 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     // Random timer for spawning mechanics
-    private void setUpTimer(){
-        int delay = (int) (Math.random() * Constants.MAX_DELAY);
+    private void setUpTimers(){
+//        int delay = (int) (Math.random() * Constants.MAX_DELAY);
+//
+////        System.out.println("setUpTimer:" +  delay);
+//
+//        timer = new Timer(delay, e -> {
+////            System.out.println("rotten");
+//            spawnRotten();
+//            setUpTimer();
+//        });
+//
+//        timer.setRepeats(false);
+//        timer.start();
 
-//        System.out.println("setUpTimer:" +  delay);
-
-        timer = new Timer(delay, e -> {
-//            System.out.println("rotten");
-            spawnRotten();
-            setUpTimer();
-        });
-
-        timer.setRepeats(false);
-        timer.start();
+        setupReedLilyTimer();
+        setupRotTimer();
+        setupCrocoTimer();
+        setupFrogTimer();
 
     }
+
+    private void setupReedLilyTimer() {
+        //int delay = Constants.MIN_REEDLILY_TIMER + (int) (Math.random() * Constants.MAX_DELAY);
+
+        int delay = 3000 + (int) (Math.random() * 5000); // 3-8sec
+        reedLilyTimer = new Timer(delay, e -> {
+            if (Math.random() < 0.2) {      //80% reed, 20% lily pad
+                spawnLily();
+            } else {
+                spawnReed();
+            }
+            setupReedLilyTimer(); // reschedule randomly
+        });
+        reedLilyTimer.setRepeats(false);
+        reedLilyTimer.start();
+    }
+
+    private void setupRotTimer() {
+        int delay = 5000 + (int) (Math.random() * 7000); // 5–12sec
+        rotTimer = new Timer(delay, e -> {
+            spawnRotten();
+            setupRotTimer();
+        });
+        rotTimer.setRepeats(false);
+        rotTimer.start();
+    }
+
+    private void setupCrocoTimer() {
+        int delay = 20000 + (int) (Math.random() * 20000); // 20–40s
+        crocoSpawnTimer = new Timer(delay, e -> {
+            if (Math.random() < 0.1 && !croco) {        // set up a low chance of spawn
+                spawnCroco();
+            }
+            setupCrocoTimer();
+        });
+        crocoSpawnTimer.setRepeats(false);
+        crocoSpawnTimer.start();
+    }
+
+    private void setupFrogTimer() {
+        int delay = 7000 + (int) (Math.random() * 5000); // 7–12s
+        frogSpawnTimer = new Timer(delay, e -> {
+            if (!croco) {
+                spawnFrog();
+            }
+            setupFrogTimer();
+        });
+        frogSpawnTimer.setRepeats(false);
+        frogSpawnTimer.start();
+    }
+
+
+
 
 
     // ---- PAINT MECHANICS ----
