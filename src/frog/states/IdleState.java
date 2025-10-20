@@ -17,7 +17,10 @@ public class IdleState implements FrogState {
     }
     @Override
     public void mousePressed(MouseEvent e) {
-        frogComponent.setState(new DraggingState(frogComponent,  System.currentTimeMillis()));
+        if(e.getButton() == MouseEvent.BUTTON1) // left click
+            frogComponent.setState(new DraggingState(frogComponent,  System.currentTimeMillis()));
+        if(e.getButton() == MouseEvent.BUTTON3) // right click
+            frogComponent.invertDisplayFrogInfo();
     }
 
     @Override

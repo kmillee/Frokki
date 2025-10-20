@@ -15,6 +15,7 @@ import java.util.Map;
 public class FrogBar extends JWindow {
     private JLayeredPane layeredPane;
     private final Map<Frog, FrogComponent> frogComponents = new HashMap<>();
+    private Timer updateTimer;
 
     /**
      * Constructor for a frog.FrogBar.
@@ -36,6 +37,9 @@ public class FrogBar extends JWindow {
 
         setVisible(true);
         setAlwaysOnTop(true);    // To always appear regardless of user activity
+
+        updateTimer = new Timer(50, e -> updateAllInfoPanels());
+        updateTimer.start();
     }
 
     private void setUpWindow() {
@@ -64,12 +68,23 @@ public class FrogBar extends JWindow {
         // Necessary to make sure frogComponent is only created once.
         SwingUtilities.invokeLater(() -> {
             if (frogComponents.containsKey(frog)) return;
+
             FrogComponent frogComponent = new FrogComponent(frog);
+
+            frogComponent.addChangeListener(e -> onFrogInfoDisplayToggled(frogComponent));
+
+
             frogComponents.put(frog, frogComponent);
             layeredPane.add(frogComponent);
             frogComponent.setBottomLeftAnchor(position.x, position.y);
 
             if (frog.getAnimation() == null) frog.idle();
+
+            // Frog info panel
+            layeredPane.add(frogComponent.getFrogInfoPanel(), JLayeredPane.POPUP_LAYER);
+            frogComponent.setFrogInfoPanelVisible(false);
+
+            updateInfoPanelPosition(frogComponent);
 
             layeredPane.revalidate();
             layeredPane.repaint();
@@ -84,11 +99,39 @@ public class FrogBar extends JWindow {
         FrogComponent frogComponent = frogComponents.get(frog);
         if (frogComponent != null) {
             layeredPane.remove(frogComponents.get(frog));
+            layeredPane.remove(frogComponent.getFrogInfoPanel());
             frogComponent.stopTimer();
             frogComponents.remove(frog);
+
+
             layeredPane.revalidate();
             layeredPane.repaint();
         }
+    }
+
+
+    private void updateInfoPanelPosition(FrogComponent frogComponent) {
+        if(frogComponent == null) return;
+
+        JPanel infoPanel = frogComponent.getFrogInfoPanel();
+        if(infoPanel != null && frogComponent.getDisplayFrogInfo()) { // Panel should be visible
+            Point frogLocation = frogComponent.getLocation();
+            int panelX = frogLocation.x + (frogComponent.getWidth() - infoPanel.getWidth()) / 2; // Center it relative to frog component
+            int panelY = frogLocation.y - infoPanel.getHeight() - 10;
+            infoPanel.setLocation(panelX, panelY);
+            infoPanel.setVisible(true);
+        } else if(infoPanel != null && !frogComponent.getDisplayFrogInfo()) // Panel should not be visible
+            infoPanel.setVisible(false);
+    }
+
+    public void updateAllInfoPanels(){
+        for(FrogComponent frogComponent : frogComponents.values()){
+            updateInfoPanelPosition(frogComponent);
+        }
+    }
+
+    public void onFrogInfoDisplayToggled(FrogComponent frogComponent) {
+        updateInfoPanelPosition(frogComponent);
     }
 
 }

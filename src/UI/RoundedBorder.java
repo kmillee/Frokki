@@ -14,6 +14,7 @@ public class RoundedBorder implements Border {
     private final int radius;
     private final int thickness;
     private final Color color;
+    private Color backgroundColor = null;
 
     /**
      * Creates a rounded border with specified radius, thickness and color. The border
@@ -26,6 +27,12 @@ public class RoundedBorder implements Border {
         this.radius = radius * 2;
         this.thickness = thickness;
         this.color = color;
+    }
+
+    public RoundedBorder(int radius, int thickness, Color borderColor, Color backgroundColor){
+        this(radius, thickness, borderColor);
+        System.out.println("RoundedBorder Constructor with backgroudn");
+        this.backgroundColor = backgroundColor;
     }
 
     /**
@@ -42,7 +49,7 @@ public class RoundedBorder implements Border {
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(color);
+
         // Using rounded corner formula outerRadius - gap = innerRadius
         g2.setStroke(new BasicStroke(thickness));
 
@@ -52,7 +59,11 @@ public class RoundedBorder implements Border {
         int innerWidth = width - thickness ;
         int innerHeight = height - thickness;
         int innerRadius = Math.max(0, radius - thickness);
-
+        if(backgroundColor != null){
+            g2.setColor(backgroundColor);
+            g2.fillRoundRect(innerX, innerY, innerWidth, innerHeight, innerRadius, innerRadius);
+        }
+        g2.setColor(color);
         g2.drawRoundRect(innerX, innerY, innerWidth, innerHeight, innerRadius, innerRadius);
     }
 

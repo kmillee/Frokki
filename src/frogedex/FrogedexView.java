@@ -178,7 +178,6 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         levelXpPanel.add(Box.createHorizontalGlue());
         levelXpPanel.add(xpLabel);
 
-
         levelPanel.add(levelXpPanel);
         levelPanel.add(progressBar);
 
