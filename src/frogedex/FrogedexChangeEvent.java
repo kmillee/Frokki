@@ -1,3 +1,7 @@
+package frogedex;
+
+import frog.Frog;
+
 import java.util.EventObject;
 
 public class FrogedexChangeEvent extends EventObject {

@@ -1,4 +1,10 @@
+package frogedex;
+
+import UI.RoundedBorder;
 import com.formdev.flatlaf.FlatClientProperties;
+import frog.Frog;
+import main.Constants;
+import main.Utils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -10,7 +16,7 @@ import java.io.File;
 import java.util.List;
 
 /*
- * View component of the Frogedex, responsible for the UI
+ * View component of the frogedex.Frogedex, responsible for the UI
  */
 public class FrogedexView extends JPanel implements MouseListener, MouseMotionListener {
     private JPanel frogListPanel;
@@ -23,7 +29,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
 
 
     /**
-     * Constructor for a FrogedexView. 
+     * Constructor for a frogedex.FrogedexView.
      */ 
     public FrogedexView() {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -31,8 +37,8 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
     }
 
     /**
-     * Installs the UI components of the FrogedexView.
-     * @param frogedex The Frogedex controller.
+     * Installs the UI components of the frogedex.FrogedexView.
+     * @param frogedex The frogedex.Frogedex controller.
      */
     public void installUI(Frogedex frogedex) {
         this.frogedex = frogedex;
@@ -262,7 +268,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
     }
 
     /**
-     * Adds a new frog to the list of frogs in the FrogedexView.
+     * Adds a new frog to the list of frogs in the frogedex.FrogedexView.
      * @param frog The frog to be added.
      */
     public void addFrogToList(Frog frog){
@@ -429,7 +435,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         // Fills up empty slots
         while(cardList.getComponentCount() < frogsPerPage){
             JPanel emptyCard = new JPanel();
-            //Utils.setFixedSize(emptyCard, 108, 131); // Match FrogCard size
+            //main.Utils.setFixedSize(emptyCard, 108, 131); // Match FrogCard size
             emptyCard.putClientProperty("isEmpty", true);
             Utils.setFixedSize(emptyCard, 0, 0);
             cardList.add(emptyCard);

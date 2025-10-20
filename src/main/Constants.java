@@ -1,5 +1,9 @@
+package main;
+
+import frog.Frog;
+import frog.FrogSpecies;
+
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +16,7 @@ public class Constants {
 
     public static void setUpFrogList(){
         for (int i = 0 ; i < 13 ; i++){
-            Frog frog = new Frog("media/frog_" + i + ".png", "The Frog "+ i, FrogSpecies.getSpecies(i), "01/01/2025");
+            Frog frog = new Frog("media/frog_" + i + ".png", "The frog.Frog "+ i, FrogSpecies.getSpecies(i), "01/01/2025");
             FROGS.add(frog);
         }
     }
@@ -45,5 +49,6 @@ public class Constants {
     public static final int INACTIVITY_MS = 200;   // how long to wait before "stopped"
     public static final double SPEED_THRESHOLD = 0.5; // pixel/ms
 
-
+    // File paths
+    public static final String SAVE_FILE = "frogedex_data.json";
 }

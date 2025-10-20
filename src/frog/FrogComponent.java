@@ -1,17 +1,23 @@
+package frog;
+
+import frog.states.IdleState;
+import main.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 
 public class FrogComponent extends JComponent implements MouseListener, MouseMotionListener {
     private final Frog frog;
     private FrogState currentState;
-    int anchorX;
-    int anchorY;
+    private int anchorX;
+    private int anchorY;
+    private int direction = 1; // Use to get the direction of the frog, supposed to be either 1 or -1
 
-    private PhysicsBody physicsBody;
+    Timer experienceTimer;
+    private final PhysicsBody physicsBody;
     public FrogComponent(Frog frog) {
         this.frog = frog;
         this.physicsBody = new PhysicsBody();
@@ -39,6 +45,12 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             repaint();
         });
 
+        experienceTimer = new Timer(5000, e -> {
+            frog.increaseExperience();
+        });
+        experienceTimer.setRepeats(true);
+        experienceTimer.start();
+
         frog.addChangeListeners(e -> repaint());
     }
 
@@ -52,6 +64,10 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         return frog;
     }
 
+    public void setAnchor(int x, int y){
+        anchorX = x;
+        anchorY = y;
+    }
     public PhysicsBody getPhysicsBody(){
         return this.physicsBody;
     }
@@ -128,22 +144,8 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         Graphics2D g2d = (Graphics2D) g;
 
         // Draw the frog
-        ImageIcon frogImage;
-        Dimension frameSize;
-
-        Animation animation = this.frog.getAnimation();
-        boolean isThrown = currentState instanceof ThrownState;
-
-        if(animation != null && animation.isRunning()){
-            frogImage = animation.getCurrentFrame();
-            frameSize = animation.getFrameSize();
-        } else if(isThrown){
-            frogImage = (new ImageIcon("media" + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png"));
-            frameSize = new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
-        } else {
-            frogImage = frog.getImage();
-            frameSize = new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
-        }
+        ImageIcon frogImage = currentState.getCurrentImage();
+        Dimension frameSize = currentState.getCurrentSize();
 
         setSize(frameSize);
         Container parent = getParent();
@@ -151,8 +153,36 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
             updateLocationFromAnchor(parent);
         }
 
-        g2d.drawImage(frogImage.getImage(), 0, 0, getWidth(), getHeight(), null);
+        if (direction > 0) {
+            // Draw the image as is
+            g2d.drawImage(frogImage.getImage(), 0, 0, getWidth(), getHeight(), null);
+        } else {
+            // Flip the image horizontally and adjust its size
+            g2d.drawImage(frogImage.getImage(), getWidth(), 0, 0, getHeight(), 0, 0, frogImage.getIconWidth(), frogImage.getIconHeight(), null);
+        }
+
+//        Image image = frogImage.getImage();
+//        if(direction < 0) {
+//            AffineTransform transform = new AffineTransform();
+//            transform.scale(-1 , 1); // Flip horizontally
+//            transform.translate(-image.getWidth(null), 0); // Adjust position after flipping
+//            g2d.drawImage(image, transform, null);
+//        }
+//        else
+//            g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
         g2d.dispose();
+    }
+
+    public void setDirection(int direction){
+        this.direction = direction;
+    }
+
+    public int getDirection(){
+        return direction;
+    }
+
+    public void stopTimer(){
+        experienceTimer.stop();
     }
 
 }

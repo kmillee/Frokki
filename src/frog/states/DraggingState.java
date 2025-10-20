@@ -1,20 +1,32 @@
+package frog.states;
+
+import UI.Animation;
+import frog.Frog;
+import frog.FrogComponent;
+import frog.FrogState;
+import main.Constants;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DraggingState implements FrogState{
-    private final FrogComponent  frogComponent;
+public class DraggingState implements FrogState {
+    private final FrogComponent frogComponent;
     private Point dragOffset;
     private final List<Point> mousePositions = new LinkedList<>();
     private final List<Long> timestamps = new LinkedList<>();
     private static final int MAX_SIZE = 7;
     private double velocityX = 0;
     private double velocityY = 0;
+    private long timeAtPressed;
 
 
-    public DraggingState(FrogComponent frogComponent){
+    public DraggingState(FrogComponent frogComponent, long timeAtPressed) {
         this.frogComponent = frogComponent;
+        this.timeAtPressed = timeAtPressed;
     }
     @Override
     public void mousePressed(MouseEvent e) {
@@ -23,7 +35,22 @@ public class DraggingState implements FrogState{
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        frogComponent.setState(new ThrownState(frogComponent, velocityX, velocityY));
+        if(System.currentTimeMillis() - this.timeAtPressed < 200) // This is considered a click, we apply a jump-like throw
+        {
+            int randomDirection = Math.random() < 0.5 ? 1 : -1;
+            frogComponent.setDirection(randomDirection);
+            frogComponent.setState(new ThrownState(frogComponent, randomDirection * 200, 1000));
+        }
+
+        else {
+            if(!mousePositions.isEmpty()){
+                int sign = mousePositions.getLast().x - mousePositions.getFirst().x;
+                int direction = sign > 0 ? 1 : -1;
+                frogComponent.setDirection(direction);
+            }
+            frogComponent.setState(new ThrownState(frogComponent, velocityX, velocityY));
+        }
+
     }
 
     @Override
@@ -49,8 +76,8 @@ public class DraggingState implements FrogState{
         newY = Math.max(0, Math.min(newY, parentBounds.height - frogComponent.getHeight()));
 
         frogComponent.setLocation(newX, newY);
-        frogComponent.anchorX = newX;
-        frogComponent.anchorY = parent.getHeight() - newY - frogComponent.getHeight();
+
+        frogComponent.setAnchor(newX, parent.getHeight() - newY - frogComponent.getHeight());
     }
     private void recordMouseMovement(MouseEvent e){
         Point currentMousePosition = e.getPoint();
@@ -83,11 +110,6 @@ public class DraggingState implements FrogState{
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
     public void update() {
 
     }
@@ -108,6 +130,17 @@ public class DraggingState implements FrogState{
         mousePositions.clear();
         timestamps.clear();
         dragOffset = null;
+    }
+
+    @Override
+    public ImageIcon getCurrentImage() {
+        Frog frog = frogComponent.getFrog();
+        return new ImageIcon("media" + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png");
+    }
+
+    @Override
+    public Dimension getCurrentSize() {
+        return new Dimension(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
     }
 
 }
