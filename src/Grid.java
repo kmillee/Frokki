@@ -33,6 +33,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private Toolbox toolbox;
     private Frogedex frogedex;
     private Sound bellsound = new Sound("media/sound/bell.wav");
+    private Sound endbellsound = new Sound("media/sound/bell_short.wav");
 
     // Other
     private Timer timer;
@@ -363,7 +364,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     public void setBell(){
 
         System.out.print("choosing bell");
-        bellsound = new Sound("media/sound/bell.wav");
 
         // Timer to check for inactivity
         Timer checkTimer = new Timer(30, e -> checkInactivity());
@@ -381,6 +381,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             alreadyJiggling = false;
             System.out.println("stopped jiggling");
             bellsound.pause();
+            endbellsound.play();
         }
 
 
@@ -551,8 +552,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         // bell sound stop
         bellsound.pause();
+        endbellsound.play();
+
         alreadyJiggling = false;
-        System.out.print("Mouse released.");
+//        System.out.println("Mouse released.");
 
     }
 
@@ -598,6 +601,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 }
                 if (!alreadyJiggling) {
                     bellsound.play();
+                    bellsound.clip.loop(Clip.LOOP_CONTINUOUSLY);
                 }
             }
 //            else if (alreadyJiggling){
