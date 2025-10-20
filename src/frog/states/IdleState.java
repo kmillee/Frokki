@@ -35,15 +35,6 @@ public class IdleState implements FrogState {
 
 
     @Override
-    public void update() {
-        Frog frog = frogComponent.getFrog();
-        Animation animation = frog.getAnimation();
-        if(animation == null || !animation.isRunning()){
-            frog.idle();
-        }
-    }
-
-    @Override
     public void enterState() {
         Frog frog =  frogComponent.getFrog();
         if(frog.getAnimation() == null) {

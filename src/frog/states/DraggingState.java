@@ -109,10 +109,6 @@ public class DraggingState implements FrogState {
         }
     }
 
-    @Override
-    public void update() {
-
-    }
 
     @Override
     public void enterState() {

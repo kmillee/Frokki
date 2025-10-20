@@ -38,10 +38,6 @@ public class ThrownState implements FrogState {
     }
 
     @Override
-    public void update() {
-    }
-
-    @Override
     public void enterState() {
         Container parent = frogComponent.getParent();
         if(parent != null){
