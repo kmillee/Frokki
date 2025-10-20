@@ -24,10 +24,10 @@ public class Frogedex {
 
     private Timer saveTimer;
     public Frogedex() {
-        frogedexModel = FrogedexModel.loadFromFile(Constants.SAVE_FILE);
+        frogedexModel = FrogedexModel.loadFromFile(Constants.DATA_FILE);
         frogedexView = new FrogedexView();
 
-        frame = new JFrame("frogedex.Frogedex");
+        frame = new JFrame("frogedex");
         frame.setLayout(new BorderLayout());
         frame.add(frogedexView, BorderLayout.CENTER);
         Utils.setFixedSize(frame, 858, 430);
@@ -41,7 +41,6 @@ public class Frogedex {
     }
 
     public void setupListeners(){
-
         frogedexModel.getFrogs().forEach(frog -> {
             frog.addChangeListeners(e -> {
                 if (e.getSource() instanceof Frog updatedFrog) {
@@ -78,7 +77,7 @@ public class Frogedex {
 
     public void saveData(){
         System.out.println("Saving data...");
-        frogedexModel.saveToFile(Constants.SAVE_FILE);
+        frogedexModel.saveToFile(Constants.DATA_FILE);
     }
 
     public void onFrogDataChanged(){

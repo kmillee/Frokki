@@ -87,7 +87,7 @@ public class FrogedexView extends JPanel implements MouseListener, MouseMotionLi
         // --- Get all elements necessary for the frog info panel
         ImageIcon frogImage = frog.getImage();
         frogImage = Utils.resizeImageIcon(frogImage, 166, 166);
-
+        System.out.println("frog image: " + frog.getImagePath());
         // -- Labels setup & fonts
         Font fontSpecies = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 16);
         Font fontFrogNameTitle = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 24);

@@ -127,7 +127,7 @@ public class Frog {
      * @param animationType The type of animation to load.
      */
     private void loadAnimation(String animationType){
-        String animationPath = "media" + File.separator + "animation_sprite" +
+        String animationPath = Constants.RESOURCES_PATH + File.separator + "animation_sprite" +
                 File.separator + animationType + File.separator + species.toInt();
         List<ImageIcon> frames = Utils.loadFrames(animationPath);
         // resize frames

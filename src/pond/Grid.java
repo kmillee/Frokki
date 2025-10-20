@@ -11,6 +11,7 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -25,18 +26,18 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     // Media
     public Image image;
     public Image grabbed_img; // image of currently grabbed item
-    private final Image reedImg = new ImageIcon("media/pond/reed.jpg").getImage();
+    private final Image reedImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed.jpg").getImage();
     private final ArrayList<Image> reedImages = new ArrayList<Image>() {
         {
-            add(new ImageIcon("media/pond/reed_1.png").getImage());
-            add(new ImageIcon("media/pond/reed_2.png").getImage());
-            add(new ImageIcon("media/pond/reed_3.png").getImage());
+            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed_1.png").getImage());
+            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed_2.png").getImage());
+            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed_3.png").getImage());
 
         }
     };
-    private final Image lilyImg = new ImageIcon("media/pond/lilypad.png").getImage();
-    private final Image rottenImg = new ImageIcon("media/pond/rotten.png").getImage();
-    private final Image crocoImg = new ImageIcon("media/pond/croco.png").getImage();
+    private final Image lilyImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "lilypad.png").getImage();
+    private final Image rottenImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "rotten.png").getImage();
+    private final Image crocoImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "croco.png").getImage();
 
 
 
@@ -50,8 +51,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     // Tools
     private Toolbox toolbox;
-    private final Sound bellsound = new Sound("media/sound/bell.wav");
-    private final Sound endbellsound = new Sound("media/sound/bell_short.wav");
+    private final Sound bellsound = new Sound( Constants.RESOURCES_PATH + File.separator + "sound" + File.separator +"bell.wav");
+    private final Sound endbellsound = new Sound(Constants.RESOURCES_PATH + File.separator + "sound" + File.separator + "bell_short.wav");
 
     // Other
     private Timer timer;

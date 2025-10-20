@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import frog.Frog;
+import main.Constants;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class FrogedexModel {
     }
     public FrogedexModel(){
         this.frogs = new ArrayList<Frog>();
-        Frog defaultFrog = new Frog("media" + File.separator + "frog_1.png");
+        Frog defaultFrog = new Frog(Constants.RESOURCES_PATH + File.separator + "frog_1.png");
         addFrog(defaultFrog);
     }
 

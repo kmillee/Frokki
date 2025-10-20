@@ -131,7 +131,7 @@ public class DraggingState implements FrogState {
     @Override
     public ImageIcon getCurrentImage() {
         Frog frog = frogComponent.getFrog();
-        return new ImageIcon("media" + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png");
+        return new ImageIcon(Constants.RESOURCES_PATH + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png");
     }
 
     @Override

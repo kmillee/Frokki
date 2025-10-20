@@ -53,7 +53,7 @@ public class Utils {
      */
     public static Font loadFont(String fontPath, float size) {
         try {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, new File("media" + File.separator + fontPath));
+            Font font = Font.createFont(Font.TRUETYPE_FONT, new File(Constants.RESOURCES_PATH + File.separator + fontPath));
             return font.deriveFont(size);
         } catch(Exception e) {
             e.printStackTrace();
