@@ -37,6 +37,7 @@ public class Constants {
 
     public static final int MAX_OBJECTS = 30; // Maximum number of objects on pond simultaneously (reeve, lily pads & rotten lily pads)
 
+
     // TOOLBAR SHARED MEDIA
     public static ImageIcon SCISSORS_IMG = new ImageIcon("media" + File.separator + "tool"+ File.separator + "scissors.png");
     public static ImageIcon NET_IMG = new ImageIcon("media" + File.separator + "tool" + File.separator + "net.png");
