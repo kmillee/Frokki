@@ -1,0 +1,583 @@
+package main.java.frogedex;
+
+import main.java.UI.RoundedBorder;
+import com.formdev.flatlaf.FlatClientProperties;
+import main.java.frog.Frog;
+import main.java.Constants;
+import main.java.Utils;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.util.List;
+
+/*
+ * View component of the frogedex.Frogedex, responsible for the UI
+ */
+public class FrogedexView extends JPanel implements MouseListener, MouseMotionListener {
+    private JPanel frogListPanel;
+    private JPanel frogInfoPanel;
+    private Frogedex frogedex;
+    private JPanel selectedFrogCard;
+    private Point dragOffset;
+    private JButton summonButton;
+    private int pageIndex=0;
+
+
+    /**
+     * Constructor for a frogedex.FrogedexView.
+     */ 
+    public FrogedexView() {
+        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        Utils.setFixedSize(this, 858, 430);
+    }
+
+    /**
+     * Installs the UI components of the frogedex.FrogedexView.
+     * @param frogedex The frogedex.Frogedex controller.
+     */
+    public void installUI(Frogedex frogedex) {
+        this.frogedex = frogedex;
+        List<Frog> frogs = frogedex.getFrogs();
+
+        // Content setup
+        Frog frog = frogs.isEmpty() ? null : frogs.getFirst();
+        frogInfoPanel = getFrogInfoPanel(frog);
+
+        frogListPanel = getFrogListPanel(frogs);
+
+        JPanel separationPanel = new JPanel();
+        separationPanel.setBackground(UIManager.getColor("Component.borderColor"));
+        Utils.setFixedSize(separationPanel,5, 430);
+
+        this.add(frogInfoPanel);
+        this.add(separationPanel);
+        this.add(frogListPanel);
+    }
+
+    /**
+     * Updates the frog info panel to display the information of the given frog.
+     * @param frog The frog whose information is to be displayed.
+     */
+    public void updateFrogInfo(Frog frog){
+        remove(frogInfoPanel);
+        frogInfoPanel = getFrogInfoPanel(frog);
+        add(frogInfoPanel, 0);
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Creates a panel displaying detailed information about a frog.
+     * @param frog The frog whose information is to be displayed.
+     * @return A JPanel containing the frog's information.
+     */
+    private JPanel getFrogInfoPanel(Frog frog){
+        JPanel frogInfoPanel =  new JPanel();
+        frogInfoPanel.setLayout(new BoxLayout(frogInfoPanel, BoxLayout.Y_AXIS));
+
+        if(frog == null) {
+            Utils.setFixedSize(frogInfoPanel, 322, 430);
+            return frogInfoPanel;
+        }
+        // --- Get all elements necessary for the frog info panel
+        ImageIcon frogImage = frog.getImage();
+        frogImage = Utils.resizeImageIcon(frogImage, 166, 166);
+        System.out.println("frog image: " + frog.getImagePath());
+        // -- Labels setup & fonts
+        Font fontSpecies = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 16);
+        Font fontFrogNameTitle = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 24);
+        Font fontsmall = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 14);
+
+        // -- Setup labels
+        JLabel speciesLabel = new JLabel(frog.getSpeciesName());
+        speciesLabel.setFont(fontSpecies);
+        speciesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel nameLabel = new JLabel(frog.getName());
+        nameLabel.setFont(fontFrogNameTitle);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nameLabel.setBorder(new EmptyBorder(10,0,0,0));
+
+        JLabel levelLabel = new JLabel("Lvl" + frog.getLevel());
+        levelLabel.setFont(fontsmall);
+
+        JLabel xpLabel = new JLabel(frog.getExperience() + "/100XP");
+        xpLabel.setFont(fontsmall);
+
+        JLabel acquisitionLabel = new JLabel("Captured: " + frog.getAcquisitionDate());
+        acquisitionLabel.setFont(fontsmall);
+        acquisitionLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        acquisitionLabel.setBorder(new EmptyBorder(0,0,0,23));
+
+        JLabel frogImageLabel = new JLabel(frogImage);
+        frogImageLabel.putClientProperty("isFrogImageLabel", true);
+
+        // Put mouseListener and motionListener on image to allow for drag and drop on toolbar of frog
+        frogImageLabel.addMouseListener(this);
+        frogImageLabel.addMouseMotionListener(this);
+
+        JProgressBar progressBar = new JProgressBar(0, Constants.EXPERIENCE_THRESHOLD);
+        progressBar.setValue(frog.getExperience());
+        progressBar.putClientProperty(FlatClientProperties.STYLE, "arc: 20; horizontalSize: 170,10;");
+
+        // -- Button
+        summonButton = new JButton("Summon");
+        summonButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
+        if(frog.isActive()) {
+            summonButton.setText("Unsummon");
+            summonButton.putClientProperty(FlatClientProperties.STYLE,
+                    "arc: 20;" +
+                    "background: #f6685e;" +
+                    "disabledBackground: #f6685e;" +
+                    "focusedBackground: #f6685e;");
+        }
+
+        summonButton.setFont(fontsmall);
+        summonButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        summonButton.addMouseListener(this);
+
+
+        // --- Image subpanel
+        JPanel frogImagePanel = new JPanel();
+        Utils.setFixedSize(frogImagePanel, 206, 206);
+
+        int padding = 20;
+        Color borderColor = UIManager.getColor("Component.borderColor");
+        Border outerBorder = new RoundedBorder(20, 4, borderColor);
+        Border paddingBorder = new EmptyBorder(padding, padding, padding, padding);
+
+        frogImagePanel.setBorder(new CompoundBorder(outerBorder, paddingBorder));
+
+        frogImagePanel.add(frogImageLabel);
+
+
+
+        // --- Level subpanel
+        JPanel levelPanel = new JPanel();
+        Utils.setFixedSize(levelPanel, 206, 59);
+
+        Border outerBorderLevel = new RoundedBorder(15, 4, borderColor);
+        int paddingHorizontal = 15;
+        int paddingVertical = 10;
+        Border innerPanningBorder = new EmptyBorder(paddingVertical, paddingHorizontal, paddingVertical, paddingHorizontal);
+
+        levelPanel.setBorder(new CompoundBorder(outerBorderLevel, innerPanningBorder));
+        levelPanel.setLayout(new BoxLayout(levelPanel, BoxLayout.Y_AXIS));
+
+        // Level + xp labels subpanel
+        JPanel levelXpPanel = new JPanel();
+        Utils.setFixedSize(levelXpPanel, 170, 19);
+        levelXpPanel.setLayout(new BoxLayout(levelXpPanel, BoxLayout.X_AXIS));
+        levelXpPanel.add(levelLabel);
+        levelXpPanel.add(Box.createHorizontalGlue());
+        levelXpPanel.add(xpLabel);
+
+        levelPanel.add(levelXpPanel);
+        levelPanel.add(progressBar);
+
+        // Acquisition date panel + summon button
+        JPanel acquisitionPanel = new JPanel();
+        acquisitionPanel.setLayout(new BoxLayout(acquisitionPanel, BoxLayout.X_AXIS));
+        acquisitionPanel.setBorder(new EmptyBorder(0, 20,10,0));
+
+        acquisitionPanel.add(summonButton);
+        acquisitionPanel.add(Box.createHorizontalGlue());
+        acquisitionPanel.add(acquisitionLabel);
+
+        // --- Put everything in the frogInfoPanel
+        JPanel frogInfo = new JPanel();
+        Border innerPadding = new EmptyBorder(0,58,0,58);
+        frogInfo.setBorder(innerPadding);
+
+        frogInfo.setLayout(new BoxLayout(frogInfo, BoxLayout.Y_AXIS));
+        frogInfo.add(speciesLabel);
+        frogInfo.add(frogImagePanel);
+        frogInfo.add(nameLabel);
+        frogInfo.add(levelPanel);
+
+
+        frogInfoPanel.add(frogInfo);
+        frogInfoPanel.add(Box.createVerticalGlue());
+        frogInfoPanel.add(acquisitionPanel);
+
+        return frogInfoPanel;
+    }
+
+    /**
+     * Creates a frog card panel that is used to display a frog's picture and name
+     * @return A JPanel representing a frog card
+     */
+    private JPanel getFrogCardPanel(Frog frog) {
+        // Load and resize image
+        ImageIcon frogImage = frog.getImage();
+        frogImage = Utils.resizeImageIcon(frogImage, 82, 82);
+        JLabel frogImageLabel = new JLabel(frogImage);
+        frogImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Create label for frog's name
+        JLabel frogNameLabel = new JLabel(frog.getName());
+        frogNameLabel.setFont(Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 14));
+        frogNameLabel.setHorizontalAlignment(JLabel.CENTER);
+        frogNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        frogNameLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+        // Panel for inner frog card
+        JPanel frogCard = new JPanel();
+        frogCard.setLayout(new BoxLayout(frogCard, BoxLayout.Y_AXIS));
+
+        // following line from https://github.com/JFormDesigner/FlatLaf/issues/367
+        // Set border based on frog selected
+        if(frog.equals(frogedex.getSelectedFrog())){
+            frogCard.putClientProperty(FlatClientProperties.STYLE,
+                    "[light]background: tint(@background,50%);" +
+                    "[dark]background: shade(@background,15%);" +
+                    "[light]border: 16,16,16,16,#ADD8E6,,20;" +
+                    "[dark]border: 16,16,16,16,#5F9EA0,,20;"
+            );
+        }
+        else {
+            frogCard.putClientProperty(FlatClientProperties.STYLE,
+                    "[light]background: tint(@background,50%);" +
+                            "[dark]background: shade(@background,15%);" +
+                            "[light]border: 16,16,16,16,shade(@background,10%),,20;" +
+                            "[dark]border: 16,16,16,16,tint(@background,10%),,20;"
+            );
+        }
+
+        // Add image and name
+        frogCard.add(frogImageLabel);
+        frogCard.add(frogNameLabel);
+        Utils.setFixedSize(frogCard, 108, 131);
+
+        // Mouse listener that manages frog selecting (changing style of selected card)
+        frogCard.putClientProperty("isFrogCard", true);
+        frogCard.putClientProperty("frog", frog); // Necessary to retrieve the frog's info in the mouse event
+        frogCard.addMouseListener(this);
+
+
+        frogCard.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        return frogCard;
+    }
+
+    /**
+     * Adds a new frog to the list of frogs in the frogedex.FrogedexView.
+     * @param frog The frog to be added.
+     */
+    public void addFrogToList(Frog frog){
+        JPanel frogCard = getFrogCardPanel(frog);
+        JPanel cardPanel = (JPanel) frogListPanel.getComponent(0); // Card panel that contains pages
+        int totalPages = cardPanel.getComponentCount();
+
+        // Get the last page (we want to add the new frog there)
+        JPanel lastPage = (JPanel)  cardPanel.getComponent(totalPages-1);
+        JPanel cardList = (JPanel) lastPage.getComponent(0); // The grid layout that contains the frog cards inside the page
+
+        // We iterate through all elements of the list to check for empty spaces
+        for(Component c : cardList.getComponents()){
+            if(c instanceof JPanel panel ){
+                System.out.println(panel.getClientProperty("isEmpty"));
+            }
+            if(c instanceof JPanel panel && Boolean.TRUE.equals(panel.getClientProperty("isEmpty"))) {
+                panel.removeAll(); // Remove that panel
+                panel.setLayout(new BorderLayout());
+                panel.add(frogCard, BorderLayout.CENTER);
+                panel.putClientProperty("isEmpty", false);
+                panel.revalidate();
+                panel.repaint();
+                return;
+            }
+        }
+
+        // If no empty space was found, this mean we need to create a new page
+        JPanel newPage = getFrogListPagePanel(List.of(frog), 0, 6);
+        cardPanel.add(newPage, "Page " + totalPages);
+
+        updateNavigationPanel(cardPanel);
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Updates the navigation panel based on the number of pages in the card panel.
+     * @param cardPanel The card panel containing the pages of frogs.
+     */
+    private void updateNavigationPanel(JPanel cardPanel) {
+        int totalPages = cardPanel.getComponentCount();
+        JPanel navigationPanel = createNavigationPanel(cardPanel, totalPages);
+
+        // Remove the old navigation panel and add the updated one
+        frogListPanel.remove(frogListPanel.getComponent(1)); // navigation panel is at index 1
+        frogListPanel.add(navigationPanel, BorderLayout.SOUTH);
+
+        revalidate();
+        repaint();
+    }
+
+    /**
+     * Creates a navigation panel with previous and next buttons to navigate through pages.
+     * @param cardPanel The card panel containing the pages of frogs.
+     * @param totalPages The total number of pages.
+     * @return A JPanel representing the navigation panel.
+     */
+    private JPanel createNavigationPanel(JPanel cardPanel, int totalPages) {
+        // Setup navigation layout
+        Font buttonFont = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Bold.ttf", 20);
+        JButton prevButton = new JButton("<");
+        prevButton.setFont(buttonFont);
+        prevButton.setMargin(new Insets(5, 0, 0, 0));
+        JButton nextButton = new JButton(">");
+        nextButton.setFont(buttonFont);
+        nextButton.setMargin(new Insets(5, 0, 0, 0));
+
+        prevButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        nextButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        JPanel navigationPanel = new JPanel();
+        navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.X_AXIS));
+        navigationPanel.setOpaque(false);
+        navigationPanel.add(Box.createHorizontalGlue());
+        navigationPanel.add(prevButton);
+        navigationPanel.add(Box.createHorizontalStrut(5));
+        navigationPanel.add(nextButton);
+        navigationPanel.add(Box.createHorizontalGlue());
+
+        // Make navigation functional
+        CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
+        final int[] currentPage = {pageIndex}; // track selected page index -> final int[] because it is necessary in lambda expressions
+
+
+        // Method to update enabled state of a button
+        Runnable updateButtonStates = () -> {
+            prevButton.setEnabled(currentPage[0]>0);
+            nextButton.setEnabled(currentPage[0]<totalPages-1);
+        };
+
+        prevButton.addActionListener(e -> {
+            if(currentPage[0] > 0){
+                currentPage[0]--;
+                pageIndex = currentPage[0];
+                cardLayout.show(cardPanel, "Page " + currentPage[0]);
+                updateButtonStates.run();
+            }
+        });
+
+        nextButton.addActionListener(e -> {
+            if(currentPage[0] < totalPages - 1){
+                currentPage[0]++;
+                pageIndex = currentPage[0];
+                cardLayout.show(cardPanel, "Page " + currentPage[0]);
+                updateButtonStates.run();
+            }
+        });
+
+        updateButtonStates.run();
+
+        return navigationPanel;
+    }
+
+    /**
+     * Creates the panel for displaying the list of frogs.
+     * @param frogs The list of frogs to display.
+     * @return A JPanel containing the frog list.
+     */
+    private JPanel getFrogListPanel(java.util.List<Frog> frogs) {
+        JPanel cardPanel = new JPanel(new CardLayout());
+        Utils.setFixedSize(cardPanel, 528, 430);
+        int frogsPerPage = 6;
+        int totalPages = (int) Math.ceil((double) frogs.size() / frogsPerPage);
+
+        for(int pageIndex = 0 ; pageIndex < totalPages ; pageIndex++) {
+            JPanel page = getFrogListPagePanel(frogs, pageIndex,  frogsPerPage);
+            cardPanel.add(page, "Page " + pageIndex);
+        }
+
+        JPanel navigationPanel = createNavigationPanel(cardPanel, totalPages);
+
+
+        // Encapsulate list and navigation in a single panel
+        JPanel frogListPanel = new JPanel();
+        frogListPanel.setLayout(new BorderLayout());
+        frogListPanel.setOpaque(false);
+        frogListPanel.add(cardPanel,  BorderLayout.CENTER);
+        frogListPanel.add(navigationPanel, BorderLayout.SOUTH);
+
+        return frogListPanel;
+    }
+
+    /**
+     * Creates a subpage for the list of all frogs
+     * @param frogs list of frogs
+     * @param pageIndex index of the page to display
+     * @param frogsPerPage number of frogs to display in a page
+     * @return list of frogs page
+     */
+    private JPanel getFrogListPagePanel(List<Frog> frogs, int pageIndex, int frogsPerPage) {
+        JPanel page = new JPanel();
+        Utils.setFixedSize(page, 368, 285);
+        JPanel cardList = new JPanel(new GridLayout(2, 3, 22,22));
+        cardList.setOpaque(false);
+
+        // Add up to 6 frogs to the current page
+        for(int i = pageIndex * frogsPerPage; i < Math.min((pageIndex+1) * frogsPerPage, frogs.size()); i++){
+            Frog frog =  frogs.get(i);
+            JPanel frogCard = getFrogCardPanel(frog);
+            frogCard.putClientProperty("isEmpty", false);
+            cardList.add(frogCard);
+        }
+        // Fills up empty slots
+        while(cardList.getComponentCount() < frogsPerPage){
+            JPanel emptyCard = new JPanel();
+            //main.Utils.setFixedSize(emptyCard, 108, 131); // Match FrogCard size
+            emptyCard.putClientProperty("isEmpty", true);
+            Utils.setFixedSize(emptyCard, 0, 0);
+            cardList.add(emptyCard);
+        }
+
+        page.add(cardList);
+        return page;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Object source = e.getSource();
+        if (source instanceof JButton button) {
+            // Manages summoning of frogs
+            if (button.equals(summonButton)) {
+                Frog frog = frogedex.getSelectedFrog();
+                frog.setActive(!frog.isActive());
+                if (frog.isActive()) {
+                    button.setText("Unsummon");
+                    button.putClientProperty(FlatClientProperties.STYLE,
+                            "arc: 20;" +
+                            "background: #f6685e;" +
+                            "disabledBackground: #f6685e;" +
+                            "focusedBackground: #f6685e;");
+                } else {
+                    button.setText("Summon");
+                    button.putClientProperty(FlatClientProperties.STYLE, null); // reset style
+                    button.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
+                }
+            }
+        }
+        else if (source instanceof JPanel panel){
+            // Manages change of frog info + style of card when selected
+            if(Boolean.TRUE.equals(panel.getClientProperty("isFrogCard"))){
+                if(selectedFrogCard != null){
+                    selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
+                            "[light]background: tint(@background,50%);" +
+                                    "[dark]background: shade(@background,15%);" +
+                                    "[light]border: 16,16,16,16,shade(@background,10%),,20;" +
+                                    "[dark]border: 16,16,16,16,tint(@background,10%),,20;"
+                    );
+                }
+                selectedFrogCard = panel;
+                selectedFrogCard.putClientProperty(FlatClientProperties.STYLE,
+                        "[light]background: tint(@background,50%);" +
+                                "[dark]background: shade(@background,15%);" +
+                                "[light]border: 16,16,16,16,#ADD8E6,,20;" +
+                                "[dark]border: 16,16,16,16,#5F9EA0,,20;"
+                );
+
+                // Notify controller about modification in selection
+                Frog frog = (Frog) panel.getClientProperty("frog");
+                frogedex.selectFrog(frog);
+            }
+        }
+    }
+
+
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        Object source = e.getSource();
+        if(source instanceof JLabel label){
+            if(Boolean.TRUE.equals(label.getClientProperty("isFrogImageLabel"))){
+                dragOffset = e.getPoint();
+                // Create a small JWindow that just fits the frog image so that there is a visual guide of the drag
+                JWindow frogWindow = new JWindow();
+                frogWindow.setSize(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+                frogWindow.setBackground(new Color(0,0,0,0)); // transparent window
+
+                frogWindow.setLayout(new BorderLayout());
+
+                Icon icon = label.getIcon();
+                ImageIcon frogImage = (ImageIcon) icon;
+                frogImage = Utils.resizeImageIcon(frogImage, Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+
+                JLabel frogLabel = new JLabel(frogImage);
+                frogWindow.add(frogLabel, BorderLayout.CENTER);
+                frogWindow.setSize(Constants.TASKBAR_FROG_SIZE, Constants.TASKBAR_FROG_SIZE);
+
+                // Scale dragOffset because we resized window to be TASKBAR_FROG_SIZE
+                double scaleX = (double) frogWindow.getWidth() / (double) label.getWidth();
+                double scaleY = (double) frogWindow.getHeight() / (double) label.getHeight();
+                dragOffset.x = (int) (scaleX * dragOffset.x);
+                dragOffset.y = (int) (scaleY * dragOffset.y);
+
+                frogWindow.setLocation(e.getXOnScreen() - dragOffset.x, e.getYOnScreen() - dragOffset.y);
+                frogWindow.setVisible(true);
+
+                // Store the window so that we can use it in mouseDragged and mouseReleased
+                label.putClientProperty("frogWindow", frogWindow);
+            }
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if(e.getSource() instanceof JLabel label){
+            if(Boolean.TRUE.equals(label.getClientProperty("isFrogImageLabel"))){
+                JWindow frogWindow = (JWindow) label.getClientProperty("frogWindow");
+                if(frogWindow != null){
+                    frogWindow.dispose(); // We can get rid of this window when the dragging is done
+                    label.putClientProperty("frogWindow", null);
+                    Frog selectedFrog = frogedex.getSelectedFrog();
+
+                    // Test if the mouse is outside the frame before accepting the drag
+                    if(!this.contains(e.getXOnScreen(), e.getYOnScreen())){
+                        selectedFrog.setActive(true);
+                        summonButton.setText("Unsummon");
+                        summonButton.putClientProperty(FlatClientProperties.STYLE,
+                                "arc: 20;" +
+                                "background: #f6685e;" +
+                                "disabledBackground: #f6685e;" +
+                                "focusedBackground: #f6685e;");
+                    }
+                    dragOffset = null;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if(e.getSource() instanceof JLabel label){
+            if(Boolean.TRUE.equals(label.getClientProperty("isFrogImageLabel"))){
+                JWindow frogWindow = (JWindow) label.getClientProperty("frogWindow");
+                if(frogWindow != null) frogWindow.setLocation(e.getXOnScreen() - dragOffset.x, e.getYOnScreen() - dragOffset.y);
+            }
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
+}

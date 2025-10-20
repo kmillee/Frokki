@@ -2,19 +2,19 @@
 forgs
 
 ## TODO:
-  - [ ] add popup when catching a frog to ask for its name (implement random name thing)
-  - [ ] set timer and maximum nb of things in the pond
+  - [ ] add popup when catching a main.java.frog to ask for its name (implement random name thing)
+  - [ ] set timer and maximum nb of things in the main.java.pond
   - [ ] add sounds (frogs, scissors...)
   - [ ] toolbox decorate frame (+ handle close and moving operation)
   - [ ] do pixel art assets
 
 
-- [ ] frog.Frog bar
-    - [x] display selected frog onto task bar
-    - [x] Drag and drop to add frog to frog bar
-    - [x] left click on frog, it jumps
-    - [x] right click, show frog-related options
-    - [ ] crocodile appear when a snake is in the pond
+- [ ] main.java.frog.Frog bar
+    - [x] display selected main.java.frog onto task bar
+    - [x] Drag and drop to add main.java.frog to main.java.frog bar
+    - [x] left click on main.java.frog, it jumps
+    - [x] right click, show main.java.frog-related options
+    - [ ] crocodile appear when a snake is in the main.java.pond
 
 - [ ] Menu: 
   - [ ] icon in system tray, when click on it opens option/the menu
@@ -28,15 +28,15 @@ forgs
   - [ ] Settings menu
       - [ ] Volume
       - [ ] snake on/off
-      - [ ] clean pond: 
-  - [x] frog.Frog menu
-      - [x] left panel: selected frog information
+      - [ ] clean main.java.pond: 
+  - [x] main.java.frog.Frog menu
+      - [x] left panel: selected main.java.frog information
       - [x] right panel: list of all collected frogs
   - [ ] Quit
   - [ ] Tips
 
-- [ ] pond.Pond:
-    - [x] transparent window that displays a pond
+- [ ] main.java.pond.Pond:
+    - [x] transparent window that displays a main.java.pond
     - [ ] frogs appear randomly on lilypads
     - [ ] lilypads appear randomly
     - [ ] reed appear randomly
@@ -50,12 +50,12 @@ forgs
 
 https://www.codecademy.com/article/mvc-architecture-model-view-controller
 - Model: The Model is responsible for the data and business logic of the application. It represents the state of the application and handles the logic for updating that state:
-    - frog.Frog.java: Represents the data structure for a frog (e.g., name, species, experience, image path).
-    - PondSimModel.java: Manages the overall state of the pond simulation, such as the list of frogs, lilypads, reeds, and other entities in the pond.
-    - Serializer.java: Handles saving and loading player data (e.g., frogs, pond state) to and from a JSON file.
+    - main.java.frog.Frog.java: Represents the data structure for a main.java.frog (e.g., name, species, experience, image path).
+    - PondSimModel.java: Manages the overall state of the main.java.pond simulation, such as the list of frogs, lilypads, reeds, and other entities in the main.java.pond.
+    - Serializer.java: Handles saving and loading player data (e.g., frogs, main.java.pond state) to and from a JSON file.
 - View: The View is responsible for the user interface and displaying data to the user. It listens to the controller for updates and renders the state of the model:
-    - frog.FrogBar.java: Displays the frog bar on the taskbar, allowing interactions like clicking to make frogs jump.
-    - PondSimView.java: Represents the main pond view, showing the pond, lilypads, frogs, reeds, and other visual elements.
-    - frogedex.Frogedex.java: Displays the frogedex.Frogedex, showing the list of collected frogs and their details.
+    - main.java.frog.FrogBar.java: Displays the main.java.frog bar on the taskbar, allowing interactions like clicking to make frogs jump.
+    - PondSimView.java: Represents the main main.java.pond view, showing the main.java.pond, lilypads, frogs, reeds, and other visual elements.
+    - main.java.frogedex.Frogedex.java: Displays the main.java.frogedex.Frogedex, showing the list of collected frogs and their details.
 - Component: The Controller is responsible for handling user input and updating the model or view accordingly. It acts as the intermediary between the model and the view:
     - PondSimController.java: Handles user interactions (e.g., clicking on frogs, using tools, toggling settings) and updates the model or view as needed.
