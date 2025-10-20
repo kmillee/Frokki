@@ -7,6 +7,7 @@ import java.util.EventObject;
 public class FrogedexChangeEvent extends EventObject {
     private final FrogedexModel.ChangeType changeType;
     private final Frog frog;
+
     /**
      * Constructs a prototypical Event.
      *

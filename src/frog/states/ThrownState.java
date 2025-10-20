@@ -21,6 +21,12 @@ public class ThrownState implements FrogState {
     }
     @Override
     public void mousePressed(MouseEvent e) {
+        if(e.getButton() == MouseEvent.BUTTON1) // left click
+        {
+            frogComponent.setState(new DraggingState(frogComponent, System.currentTimeMillis()));
+        }
+        if(e.getButton() == MouseEvent.BUTTON3) // right click
+            frogComponent.invertDisplayFrogInfo();
     }
 
     @Override
@@ -29,10 +35,6 @@ public class ThrownState implements FrogState {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-    }
-
-    @Override
-    public void update() {
     }
 
     @Override
@@ -52,7 +54,8 @@ public class ThrownState implements FrogState {
 
     @Override
     public void exitState() {
-
+        if(frogComponent.getPhysicsBody().isActive())
+            frogComponent.getPhysicsBody().stop();
     }
 
     @Override

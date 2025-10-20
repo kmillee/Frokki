@@ -1,7 +1,7 @@
 package main;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import frog.FrogBar;
+import frog.frogbar.FrogBarController;
 import frogedex.Frogedex;
 import pond.Pond;
 
@@ -14,8 +14,8 @@ public class Main {
 
         Pond pond = new Pond();
         Frogedex frogedex = new Frogedex();
-        FrogBar frogbar = new FrogBar(frogedex);
-
+        //FrogBar frogbar = new FrogBar(frogedex);
+        FrogBarController frogbar = new FrogBarController(frogedex);
         pond.setFrogedex(frogedex);
 
         frogedex.show();
