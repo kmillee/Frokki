@@ -42,7 +42,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
 
 
-    // pond.Tile management
+    // Tile management
     private final ArrayList<Tile> grid, water_grid, lily_grid, reed_grid, frog_grid, rotten_grid;
 
     // Relative position help
@@ -53,6 +53,13 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private Toolbox toolbox;
     private final Sound bellsound = new Sound( Constants.RESOURCES_PATH + File.separator + "sound" + File.separator +"bell.wav");
     private final Sound endbellsound = new Sound(Constants.RESOURCES_PATH + File.separator + "sound" + File.separator + "bell_short.wav");
+
+    // Timers
+    private Timer reedLilyTimer;
+    private Timer rotTimer;
+    private Timer crocoSpawnTimer;
+    private Timer frogSpawnTimer;
+
 
     // Other
     private Timer timer;
@@ -71,10 +78,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     private final LinkedList<MouseData> history = new LinkedList<>();
-    private long lastMoveTime = 0;
     private boolean alreadyJiggling = false;
-    private final int CROCO_COOLDOWN = 500; // croco only runs once per second
-    private long lastCrocoTime = 0;
     private Timer crocoTimer;
     private Point lastCursorPoint;
 
@@ -113,7 +117,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         this.toolbox = new Toolbox();
 
         installUI();
-        setUpTimer();
+        setUpTimers();
     }
 
     public void installUI(){
@@ -124,21 +128,79 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     // Random timer for spawning mechanics
-    private void setUpTimer(){
-        int delay = (int) (Math.random() * Constants.MAX_DELAY);
+    private void setUpTimers(){
+//        int delay = (int) (Math.random() * Constants.MAX_DELAY);
+//
+////        System.out.println("setUpTimer:" +  delay);
+//
+//        timer = new Timer(delay, e -> {
+////            System.out.println("rotten");
+//            spawnRotten();
+//            setUpTimer();
+//        });
+//
+//        timer.setRepeats(false);
+//        timer.start();
 
-//        System.out.println("setUpTimer:" +  delay);
-
-        timer = new Timer(delay, e -> {
-//            System.out.println("rotten");
-            spawnRotten();
-            setUpTimer();
-        });
-
-        timer.setRepeats(false);
-        timer.start();
+        setupReedLilyTimer();
+        setupRotTimer();
+        setupCrocoTimer();
+        setupFrogTimer();
 
     }
+
+    private void setupReedLilyTimer() {
+        //int delay = Constants.MIN_REEDLILY_TIMER + (int) (Math.random() * Constants.MAX_DELAY);
+
+        int delay = 3000 + (int) (Math.random() * 5000); // 3-8sec
+        reedLilyTimer = new Timer(delay, e -> {
+            if (Math.random() < 0.2) {      //80% reed, 20% lily pad
+                spawnLily();
+            } else {
+                spawnReed();
+            }
+            setupReedLilyTimer(); // reschedule randomly
+        });
+        reedLilyTimer.setRepeats(false);
+        reedLilyTimer.start();
+    }
+
+    private void setupRotTimer() {
+        int delay = 5000 + (int) (Math.random() * 7000); // 5–12sec
+        rotTimer = new Timer(delay, e -> {
+            spawnRotten();
+            setupRotTimer();
+        });
+        rotTimer.setRepeats(false);
+        rotTimer.start();
+    }
+
+    private void setupCrocoTimer() {
+        int delay = 20000 + (int) (Math.random() * 20000); // 20–40s
+        crocoSpawnTimer = new Timer(delay, e -> {
+            if (Math.random() < 0.1 && !croco) {        // set up a low chance of spawn
+                spawnCroco();
+            }
+            setupCrocoTimer();
+        });
+        crocoSpawnTimer.setRepeats(false);
+        crocoSpawnTimer.start();
+    }
+
+    private void setupFrogTimer() {
+        int delay = 7000 + (int) (Math.random() * 5000); // 7–12s
+        frogSpawnTimer = new Timer(delay, e -> {
+            if (!croco) {
+                spawnFrog();
+            }
+            setupFrogTimer();
+        });
+        frogSpawnTimer.setRepeats(false);
+        frogSpawnTimer.start();
+    }
+
+
+
 
 
     // ---- PAINT MECHANICS ----
@@ -285,23 +347,35 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
     }
 
+
     public void spawnReed(){
-        Tile tile = getRandomAvailableTile();
-        if (tile != null){
-            tile.setReed(true);
-            reed_grid.add(tile);
-            repaint();
+
+        if (getObjectTotal() >= Constants.MAX_OBJECTS){
+            System.out.println("Too many objects in the pond already");
+        }
+        else{
+            Tile tile = getRandomAvailableTile();
+            if (tile != null){
+                tile.setReed(true);
+                reed_grid.add(tile);
+                repaint();
+            }
         }
     }
 
     public void spawnLily(){
-        Tile tile = getRandomAvailableTile();
-        if (tile != null){
-            tile.setLily(true);
-            lily_grid.add(tile);
-            repaint();
+        if (getObjectTotal() >= Constants.MAX_OBJECTS){
+            System.out.println("Too many objects in the pond already");
+            return;
         }
-
+        else{
+            Tile tile = getRandomAvailableTile();
+            if (tile != null){
+                tile.setLily(true);
+                lily_grid.add(tile);
+                repaint();
+            }
+        }
     }
 
     public void spawnRotten(){
@@ -313,9 +387,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             repaint();
         }
 
-        else{
-//            System.out.println("no lily pad available");
-        }
+//        else{
+////            System.out.println("no lily pad available");
+//        }
 
     }
 
@@ -366,8 +440,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         for (Tile tile : grid){
             if (tile.isCroco()){
                 // find running direction
-                float croco_x = tile.x + cellSize / 2;
-                float croco_y = tile.y + cellSize / 2;
+                float croco_x = tile.x + (float) cellSize / 2;
+                float croco_y = tile.y + (float) cellSize / 2;
                 float dx = cursor.x - croco_x;
                 float dy = cursor.y - croco_y;
 
@@ -607,7 +681,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
             long now = System.currentTimeMillis();
             history.add(new MouseData(e.getPoint(), now));
-            lastMoveTime = now;
             lastCursorPoint = e.getPoint(); // save latest cursor for croco
 
             // remove old data
@@ -656,13 +729,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         // update grabbed object position
         Point gridCursor = new Point(e.getX() - dx, e.getY() - dy);
         for (Tile tile : grid) {
-            if (tile.contains(gridCursor)) {
-                // System.out.println(tile);
-                tile.setHovered(true);
-            }
-            else{
-                tile.setHovered(false);
-            }
+            // System.out.println(tile);
+            tile.setHovered(tile.contains(gridCursor));
 
         }
         repaint();
@@ -683,12 +751,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         Point gridCursor = new Point(e.getX() - dx, e.getY() - dy);
         for (Tile tile : grid) {
-            if (tile.contains(gridCursor)) {
-                tile.setHovered(true);
-            }
-            else{
-                tile.setHovered(false);
-            }
+            tile.setHovered(tile.contains(gridCursor));
         }
         repaint();
 
@@ -842,6 +905,17 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
         return grid.get(tile.getId()-1);
     }
+
+    private int getObjectTotal(){
+        int total = 0;
+        for (Tile tile : grid){
+            if (tile.isLily() ||tile.isReed() || tile.isRotten()){
+                total++;
+            }
+        }
+        return total;
+    }
+
 
 
 }
