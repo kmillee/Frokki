@@ -57,14 +57,14 @@ public class Pond extends JComponent {
         buttonBar.setLayout(new FlowLayout());
 
         JButton frogButton = new JButton("frog.Frog");
-        JButton reeveButton = new JButton("Reeve");
+        JButton reedButton = new JButton("Reed");
         JButton lilyButton = new JButton("Lilypad");
 
 
         buttonBar.add(frogButton);
         frogButton.addActionListener(e -> {grid.spawnFrog();});
-        buttonBar.add(reeveButton);
-        reeveButton.addActionListener(e -> {grid.spawnReeve();});
+        buttonBar.add(reedButton);
+        reedButton.addActionListener(e -> {grid.spawnReed();});
         buttonBar.add(lilyButton);
         lilyButton.addActionListener(e -> {grid.spawnLily();});
 

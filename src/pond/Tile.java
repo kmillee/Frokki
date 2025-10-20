@@ -9,11 +9,12 @@ public class Tile extends Rectangle{
 
 
     private int id;
+    private int randomReed; // to assign a random reed option
     private boolean hovered;
     private boolean selected;
     private boolean occupied;   // already has a frog or a reeve
     private Frog frog;
-    private boolean reeve;
+    private boolean reed;
     private boolean lily;
     private boolean rotten;
     private boolean croco;
@@ -25,18 +26,21 @@ public class Tile extends Rectangle{
         occupied = false;
 
         lily = false;
-        reeve = false;
+        reed = false;
         rotten = false;
         croco = false;
         frog = null;
         id = total++;
+        randomReed = (int) (Math.random() * 3);
     }
 
     public void clean(){
         lily = false;
-        reeve = false;
+        reed = false;
         rotten = false;
         frog = null;
+
+        randomReed = (int) (Math.random() * 3);
     }
 
     // Getters and Setters
@@ -88,12 +92,12 @@ public class Tile extends Rectangle{
         this.lily = lily;
     }
 
-    public boolean isReeve() {
-        return reeve;
+    public boolean isReed() {
+        return reed;
     }
 
-    public void setReeve(boolean reeve) {
-        this.reeve = reeve;
+    public void setReed(boolean reed) {
+        this.reed = reed;
         this.occupied = true;
     }
 
@@ -120,4 +124,11 @@ public class Tile extends Rectangle{
     }
 
 
+    public int getRandomReed() {
+        return randomReed;
+    }
+
+    public void setRandomReed(int randomReed) {
+        this.randomReed = randomReed;
+    }
 }
