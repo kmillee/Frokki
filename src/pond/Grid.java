@@ -74,6 +74,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private boolean alreadyJiggling = false;
     private final int CROCO_COOLDOWN = 500; // croco only runs once per second
     private long lastCrocoTime = 0;
+    private Timer crocoTimer;
+    private Point lastCursorPoint;
+
 
 
 
@@ -110,8 +113,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         installUI();
         setUpTimer();
-        setBell();
-
     }
 
     public void installUI(){
@@ -227,37 +228,37 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
 
             // if tile selected, display in full pink
-            if (tile.isSelected()){
-                g.setColor(new Color(255, 143, 248,180));
-                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
-
-                Tile left = getLeftTile(tile);
-                Tile right = getRightTile(tile);
-                Tile up = getUpperTile(tile);
-                Tile down = getLowerTile(tile);
-
-                if(left!=null){
-                    g.setColor(new Color(100,255,100,100));
-                    g.fillRect(left.x + dx, left.y + dy, tile.width, tile.height);
-                }
-
-                if(right!=null){
-                    g.setColor(new Color(147, 114, 3, 228));
-                    g.fillRect(right.x + dx, right.y + dy, tile.width, tile.height);
-                }
-
-                if(up!=null){
-                    g.setColor(new Color(0, 255, 205,100));
-                    g.fillRect(up.x + dx, up.y + dy, tile.width, tile.height);
-                }
-
-                if(down!=null){
-
-                    g.setColor(Color.yellow);
-                    g.fillRect(down.x + dx, down.y + dy, tile.width, tile.height);
-                }
-
-            }
+//            if (tile.isSelected()){
+//                g.setColor(new Color(255, 143, 248,180));
+//                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
+//
+//                Tile left = getLeftTile(tile);
+//                Tile right = getRightTile(tile);
+//                Tile up = getUpperTile(tile);
+//                Tile down = getLowerTile(tile);
+//
+//                if(left!=null){
+//                    g.setColor(new Color(100,255,100,100));
+//                    g.fillRect(left.x + dx, left.y + dy, tile.width, tile.height);
+//                }
+//
+//                if(right!=null){
+//                    g.setColor(new Color(147, 114, 3, 228));
+//                    g.fillRect(right.x + dx, right.y + dy, tile.width, tile.height);
+//                }
+//
+//                if(up!=null){
+//                    g.setColor(new Color(0, 255, 205,100));
+//                    g.fillRect(up.x + dx, up.y + dy, tile.width, tile.height);
+//                }
+//
+//                if(down!=null){
+//
+//                    g.setColor(Color.yellow);
+//                    g.fillRect(down.x + dx, down.y + dy, tile.width, tile.height);
+//                }
+//
+//            }
         }
 
     }
@@ -279,7 +280,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
 
         else{
-            System.out.println("no lily pad available");
+            System.out.println("No lily pad available to spawn frog.");
         }
     }
 
@@ -327,6 +328,39 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
     }
 
+
+    // ---- TOOLS ----
+
+    // Remove frog from lilypad and add it to frogedex
+    public void useNet(Tile tile){
+        Utils.setCustomCursor(Constants.NET_IMG, this);
+        if (tile.getFrog() != null){
+
+            pond.getFrogedex().addFrog(tile.getFrog());
+            frog_grid.remove(tile);
+            tile.setFrog(null);
+
+            repaint();
+        }
+    }
+
+
+    // Activated periodically to stop bell when it is still
+//    private void checkInactivity() {
+//        long now = System.currentTimeMillis();
+////        System.out.println("\n##############\nchecking inactivity");
+////        System.out.println("Last move:" + (now -  lastMoveTime) + "ms ago");
+////        System.out.println("Inactivity threshold: " + main.Constants.INACTIVITY_MS);
+//
+//        if (alreadyJiggling && (now - lastMoveTime > Constants.INACTIVITY_MS)) {
+//            alreadyJiggling = false;
+//            System.out.println("stopped jiggling");
+//            bellsound.pause();
+//            endbellsound.play();
+//        }
+//    }
+
+
     private void scareCroco(Point cursor){
         for (Tile tile : grid){
             if (tile.isCroco()){
@@ -362,49 +396,19 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     }
 
+    private void stopBellandCroco() {
+        if (bellsound != null) bellsound.pause();
+        if (endbellsound != null) endbellsound.play();
 
-    // ---- TOOLS ----
-
-    // Remove frog from lilypad and add it to frogedex
-    public void useNet(Tile tile){
-        Utils.setCustomCursor(Constants.NET_IMG, this);
-        if (tile.getFrog() != null){
-
-            pond.getFrogedex().addFrog(tile.getFrog());
-            frog_grid.remove(tile);
-            tile.setFrog(null);
-
-            repaint();
+        if (crocoTimer != null) {
+            crocoTimer.stop();
+            crocoTimer = null;
         }
 
-
+        alreadyJiggling = false;
     }
 
-    public void setBell(){
 
-        System.out.print("choosing bell");
-
-        // Timer to check for inactivity
-        Timer checkTimer = new Timer(30, e -> checkInactivity());
-        checkTimer.start();
-    }
-
-    // Activated periodically to stop bell when it is still
-    private void checkInactivity() {
-        long now = System.currentTimeMillis();
-//        System.out.println("\n##############\nchecking inactivity");
-//        System.out.println("Last move:" + (now -  lastMoveTime) + "ms ago");
-//        System.out.println("Inactivity threshold: " + main.Constants.INACTIVITY_MS);
-
-        if (alreadyJiggling && (now - lastMoveTime > Constants.INACTIVITY_MS)) {
-            alreadyJiggling = false;
-            System.out.println("stopped jiggling");
-            bellsound.pause();
-            endbellsound.play();
-        }
-
-
-    }
 
     // Only used to change the cursor, the actual work is done in listeners
     public void useGrab(){
@@ -571,10 +575,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
         if (toolbox.getCurrentTool() == Toolbox.Tool.BELL) {
             // bell sound stop
-            bellsound.pause();
-            endbellsound.play();
-
-            alreadyJiggling = false;
+            stopBellandCroco();
         }
 
 //        System.out.println("Mouse released.");
@@ -606,6 +607,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             long now = System.currentTimeMillis();
             history.add(new MouseData(e.getPoint(), now));
             lastMoveTime = now;
+            lastCursorPoint = e.getPoint(); // save latest cursor for croco
 
             // remove old data
             while (!history.isEmpty() && (now - history.getFirst().time > Constants.MAX_HISTORY_MS)) {
@@ -616,20 +618,17 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             boolean jigglingNow = isJiggling();
 //            System.out.println("Is jiggling: " + jigglingNow);
 
-            if (jigglingNow){
-                if (now - lastCrocoTime > CROCO_COOLDOWN) {
-                    scareCroco(e.getPoint());
-                    lastCrocoTime = now;
-                }
+            if (jigglingNow) {
+                // start bell sound if not already running
                 if (!alreadyJiggling) {
                     bellsound.play();
                     bellsound.clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+                    // start periodic croco timer (every 0.5s)
+                    crocoTimer = new Timer(500, evt -> scareCroco(lastCursorPoint));
+                    crocoTimer.start();
                 }
             }
-//            else if (alreadyJiggling){
-//                bellsound.clip.loop(0);
-//            }
-
 
             alreadyJiggling = jigglingNow;
         }

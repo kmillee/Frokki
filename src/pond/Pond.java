@@ -56,7 +56,7 @@ public class Pond extends JComponent {
         JPanel buttonBar = new JPanel();
         buttonBar.setLayout(new FlowLayout());
 
-        JButton frogButton = new JButton("frog.Frog");
+        JButton frogButton = new JButton("Frog");
         JButton reedButton = new JButton("Reed");
         JButton lilyButton = new JButton("Lilypad");
 
