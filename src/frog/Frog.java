@@ -4,6 +4,7 @@ import UI.Animation;
 import com.google.gson.annotations.Expose;
 import main.Constants;
 import main.Utils;
+import sound.Sound;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -11,6 +12,8 @@ import javax.swing.event.ChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static main.Constants.RESOURCES_PATH;
 
 /**
  * This class represents a frog.Frog object.
@@ -26,6 +29,7 @@ public class Frog {
     @Expose
     private boolean active = false; // If active is true, it means the frog is on the toolbar
     private Animation animation;
+    private Sound sound;
 
     private final List<ChangeListener> listeners;
 
@@ -41,6 +45,7 @@ public class Frog {
         this.species = species;
         this.acquisitionDate = acquisitionDate;
         this.experience = 0;
+        this.sound = new Sound(RESOURCES_PATH + File.separator + "sound" + File.separator + "croak.wav");
     }
 
     /**
@@ -91,6 +96,10 @@ public class Frog {
         notifyChangeListeners();
     }
 
+    public Sound getSound(){
+        return sound;
+    }
+
     public void increaseExperience() {
         this.experience++;
         notifyChangeListeners(); // Notify general listeners
@@ -127,7 +136,7 @@ public class Frog {
      * @param animationType The type of animation to load.
      */
     private void loadAnimation(String animationType){
-        String animationPath = Constants.RESOURCES_PATH + File.separator + "animation_sprite" +
+        String animationPath = RESOURCES_PATH + File.separator + "animation_sprite" +
                 File.separator + animationType + File.separator + species.toInt();
         List<ImageIcon> frames = Utils.loadFrames(animationPath);
         // resize frames
@@ -173,6 +182,7 @@ public class Frog {
     public void reconstruct() {
         if(imagePath != null)
             this.image = new ImageIcon(imagePath);
+        this.sound = new Sound(RESOURCES_PATH + File.separator + "sound" + File.separator + "croak.wav");
         this.animation = null;
     }
 }

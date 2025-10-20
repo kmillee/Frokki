@@ -263,6 +263,7 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     public void mouseClicked(MouseEvent e) {}
     @Override
     public void mousePressed(MouseEvent e) {
+        getFrog().getSound().play();
         currentState.mousePressed(e);
     }
     @Override
