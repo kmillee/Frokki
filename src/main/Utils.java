@@ -3,7 +3,9 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
@@ -122,6 +124,12 @@ public class Utils {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Cursor customCursor = toolkit.createCustomCursor(cursor.getImage(), new Point(0, 0), "Custom Cursor");
         container.setCursor(customCursor);
+    }
+
+    public static String getFormattedDate(){
+        SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
+
+        return ft.format(new Date());
     }
 
 }

@@ -28,5 +28,10 @@ public enum FrogSpecies {
     public static FrogSpecies getSpecies(int index){
         return values()[index];
     }
+
+    public static FrogSpecies getRandom(){
+        int rand =(int)(Math.random()*values().length);
+        return getSpecies(rand);
+    }
 }
 

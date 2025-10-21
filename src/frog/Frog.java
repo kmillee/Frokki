@@ -40,6 +40,21 @@ public class Frog {
     public Frog(String imagePath, String name, FrogSpecies species, String acquisitionDate) {
         this();
         this.imagePath = imagePath;
+        this.imagePath = Constants.RESOURCES_PATH + File.separator + "frog_" + species.toInt() + ".png";
+
+        this.image = new ImageIcon(imagePath);
+        this.name = name;
+        this.species = species;
+        this.acquisitionDate = acquisitionDate;
+        this.experience = 0;
+        this.sound = new Sound(RESOURCES_PATH + File.separator + "sound" + File.separator + "croak.wav");
+    }
+
+    public Frog(String name, FrogSpecies species, String acquisitionDate) {
+        this();
+
+        this.imagePath = Constants.RESOURCES_PATH + File.separator + "frog_" + species.toInt() + ".png";
+
         this.image = new ImageIcon(imagePath);
         this.name = name;
         this.species = species;

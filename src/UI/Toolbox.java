@@ -44,7 +44,6 @@ public class Toolbox implements MouseListener, MouseMotionListener {
         frame.setPreferredSize(new Dimension(250,100));
         frame.setLocationRelativeTo(null);
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setAlwaysOnTop(true);
 //        frame.setUndecorated(true);

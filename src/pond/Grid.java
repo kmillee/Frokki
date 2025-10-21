@@ -2,6 +2,7 @@ package pond;
 
 import UI.Toolbox;
 import frog.Frog;
+import frog.FrogSpecies;
 import frogedex.Frogedex;
 import main.Constants;
 import main.Utils;
@@ -334,7 +335,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             System.out.print("no forg while croco is here!");
             return;
         }
-        Frog frog = getRandomFrog();    // need to randomize frog by rarity
+        FrogSpecies frogSpecies = FrogSpecies.getRandom();
+        Frog frog = new Frog("john doe",frogSpecies,Utils.getFormattedDate());    // need to randomize frog by rarity
         Tile tile = getRandomLilyTile();
         if (tile != null){
             tile.setFrog(frog);
@@ -866,7 +868,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     private Frog getRandomFrog(){
-        int size = Constants.FROGS.size();
+        int size = FrogSpecies.values().length;
+
         int random = (int) (Math.random() * size);
 
         return Constants.FROGS.get(random);
