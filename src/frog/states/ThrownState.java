@@ -44,7 +44,7 @@ public class ThrownState implements FrogState {
             frogComponent.getPhysicsBody().start(
                     frogComponent.getX(),
                     frogComponent.getY(),
-                    velocityX * 5,
+                    velocityX,
                     -velocityY,
                     parent.getHeight(),
                     frogComponent.getHeight()

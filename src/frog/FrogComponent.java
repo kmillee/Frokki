@@ -143,7 +143,6 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
     }
 
     private void setDisplayFrogInfo(boolean displayFrogInfo){
-        System.out.println("setDisplayFrogInfo: " + displayFrogInfo);
         this.displayFrogInfo = displayFrogInfo;
         notifyChangeListener(); // Notifies FrogBar
     }
@@ -162,7 +161,6 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         Frog frog = getFrog();
         JPanel displayFrogInfo = new JPanel();
         displayFrogInfo.setLayout(new BoxLayout(displayFrogInfo, BoxLayout.Y_AXIS));
-
 
         Color borderColor = UIManager.getColor("Component.borderColor");
         Color backgroundColor = UIManager.getColor("Panel.background");

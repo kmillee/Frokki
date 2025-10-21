@@ -16,7 +16,7 @@ import java.util.List;
 import static main.Constants.RESOURCES_PATH;
 
 /**
- * This class represents a frog.Frog object.
+ * This class represents a Frog object.
  */
 public class Frog {
     @Expose

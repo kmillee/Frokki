@@ -39,7 +39,7 @@ public class DraggingState implements FrogState {
         {
             int randomDirection = Math.random() < 0.5 ? 1 : -1;
             frogComponent.setDirection(randomDirection);
-            frogComponent.setState(new ThrownState(frogComponent, randomDirection * 200, 1000));
+            frogComponent.setState(new ThrownState(frogComponent, randomDirection * 100 * frogComponent.getFrog().getLevel(), 100 * frogComponent.getFrog().getLevel()));
         }
 
         else {
@@ -48,7 +48,7 @@ public class DraggingState implements FrogState {
                 int direction = sign > 0 ? 1 : -1;
                 frogComponent.setDirection(direction);
             }
-            frogComponent.setState(new ThrownState(frogComponent, velocityX, velocityY));
+            frogComponent.setState(new ThrownState(frogComponent, velocityX * 5, velocityY));
         }
 
     }

@@ -6,8 +6,6 @@ import java.awt.*;
 
 public class Tile extends Rectangle{
     public static int total = 0;
-
-
     private int id;
     private int randomReed; // to assign a random reed option
     private boolean hovered;
