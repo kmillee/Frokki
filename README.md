@@ -59,3 +59,30 @@ https://www.codecademy.com/article/mvc-architecture-model-view-controller
     - frogedex.Frogedex.java: Displays the frogedex.Frogedex, showing the list of collected frogs and their details.
 - Component: The Controller is responsible for handling user input and updating the model or view accordingly. It acts as the intermediary between the model and the view:
     - PondSimController.java: Handles user interactions (e.g., clicking on frogs, using tools, toggling settings) and updates the model or view as needed.
+
+
+When first launching the app, you will see a menu appear. From this menu you will be able to display the pond which is the place to collect frogs. 
+Frogedex is the place to go whenever you want to see all the frogs you collected. If you need more explanation about how to collect frogs and how to interact
+with them, keep on reading!
+
+## Pond
+Whenever this window is opened, elements will randomly appear in the pond. Reeds, lily pads, frogs or even crocodile can appear.
+You will have to take care of that pond if you want frogs to actually appear, which they will only do if there is an available lily pad.
+Beware, lily pads may start to rot which will impede frogs from spawning on it. You will have to use the hand tool to drag-and-drop the 
+rotten lily pad into the bin. 
+Also, a limited number of items can appear in the pond so you should cut off reeds using the scissors to allow for lily pads to spawn and
+eventually frogs. 
+When the crocodile spawns, all the frog go away. You have to scare the crocodile off using the bell
+tool before any frog will come back to the pond.
+
+## Frogedex
+In the frogedex, you are able to see all the frogs you collected. You can see there a list
+of all frogs you collected along with more detailed explanation about the currently selected 
+frog in the list. 
+If you want to put frogs onto your taskbar to act as your companions, you can do so
+by either clicking on the summon button or dragging the frog from the detailed view to the taskbar.
+You can interact with this frog by either left-clicking on it which will make it jump, or dragging and throwing
+it. If you right-click on the frog, you will see a small card appear on top of it 
+with some information regarding this specific frog.
+
+That's all there is to know! 

@@ -24,8 +24,7 @@ public class FrogedexModel {
     public enum ChangeType {
         ADD_FROG,
         SELECT_FROG,
-        EXPERIENCE_UPDATE,
-        OTHER
+        EXPERIENCE_UPDATE
     }
     public FrogedexModel(){
         this.frogs = new ArrayList<Frog>();

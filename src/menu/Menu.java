@@ -1,11 +1,15 @@
 package menu;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import frog.frogbar.FrogBarController;
 import frogedex.Frogedex;
 import main.Constants;
+import main.Utils;
 import pond.Pond;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,15 +19,6 @@ import java.io.File;
 
 public class Menu {
     private JFrame menuFrame;
-
-    public Frogedex getFrogedex() {
-        return frogedex;
-    }
-
-    public void setFrogedex(Frogedex frogedex) {
-        this.frogedex = frogedex;
-    }
-
     private Frogedex frogedex;
     private final Pond pond;
 
@@ -34,6 +29,15 @@ public class Menu {
         frogedex = new Frogedex();
         FrogBarController frogbar = new FrogBarController(frogedex);
         pond.setFrogedex(frogedex);
+
+        toggleMenu();
+    }
+    public Frogedex getFrogedex() {
+        return frogedex;
+    }
+
+    public void setFrogedex(Frogedex frogedex) {
+        this.frogedex = frogedex;
     }
 
     private void setupSystemTray() {
@@ -64,31 +68,70 @@ public class Menu {
     }
 
     private void createMenu() {
-        menuFrame = new JFrame("Frog Game Menu");
-        menuFrame.setUndecorated(true);
+        menuFrame = new JFrame("Menu");
         menuFrame.setSize(200, 250);
-        menuFrame.setLayout(new GridLayout(0, 1, 5, 5));
-        menuFrame.setAlwaysOnTop(true);
+        menuFrame.setResizable(false);
+        menuFrame.setLayout(new BorderLayout());
+        menuFrame.setLocationRelativeTo(null);
+        Font fontButton = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 18);
+        Font fontTitle = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 24);
 
-        JButton pondButton = new JButton("Pond");
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBorder(new EmptyBorder(5, 5, 0, 5));
+        JLabel titleLabel = new JLabel("Frokki");
+        titleLabel.setFont(fontTitle);
+        titlePanel.add(titleLabel);
+
+        // Menu buttons
+        JButton pondButton = new JButton("Show pond");
         JButton frogedexButton = new JButton("Frogedex");
-        JButton settingsButton = new JButton("Settings");
+        //JButton settingsButton = new JButton("Settings");
         JButton quitButton = new JButton("Quit");
-        quitButton.setBackground(Color.RED);
-        quitButton.setForeground(Color.WHITE);
+        JButton helpButton = new JButton("Help");
+
+        pondButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
+        frogedexButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
+        //settingsButton.putClientProperty(FlatClientProperties.STYLE, "arc: 20;");
+        quitButton.putClientProperty(FlatClientProperties.STYLE, "arc: 15;" +
+                "background: #f6685e;" +
+                "disabledBackground: #f6685e;" +
+                "focusedBackground: #f6685e;");
+        helpButton.putClientProperty(FlatClientProperties.STYLE, "arc: 15;");
+
+        pondButton.setFont(fontButton);
+        frogedexButton.setFont(fontButton);
+        //settingsButton.setFont(fontButton);
+        quitButton.setFont(fontButton);
+        helpButton.setFont(fontButton);
+
+
+        helpButton.addActionListener(e -> {
+            new HelpDialog(menuFrame).setVisible(true);
+        });
+
+        //
+        JPanel menuButtonPanel = new JPanel();
+        menuButtonPanel.setLayout(new GridLayout(0, 1, 0, 5));
+        menuButtonPanel.add(pondButton);
+        menuButtonPanel.add(frogedexButton);
+        //menuButtonPanel.add(settingsButton);
+        menuButtonPanel.setBorder(new EmptyBorder(5, 10, 30, 10));
+
+        JPanel quitHelpPanel = new JPanel();
+        quitHelpPanel.setLayout(new GridLayout(0,2, 10, 5));
+        quitHelpPanel.add(quitButton);
+        quitHelpPanel.add(helpButton);
+        quitHelpPanel.setBorder(new EmptyBorder(0, 10, 10, 10));
 
         pondButton.addActionListener(e -> openPond());
         frogedexButton.addActionListener(e -> openFrogedex());
-        settingsButton.addActionListener(e -> openSettings());
+        //settingsButton.addActionListener(e -> openSettings());
         quitButton.addActionListener(e -> quitGame());
 
-        menuFrame.add(pondButton);
-        menuFrame.add(frogedexButton);
-        menuFrame.add(settingsButton);
-        menuFrame.add(quitButton);
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        menuFrame.setLocation(screenSize.height / 2 - menuFrame.getHeight() / 2, screenSize.width / 2 - menuFrame.getWidth() / 2);
+        menuFrame.add(titlePanel, BorderLayout.NORTH);
+        menuFrame.add(menuButtonPanel, BorderLayout.CENTER);
+        menuFrame.add(quitHelpPanel, BorderLayout.SOUTH);
     }
 
     private void quitGame() {
