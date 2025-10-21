@@ -1,0 +1,6 @@
+{FrogWord},
+{Adjective} {FrogWord},
+{Title} {FrogWord},
+{Adjective} {Title} {FrogWord},
+{FrogWord} the {Adjective},
+{Title} {Adjective} {FrogWord}
