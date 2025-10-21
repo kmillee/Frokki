@@ -3,6 +3,7 @@ package main;
 import com.formdev.flatlaf.FlatLightLaf;
 import frog.frogbar.FrogBarController;
 import frogedex.Frogedex;
+import menu.Menu;
 import pond.Pond;
 
 import java.io.IOException;
@@ -12,18 +13,20 @@ public class Main {
         FlatLightLaf.setup();
         Constants.setUpFrogList();
 
-        Pond pond = new Pond();
-        Frogedex frogedex = new Frogedex();
-        //FrogBar frogbar = new FrogBar(frogedex);
-        FrogBarController frogbar = new FrogBarController(frogedex);
-        pond.setFrogedex(frogedex);
+        Menu menu = new Menu();
 
-        frogedex.show();
+//        Pond pond = new Pond();
+//        Frogedex frogedex = new Frogedex();
+//        //FrogBar frogbar = new FrogBar(frogedex);
+//        FrogBarController frogbar = new FrogBarController(frogedex);
+//        pond.setFrogedex(frogedex);
+//
+//        frogedex.show();
 
         // -- the following code was taken from https://stackoverflow.com/a/5824066
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                frogedex.saveData();
+                menu.getFrogedex().saveData();
             }
         }, "Shutdown-thread"));
     }

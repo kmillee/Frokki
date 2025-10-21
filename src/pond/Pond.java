@@ -1,47 +1,55 @@
 package pond;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import frogedex.Frogedex;
 import main.Constants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Pond extends JComponent {
 
-    //image pond
-    //list animaux
-    //gestion vie du pond >> dechet / apparition d'animaux
-    // gestion de position (matrice de tiles)
-    // classe tile (check if frog, water,
-
-    // display pond image in the frame and a grid on top of it
-
     private JFrame frame;
-    private ImageIcon pondImage;
-    private String imagePath;
+    private final String imagePath;
     private Grid grid;
-
     private Frogedex frogedex;
 
     public Pond() {
         // change image size
         this.imagePath = Constants.POND_IMAGE;
-        this.pondImage = new ImageIcon(imagePath);
         setUpFrame();
         setUpPond();
         setUpDevMode();
 
-        frame.setVisible(true);
+        frame.setVisible(false);
         frame.pack();
     }
 
+
+
     private void setUpFrame() {
         frame = new JFrame();
-        frame.setTitle("pond.Pond");
-//        frame.setUndecorated(true);
-        frame.setPreferredSize(new Dimension(1100, 600));
-//        setBackground(new Color(255, 255, 255,40));
+        frame.setTitle("Pond");
+        frame.setResizable(false);
+        frame.setPreferredSize(new Dimension(860, 600));
 
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                deactivate();
+            }
+        });
+    }
+
+    private void deactivate() {
+        frame.setVisible(false);
+        grid.pauseTimers();
+    }
+
+    public void activate() {
+        frame.setVisible(true);
+        grid.setUpTimers();
     }
 
     private void setUpPond(){
@@ -49,7 +57,6 @@ public class Pond extends JComponent {
         frame.add(grid, BorderLayout.CENTER);
         frame.pack();
         grid.installUI();
-
     }
 
     private void setUpDevMode(){
@@ -58,7 +65,7 @@ public class Pond extends JComponent {
 
         JButton frogButton = new JButton("Frog");
         JButton reedButton = new JButton("Reed");
-        JButton lilyButton = new JButton("Lilypad");
+        JButton lilyButton = new JButton("Lily pad");
 
 
         buttonBar.add(frogButton);

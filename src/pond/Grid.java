@@ -23,17 +23,16 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     // Basic variable
     public final int cols, rows, cellSize;
-    private Pond pond;
+    private final Pond pond;
 
     // Media
     public Image image;
     public Image grabbed_img; // image of currently grabbed item
-    private final Image reedImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed.jpg").getImage();
-    private final ArrayList<Image> reedImages = new ArrayList<Image>() {
+    private final ArrayList<Image> reedImages = new ArrayList<>() {
         {
-            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed_1.png").getImage());
-            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed_2.png").getImage());
-            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "reed_3.png").getImage());
+            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator + "pond" + File.separator + "reed_1.png").getImage());
+            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator + "pond" + File.separator + "reed_2.png").getImage());
+            add(new ImageIcon(Constants.RESOURCES_PATH + File.separator + "pond" + File.separator + "reed_3.png").getImage());
 
         }
     };
@@ -41,8 +40,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private final Image rottenImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "rotten.png").getImage();
     private final Image crocoImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "croco.png").getImage();
 
-
-
+    private final Sound croakSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "croak.wav");
+    private final Sound crocoSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "jaws.wav");
+    private final Sound scissorsSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "scissors.wav");
 
     // Tile management
     private final ArrayList<Tile> grid, water_grid, lily_grid, reed_grid, frog_grid, rotten_grid;
@@ -57,14 +57,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private final Sound endbellsound = new Sound(Constants.RESOURCES_PATH + File.separator + "sound" + File.separator + "bell_short.wav");
 
     // Timers
-    private Timer reedLilyTimer;
-    private Timer rotTimer;
-    private Timer crocoSpawnTimer;
-    private Timer frogSpawnTimer;
-
+    private Timer reedLilyTimer, rotTimer, crocoSpawnTimer, frogSpawnTimer;
 
     // Other
-    private Timer timer;
     private boolean multSelect, ctrlPressed = false;
     private Tile grabbedTile;
     private boolean croco; // check to block frog spawn
@@ -83,8 +78,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private boolean alreadyJiggling = false;
     private Timer crocoTimer;
     private Point lastCursorPoint;
-
-
 
 
 
@@ -119,7 +112,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         this.toolbox = new Toolbox();
 
         installUI();
-        setUpTimers();
+        //setUpTimers();
     }
 
     public void installUI(){
@@ -130,20 +123,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     // Random timer for spawning mechanics
-    private void setUpTimers(){
-//        int delay = (int) (Math.random() * Constants.MAX_DELAY);
-//
-////        System.out.println("setUpTimer:" +  delay);
-//
-//        timer = new Timer(delay, e -> {
-////            System.out.println("rotten");
-//            spawnRotten();
-//            setUpTimer();
-//        });
-//
-//        timer.setRepeats(false);
-//        timer.start();
-
+    public void setUpTimers(){
         setupReedLilyTimer();
         setupRotTimer();
         setupCrocoTimer();
@@ -151,10 +131,18 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     }
 
+    public void pauseTimers(){
+        reedLilyTimer.stop();
+        rotTimer.stop();
+        crocoSpawnTimer.stop();
+        frogSpawnTimer.stop();
+    }
+
     private void setupReedLilyTimer() {
         //int delay = Constants.MIN_REEDLILY_TIMER + (int) (Math.random() * Constants.MAX_DELAY);
 
         int delay = 3000 + (int) (Math.random() * 5000); // 3-8sec
+        System.out.println("ree/lily timer: " + delay);
         reedLilyTimer = new Timer(delay, e -> {
             if (Math.random() < 0.2) {      //80% reed, 20% lily pad
                 spawnLily();
@@ -169,6 +157,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     private void setupRotTimer() {
         int delay = 5000 + (int) (Math.random() * 7000); // 5–12sec
+        System.out.println("rot timer: " + delay);
+
         rotTimer = new Timer(delay, e -> {
             spawnRotten();
             setupRotTimer();
@@ -179,6 +169,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     private void setupCrocoTimer() {
         int delay = 20000 + (int) (Math.random() * 20000); // 20–40s
+        System.out.println("croco timer: " + delay);
+
         crocoSpawnTimer = new Timer(delay, e -> {
             if (Math.random() < 0.1 && !croco) {        // set up a low chance of spawn
                 spawnCroco();
@@ -191,6 +183,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     private void setupFrogTimer() {
         int delay = 7000 + (int) (Math.random() * 5000); // 7–12s
+        System.out.println("frog timer: " + delay);
+
         frogSpawnTimer = new Timer(delay, e -> {
             if (!croco) {
                 spawnFrog();
@@ -343,6 +337,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         if (tile != null){
             tile.setFrog(frog);
             frog_grid.add(tile);
+            croakSound.play();
             repaint();
         }
 
@@ -402,6 +397,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         if (tile != null){
             tile.setCroco(true);
             croco = true;
+            crocoSound.play();
             clearFrogs();
             repaint();
         }
@@ -423,21 +419,32 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         }
     }
 
+    private boolean isJiggling() {
+        if (history.size() < 10) return false;
 
-    // Activated periodically to stop bell when it is still
-//    private void checkInactivity() {
-//        long now = System.currentTimeMillis();
-////        System.out.println("\n##############\nchecking inactivity");
-////        System.out.println("Last move:" + (now -  lastMoveTime) + "ms ago");
-////        System.out.println("Inactivity threshold: " + main.Constants.INACTIVITY_MS);
-//
-//        if (alreadyJiggling && (now - lastMoveTime > Constants.INACTIVITY_MS)) {
-//            alreadyJiggling = false;
-//            System.out.println("stopped jiggling");
-//            bellsound.pause();
-//            endbellsound.play();
-//        }
-//    }
+        // compute average speed
+        double totalDist = 0;
+        long totalTime = history.getLast().time - history.getFirst().time;
+
+        for (int i = 1; i < history.size(); i++) {
+            Point p1 = history.get(i - 1).position;
+            Point p2 = history.get(i).position;
+            totalDist += p1.distance(p2);
+        }
+
+        double speed = totalDist / Math.max(totalTime, 1); // pixels/ms
+
+        if (totalTime > Constants.INACTIVITY_MS) return false;
+        if (totalDist < 20) return false;
+
+//        System.out.println("Total dist in the last move: " + totalDist);
+//        System.out.println("Total time in the last move: " + totalTime);
+//        System.out.println("Speed: " + speed);
+//        System.out.println("Jiggles: " + (speed > main.Constants.SPEED_THRESHOLD));
+
+        return speed > Constants.SPEED_THRESHOLD /*&& directionChanges > 2*/;
+    }
+
 
 
     private void scareCroco(Point cursor){
@@ -500,37 +507,11 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         if (tile.isReed()){
             tile.clean();
             reed_grid.remove(tile);
-            //TODO: play a sound
+            scissorsSound.play();
 
             repaint();
         }
 
-    }
-
-    private boolean isJiggling() {
-        if (history.size() < 10) return false;
-
-        // compute average speed
-        double totalDist = 0;
-        long totalTime = history.getLast().time - history.getFirst().time;
-
-        for (int i = 1; i < history.size(); i++) {
-            Point p1 = history.get(i - 1).position;
-            Point p2 = history.get(i).position;
-            totalDist += p1.distance(p2);
-        }
-
-        double speed = totalDist / Math.max(totalTime, 1); // pixels/ms
-
-        if (totalTime > Constants.INACTIVITY_MS) return false;
-        if (totalDist < 20) return false;
-
-//        System.out.println("Total dist in the last move: " + totalDist);
-//        System.out.println("Total time in the last move: " + totalTime);
-//        System.out.println("Speed: " + speed);
-//        System.out.println("Jiggles: " + (speed > main.Constants.SPEED_THRESHOLD));
-
-        return speed > Constants.SPEED_THRESHOLD /*&& directionChanges > 2*/;
     }
 
 
