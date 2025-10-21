@@ -40,13 +40,12 @@ public class Toolbox implements MouseListener, MouseMotionListener {
         frame.requestFocus();
     }
     public void setUpFrame(){
-        frame = new JFrame("UI.Toolbox");
+        frame = new JFrame("Toolbox");
         frame.setPreferredSize(new Dimension(250,100));
         frame.setLocationRelativeTo(null);
 
         frame.setResizable(false);
         frame.setAlwaysOnTop(true);
-//        frame.setUndecorated(true);
         frame.setFocusable(true);
         frame.requestFocus();
         frame.pack();
