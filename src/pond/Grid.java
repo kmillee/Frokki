@@ -5,6 +5,7 @@ import frog.Frog;
 import frog.FrogSpecies;
 import frogedex.Frogedex;
 import main.Constants;
+import main.FrogNameGenerator;
 import main.Utils;
 import sound.Sound;
 
@@ -336,7 +337,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             return;
         }
         FrogSpecies frogSpecies = FrogSpecies.getRandom();
-        Frog frog = new Frog("john doe",frogSpecies,Utils.getFormattedDate());    // need to randomize frog by rarity
+        String name = FrogNameGenerator.generateName();
+        Frog frog = new Frog(name,frogSpecies,Utils.getFormattedDate());    // need to randomize frog by rarity
         Tile tile = getRandomLilyTile();
         if (tile != null){
             tile.setFrog(frog);
