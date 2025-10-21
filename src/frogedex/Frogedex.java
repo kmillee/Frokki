@@ -27,7 +27,7 @@ public class Frogedex {
         frogedexModel = FrogedexModel.loadFromFile(Constants.DATA_FILE);
         frogedexView = new FrogedexView();
 
-        frame = new JFrame("frogedex");
+        frame = new JFrame("Frogedex");
         frame.setLayout(new BorderLayout());
         frame.add(frogedexView, BorderLayout.CENTER);
         Utils.setFixedSize(frame, 858, 430);

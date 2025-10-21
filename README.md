@@ -4,45 +4,39 @@ forgs
 ## TODO:
   - [ ] add popup when catching a frog to ask for its name (implement random name thing)
   - [X] set timer and maximum nb of things in the pond
-  - [ ] add sounds (frogs, scissors...)
-  - [ ] toolbox decorate frame (+ handle close and moving operation)
-  - [ ] do pixel art assets
+  - [x] add sounds (frogs, scissors...)
+  - [x] do pixel art assets
 
 
-- [ ] frog.Frog bar
+- [ ] Frog bar
     - [x] display selected frog onto task bar
     - [x] Drag and drop to add frog to frog bar
     - [x] left click on frog, it jumps
     - [x] right click, show frog-related options
     - [ ] crocodile appear when a snake is in the pond
 
-- [ ] Menu: 
-  - [ ] icon in system tray, when click on it opens option/the menu
-  - [ ] Tools menu
+- [x] Menu: 
+  - [x] icon in system tray, when click on it opens option/the menu
+  - [x] Tools menu
       - [x] net -> catch frogs
-      - [ ] shears -> cut of reeds
-      - [ ] bait -> place on lilypad to attract frogs
-      - [ ] hand -> remove rotten lilypads
-      - [ ] bell -> scare off crocodile
-      - [ ] bin -> appears when hand is selected, to collect lilypads
-  - [ ] Settings menu
-      - [ ] Volume
-      - [ ] snake on/off
-      - [ ] clean pond: 
+      - [x] shears -> cut of reeds
+      - [x] hand -> remove rotten lilypads
+      - [x] bell -> scare off crocodile
+      - [x] bin -> appears when hand is selected, to collect lilypads
   - [x] frog.Frog menu
       - [x] left panel: selected frog information
       - [x] right panel: list of all collected frogs
-  - [ ] Quit
-  - [ ] Tips
+  - [x] Quit
+  - [x] Tips
 
-- [ ] pond.Pond:
+- [x] Pond:
     - [x] transparent window that displays a pond
-    - [ ] frogs appear randomly on lilypads
-    - [ ] lilypads appear randomly
-    - [ ] reed appear randomly
-    - [ ] lilypad can start to rot
+    - [x] frogs appear randomly on lilypads
+    - [x] lilypads appear randomly
+    - [x] reed appear randomly
+    - [x] lilypad can start to rot
     - [ ] duck appear rarely, when click on it, it appears in the task bar
-    - [ ] crocodile appear rarely
+    - [x] crocodile appear rarely
 
 
 - [x] Serializer/deserializer: json file to store locally player's data 
