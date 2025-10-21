@@ -239,12 +239,18 @@ public class FrogComponent extends JComponent implements MouseListener, MouseMot
         topPanel.add(Box.createHorizontalGlue());
         topPanel.add(closeButton);
 
+        topPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        levelPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        unsummonButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         displayFrogInfo.add(topPanel);
         displayFrogInfo.add(levelPanel);
         displayFrogInfo.add(Box.createVerticalGlue());
         displayFrogInfo.add(unsummonButton);
 
-        displayFrogInfo.setSize(206, 156);
+
+        int width = Math.max(levelXpPanel.getPreferredSize().width + 20, frogName.getPreferredSize().width + closeButton.getPreferredSize().width);
+        displayFrogInfo.setSize(width + 60, 156);
         displayFrogInfo.setOpaque(false);
         return displayFrogInfo;
     }

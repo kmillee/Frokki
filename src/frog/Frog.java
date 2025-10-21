@@ -39,7 +39,6 @@ public class Frog {
 
     public Frog(String imagePath, String name, FrogSpecies species, String acquisitionDate) {
         this();
-        this.imagePath = imagePath;
         this.imagePath = Constants.RESOURCES_PATH + File.separator + "frog_" + species.toInt() + ".png";
 
         this.image = new ImageIcon(imagePath);
@@ -64,11 +63,11 @@ public class Frog {
     }
 
     /**
-     * Constructor for a frog.Frog with default values.
+     * Constructor for a Frog with default values.
      * @param imagePath The path to the image representing the frog.
      */
     public Frog(String imagePath){
-        this(imagePath, "John Toad", FrogSpecies.GREEN, "00/00/0000");
+        this(imagePath, "John Toad", FrogSpecies.GREEN, Utils.getFormattedDate());
     }
 
     public String getImagePath() {
