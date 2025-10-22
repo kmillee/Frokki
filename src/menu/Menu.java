@@ -73,6 +73,7 @@ public class Menu {
         menuFrame.setResizable(false);
         menuFrame.setLayout(new BorderLayout());
         menuFrame.setLocationRelativeTo(null);
+        menuFrame.setIconImage(new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "lilypad.png").getImage());
         Font fontButton = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 18);
         Font fontTitle = Utils.loadFont("Gaegu" + File.separator + "Gaegu-Regular.ttf", 24);
 

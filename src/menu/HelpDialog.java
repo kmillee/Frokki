@@ -8,14 +8,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
-/**
- * HelpDialogTabs - modal help dialog using JTabbedPane.
- *
- * Usage:
- *   Font titleFont = Utils.loadFont(...);
- *   Font bodyFont  = Utils.loadFont(...);
- *   helpButton.addActionListener(e -> new HelpDialogTabs(menuFrame, titleFont, bodyFont).setVisible(true));
- */
 public class HelpDialog extends JDialog {
 
     public HelpDialog(Frame owner) {

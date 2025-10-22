@@ -45,6 +45,9 @@ public class Pond extends JComponent {
     private void deactivate() {
         frame.setVisible(false);
         grid.pauseTimers();
+        if (grid.getToolbox() != null) {
+            grid.getToolbox().getFrame().setVisible(false);
+        }
     }
 
     public void activate() {
