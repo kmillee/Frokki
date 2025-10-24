@@ -28,6 +28,7 @@ forgs
       - [x] right panel: list of all collected frogs
   - [x] Quit
   - [x] Tips
+  - [ ] Option to cut sound off
 
 - [x] Pond:
     - [x] transparent window that displays a pond
@@ -37,6 +38,7 @@ forgs
     - [x] lilypad can start to rot
     - [ ] duck appear rarely, when click on it, it appears in the task bar
     - [x] crocodile appear rarely
+    - [x] debug rotten lily pad bug (not disappearing in bin)
 
 
 - [x] Serializer/deserializer: json file to store locally player's data 

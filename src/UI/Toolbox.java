@@ -129,7 +129,7 @@ public class Toolbox implements MouseListener, MouseMotionListener {
 
     public Rectangle getBinRectangle(){
         Point binPos = grabButton.getLocationOnScreen();
-        Rectangle binRect = new Rectangle(binPos.x, binPos.y  - grabButton.getHeight() /2, grabButton.getWidth(), grabButton.getHeight());
+        Rectangle binRect = new Rectangle(binPos.x, binPos.y  - grabButton.getHeight() , grabButton.getWidth(), grabButton.getHeight());
         return binRect;
     }
 

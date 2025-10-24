@@ -620,9 +620,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 }
 
             }
-//            else{
-//                System.out.println("mouse in bin!  " + e.getX() + ", " + e.getY());
-//            }
+            else{
+                System.out.println("mouse in bin!  " + e.getX() + ", " + e.getY());
+            }
             repaint();
         }
 
