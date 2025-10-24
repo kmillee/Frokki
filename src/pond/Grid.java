@@ -63,6 +63,8 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     private boolean multSelect, ctrlPressed = false;
     private Tile grabbedTile;
     private boolean croco; // check to block frog spawn
+    private double crocoSpawnChance = 0.1;
+
 
     // BELL MECHANICS
     static class MouseData {
@@ -139,10 +141,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     private void setupReedLilyTimer() {
-        //int delay = Constants.MIN_REEDLILY_TIMER + (int) (Math.random() * Constants.MAX_DELAY);
+        int delay = Constants.MIN_REEDLILY_TIMER + (int) (Math.random() * (Constants.MAX_REEDLILY_TIMER - Constants.MIN_REEDLILY_TIMER));
 
-        int delay = 3000 + (int) (Math.random() * 5000); // 3-8sec
-        System.out.println("ree/lily timer: " + delay);
+//        System.out.println("ree/lily timer: " + delay);
         reedLilyTimer = new Timer(delay, e -> {
             if (Math.random() < 0.2) {      //80% reed, 20% lily pad
                 spawnLily();
@@ -156,34 +157,24 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
     }
 
     private void setupRotTimer() {
-        int delay = 5000 + (int) (Math.random() * 7000); // 5–12sec
-        System.out.println("rot timer: " + delay);
+        int delay = Constants.MIN_ROT_TIMER + (int) (Math.random() * (Constants.MAX_ROT_TIMER - Constants.MIN_ROT_TIMER));
+
+//        System.out.println("rot timer: " + delay);
 
         rotTimer = new Timer(delay, e -> {
-            spawnRotten();
+            if (Math.random() < 0.3) {  // 30% chance to rot a lily pad (if any available)
+                spawnRotten();
+            }
             setupRotTimer();
         });
         rotTimer.setRepeats(false);
         rotTimer.start();
     }
 
-    private void setupCrocoTimer() {
-        int delay = 20000 + (int) (Math.random() * 20000); // 20–40s
-        System.out.println("croco timer: " + delay);
-
-        crocoSpawnTimer = new Timer(delay, e -> {
-            if (Math.random() < 0.1 && !croco) {        // set up a low chance of spawn
-                spawnCroco();
-            }
-            setupCrocoTimer();
-        });
-        crocoSpawnTimer.setRepeats(false);
-        crocoSpawnTimer.start();
-    }
-
     private void setupFrogTimer() {
-        int delay = 7000 + (int) (Math.random() * 5000); // 7–12s
-        System.out.println("frog timer: " + delay);
+        int delay = Constants.MIN_FROG_TIMER + (int) (Math.random() * (Constants.MAX_FROG_TIMER - Constants.MIN_FROG_TIMER));
+
+//        System.out.println("frog timer: " + delay);
 
         frogSpawnTimer = new Timer(delay, e -> {
             if (!croco) {
@@ -195,8 +186,24 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         frogSpawnTimer.start();
     }
 
+    private void setupCrocoTimer() {
+        int delay = Constants.MIN_CROCO_TIMER + (int) (Math.random() * (Constants.MAX_CROCO_TIMER - Constants.MIN_CROCO_TIMER));
 
+//        System.out.println("croco timer: " + delay);
 
+        crocoSpawnTimer = new Timer(delay, e -> {
+            if (Math.random() < crocoSpawnChance && !croco) {        // set up a low chance of spawn
+                spawnCroco();
+                crocoSpawnChance = 0.1;     // reset spawn chance
+            }
+            else{
+                crocoSpawnChance = Math.min(0.5, crocoSpawnChance * 1.5);   // slowly increase chance of appearing
+            }
+            setupCrocoTimer();
+        });
+        crocoSpawnTimer.setRepeats(false);
+        crocoSpawnTimer.start();
+    }
 
 
     // ---- PAINT MECHANICS ----
@@ -620,9 +627,9 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
                 }
 
             }
-            else{
-                System.out.println("mouse in bin!  " + e.getX() + ", " + e.getY());
-            }
+//            else{
+//                System.out.println("mouse in bin!  " + e.getX() + ", " + e.getY());
+//            }
             repaint();
         }
 
