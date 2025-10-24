@@ -17,9 +17,7 @@ public enum FrogSpecies {
     RAINETTE;
 
     @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
+    public String toString() {return name().replace("_", " ").toLowerCase();}
 
     public int toInt(){
         return ordinal();
