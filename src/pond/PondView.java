@@ -74,34 +74,30 @@ public class PondView extends JPanel {
         setLayout(null); // absolute positioning
 
         int btnSize = 50;
-        int margin = 25;
+        int margin = 20;
 
         toolboxBtn = new JButton();
         toolboxBtn.setToolTipText("Open toolbox");
         toolboxBtn.setBackground(Color.PINK);
-//        toolboxBtn.setIcon(Utils.resizeKeepingRatio(icon, 45,45));
 
         // Default tool: NET
+        // Updates whenever currentTool changes
         updateToolboxButtonIcon(controller.getToolbox().getCurrentTool());
 
         toolboxBtn.addActionListener(e -> controller.getToolbox().show());
 
-        add(toolboxBtn);
+        this.add(toolboxBtn);
 
         // Position after resize
-        addComponentListener(new java.awt.event.ComponentAdapter() {
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
-                toolboxBtn.setBounds(
-                        getWidth() - btnSize - margin,
-                        getHeight() - btnSize - margin,
-                        btnSize,
-                        btnSize
-                );
+                toolboxBtn.setBounds(getWidth() - btnSize - margin, getHeight() - btnSize - margin, btnSize, btnSize);
                 repaint();
             }
         });
     }
+
     public void updateToolboxButtonIcon(Toolbox.Tool currentTool) {
         ImageIcon icon = controller.getToolbox().getToolIcon(currentTool);
         toolboxBtn.setIcon(Utils.resizeKeepingRatio(icon, 45, 45));

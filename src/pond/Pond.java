@@ -10,6 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 /**
  * This class is responsible for creating and displaying the Pond frame,
@@ -48,6 +49,7 @@ public class Pond {
         frame = new JFrame("Pond");
         frame.setResizable(false);
         frame.setPreferredSize(new Dimension(860, 610));
+        frame.setIconImage(new ImageIcon(Constants.POND_IMAGE).getImage());
 
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
