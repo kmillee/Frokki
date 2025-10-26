@@ -238,93 +238,10 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 
     // Update tile display according to their state (reed, lilypad, frogs...) and user input (selection, hovering)
     private void updateGrid(Graphics g) {
-
+        PondImages images = new PondImages(lilyImg,rottenImg,crocoImg,reedImages);
         for (Tile tile : grid) {
+            tile.draw(g, dx, dy, images, grabbedTile, grabbed_img, water_grid);
 
-            if (tile.isLily()){
-                g.drawImage(lilyImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
-            }
-
-            if (tile.getFrog() != null){
-                ImageIcon frogIcon = tile.getFrog().getImage();
-                Image frogImg = frogIcon.getImage();
-                // change size
-                //frogImg = frogImg.getScaledInstance(tile.width -2, tile.height -2, Image.SCALE_DEFAULT);
-                g.drawImage(frogImg,tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
-
-            }
-            if (tile.isReed()){
-                // select random image among the reed options
-                g.drawImage(reedImages.get(tile.getRandomReed()),tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
-            }
-
-            if (tile.isRotten()){
-                g.drawImage(rottenImg, tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
-            }
-
-            if (tile.isCroco()){
-                g.drawImage(crocoImg, tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
-            }
-
-            // Color tile with low opacity when hovering
-            if (tile.isHovered()) {
-
-                // if grabbing something
-                if (grabbedTile != null) {
-//                    System.out.println("hovering with:"+ grabbedTile);
-                    g.drawImage(grabbed_img, tile.x + dx +1, tile.y + dy +1, tile.width, tile.height, null);
-
-                    // Available tile for grabbed object, display in green
-                    if ((water_grid.contains(tile) && !tile.isOccupied() && !tile.isLily() && !tile.isRotten()) || (tile == grabbedTile)) {
-                        g.setColor(new Color(100,255,100,100));
-                    }
-
-                    // Cannot move grabbed tile here, display in red
-                    else{
-                        g.setColor(new Color(255,100,100, 100));
-                    }
-                }
-
-                // If nothing is grabbed, display in white
-                else{
-                    g.setColor(new Color(255, 255, 255,100));
-                }
-
-                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
-            }
-
-            // if tile selected, display in full pink
-//            if (tile.isSelected()){
-//                g.setColor(new Color(255, 143, 248,180));
-//                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
-//
-//                Tile left = getLeftTile(tile);
-//                Tile right = getRightTile(tile);
-//                Tile up = getUpperTile(tile);
-//                Tile down = getLowerTile(tile);
-//
-//                if(left!=null){
-//                    g.setColor(new Color(100,255,100,100));
-//                    g.fillRect(left.x + dx, left.y + dy, tile.width, tile.height);
-//                }
-//
-//                if(right!=null){
-//                    g.setColor(new Color(147, 114, 3, 228));
-//                    g.fillRect(right.x + dx, right.y + dy, tile.width, tile.height);
-//                }
-//
-//                if(up!=null){
-//                    g.setColor(new Color(0, 255, 205,100));
-//                    g.fillRect(up.x + dx, up.y + dy, tile.width, tile.height);
-//                }
-//
-//                if(down!=null){
-//
-//                    g.setColor(Color.yellow);
-//                    g.fillRect(down.x + dx, down.y + dy, tile.width, tile.height);
-//                }
-//
-//            }
         }
 
     }
@@ -352,8 +269,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             System.out.println("No lily pad available to spawn frog.");
         }
     }
-
-
     public void spawnReed(){
 
         if (getObjectTotal() >= Constants.MAX_OBJECTS){
@@ -368,7 +283,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
         }
     }
-
     public void spawnLily(){
         if (getObjectTotal() >= Constants.MAX_OBJECTS){
             System.out.println("Too many objects in the pond already");
@@ -383,7 +297,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
             }
         }
     }
-
     public void spawnRotten(){
         Tile tile = getRandomLilyTile();
         if (tile != null){
@@ -398,7 +311,6 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
 //        }
 
     }
-
     public void spawnCroco(){
         Tile tile = getRandomAvailableTile();
         if (tile != null){

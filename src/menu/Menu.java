@@ -25,8 +25,9 @@ public class Menu {
     public Menu() {
         setupSystemTray();
 
-        pond = new Pond();
         frogedex = new Frogedex();
+        pond = new Pond(frogedex);
+
         FrogBarController frogbar = new FrogBarController(frogedex);
         pond.setFrogedex(frogedex);
 

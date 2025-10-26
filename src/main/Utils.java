@@ -132,4 +132,7 @@ public class Utils {
         return ft.format(new Date());
     }
 
+    public static int randomBetween(int min, int max){
+        return min + (int) (Math.random() * (max - min));
+    }
 }

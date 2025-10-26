@@ -4,6 +4,7 @@ import frog.Frog;
 import frog.FrogSpecies;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,10 @@ public class Constants {
     // FROGBAR CONSTANTS
     public static final int TASKBAR_FROG_SIZE = 100;
     public static final int TASKBAR_OFFSET = 48;
+
+
+
+
 
     // POND CONSTANTS
     public static final String POND_IMAGE = RESOURCES_PATH + File.separator + "pond" + File.separator + "pond.png";
