@@ -11,33 +11,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-// Current Game State
-// Handle spawning, notify change
+/**
+ * PondModel represents the current state of the pond game.
+ * <p>
+ * It manages the grid of tiles, spawns objects (frogs, lily pads, reeds, rotten pads, crocodiles),
+ * and keeps track of object placement and interactions.
+ */
 public class PondModel {
-    private int cellSize = 25;
-    private int cols, rows;
-    private List<Tile> tiles = new ArrayList<>();
-    private ArrayList<Tile> waterTiles = new ArrayList<>();
-    private List<Tile> lilyPads = new ArrayList<>();
-    private List<Tile> reeds = new ArrayList<>();
-    private List<Tile> frogs = new ArrayList<>();
-    private List<Tile> rottedPads = new ArrayList<>();
+    private int cellSize;
+    private final int cols, rows;
+    private final List<Tile> tiles = new ArrayList<>();
+    private final ArrayList<Tile> waterTiles = new ArrayList<>();
+    private final List<Tile> lilyPads = new ArrayList<>();
+    private final List<Tile> reeds = new ArrayList<>();
+    private final List<Tile> frogs = new ArrayList<>();
+    private final List<Tile> rottedPads = new ArrayList<>();
 
     private boolean crocoPresent = false;
 
-    private final Random rand = new Random();
-
+    /**
+     * Constructs a PondModel for the given pond dimensions.
+     *
+     * @param pondWidth  Pond width in pixels
+     * @param pondHeight Pond height in pixels
+     * @param cellSize   Size of a tile in pixels
+     */
     public PondModel(int pondWidth, int pondHeight, int cellSize) {
         this.cellSize = cellSize;
         this.cols = pondWidth / cellSize;
         this.rows = pondHeight / cellSize;
 
+        // Initialize tiles
         for(int i = 0; i < this.rows; i++){
             for(int j = 0; j < this.cols; j++){
                 tiles.add(new Tile(j*cellSize,i*cellSize,cellSize,cellSize));
             }
         }
 
+        // Identify water tiles (playable) from Constants.WATER_TILES
         for (Tile tile : tiles){
             if (Utils.contains(Constants.WATER_TILES, tile.getId())) {
                 waterTiles.add(tile);
@@ -61,37 +72,29 @@ public class PondModel {
 
 
 
-    // ---- CORE MECHANICS ----
+    // ---- SPAWN METHODS ----
+    /** Spawn a frog on a random available lily pad, if no crocodile is present */
     public boolean spawnFrog(){
-        if (crocoPresent){
-            System.out.print("no forg while croco is here!");
-            return false;
-        }
+        if (crocoPresent){return false;}
 
         FrogSpecies frogSpecies = FrogSpecies.getRandom();
         String name = FrogNameGenerator.generateName();
         Frog frog = new Frog(name,frogSpecies, Utils.getFormattedDate());
 
         Tile tile = getRandomLilyTile();
-        if (tile == null){
-            System.out.println("No lily pad available to spawn frog.");
-            return false;
-        }
+        if (tile == null){return false;}
 
         tile.setFrog(frog);
         frogs.add(tile);
         return true;
     }
 
-
+    /** Spawn a reed on a random available water tile */
     public boolean spawnReed(){
+        if (getObjectTotal() >= Constants.MAX_OBJECTS){return false;}
 
-        if (getObjectTotal() >= Constants.MAX_OBJECTS){
-            System.out.println("Too many objects in the pond already");
-            return false;
-        }
         Tile tile = getRandomAvailableTile();
-        if (tile == null){ return false; }
+        if (tile == null){ return false;}
 
         tile.setReed(true);
         reeds.add(tile);
@@ -99,14 +102,12 @@ public class PondModel {
 
     }
 
+    /** Spawn a lily pad on a random available water tile */
     public boolean spawnLily(){
-        if (getObjectTotal() >= Constants.MAX_OBJECTS){
-            System.out.println("Too many objects in the pond already");
-            return false;
-        }
+        if (getObjectTotal() >= Constants.MAX_OBJECTS){return false;}
 
         Tile tile = getRandomAvailableTile();
-        if (tile == null){ return false; }
+        if (tile == null){ return false;}
 
         tile.setLily(true);
         lilyPads.add(tile);
@@ -115,6 +116,7 @@ public class PondModel {
 
     }
 
+    /** Turn a random lily pad into a rotten pad */
     public boolean spawnRotten(){
         Tile tile = getRandomLilyTile();
         if (tile == null){ return false; }
@@ -125,6 +127,7 @@ public class PondModel {
         return true;
     }
 
+    /** Spawn a crocodile on a random available tile, removing all frogs */
     public boolean spawnCroco(){
         Tile tile = getRandomAvailableTile();
         if (tile == null){ return false; }
@@ -136,51 +139,9 @@ public class PondModel {
 
     }
 
-    public void clearCroco() {
-        crocoPresent = false;
-        for (Tile tile : tiles) {
-            if (tile.isCroco()) {
-                tile.setCroco(false);
-            }
-        }
-    }
+    // ---- HELPERS ----
 
-    // Helpers
-
-    public ArrayList<Tile> getOccupiedTile(){
-        ArrayList<Tile> temp = new ArrayList<>();
-        for (Tile tile : tiles) {
-            if (tile.isOccupied()) {
-                temp.add(tile);
-            }
-        }
-        return temp;
-    }
-
-    public ArrayList<Tile> getSelectedTiles(){
-        ArrayList<Tile> temp = new ArrayList<>();
-        for (Tile tile : tiles) {
-            if (tile.isSelected()) {
-                temp.add(tile);
-            }
-
-        }
-//        System.out.println("Selected tiles: " + tiles);
-        return temp;
-    }
-
-    public ArrayList<Integer> getSelectedTilesId(){
-        ArrayList<Integer> temp = new ArrayList<>();
-        for (Tile tile : tiles) {
-            if (tile.isSelected()) {
-                temp.add(tile.getId());
-            }
-
-        }
-//        System.out.println("Selected tiles: " + tiles);
-        return temp;
-    }
-
+    /** Returns all water tiles that are unoccupied */
     public ArrayList<Tile> getAvailableTiles(){
         ArrayList<Tile> temp = new ArrayList<>();
         for (Tile tile : tiles) {
@@ -191,6 +152,7 @@ public class PondModel {
         return temp;
     }
 
+    /** Returns all lily pad tiles without frogs */
     public ArrayList<Tile> getAvailableLilyTiles(){
         ArrayList<Tile> temp = new ArrayList<>();
         for (Tile tile : tiles) {
@@ -216,14 +178,7 @@ public class PondModel {
         return availableTiles.get(ind);
     }
 
-    private Frog getRandomFrog(){
-        int size = FrogSpecies.values().length;
-
-        int random = (int) (Math.random() * size);
-
-        return Constants.FROGS.get(random);
-    }
-
+    /** Removes all frogs from the pond */
     private void clearFrogs(){
         for (Tile tile : frogs){
             tile.setFrog(null);
@@ -231,6 +186,7 @@ public class PondModel {
         frogs.clear();
     }
 
+    /** Counts all objects (lily pads, reeds, rotten pads) currently in the pond */
     private int getObjectTotal(){
         int total = 0;
         for (Tile tile : tiles){
@@ -241,8 +197,9 @@ public class PondModel {
         return total;
     }
 
-    // ---- MODEL SETUP ----
+    // ---- RESET & ACCESS ----
 
+    /** Clears the pond of all objects and resets the state */
     public void reset() {
         for (Tile t : tiles) {
             t.setFrog(null);
@@ -255,6 +212,7 @@ public class PondModel {
         crocoPresent = false;
     }
 
+    /** Returns the tile containing the given point, or null if none */
     public Tile getTileAt(Point p){
         for (Tile t : tiles) {
             if (t.contains(p)) return t;
@@ -263,6 +221,7 @@ public class PondModel {
     }
 
 
+    // ---- NEIGHBOR ACCESS ----
     public Tile getUpperTile(Tile tile){
         int up_id = tile.getId() - cols;
         if (up_id < 0) return null;

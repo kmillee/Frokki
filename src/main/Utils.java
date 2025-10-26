@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Collection of globally used methods (loading, resizing...)
+ */
 public class Utils {
 
     /**
