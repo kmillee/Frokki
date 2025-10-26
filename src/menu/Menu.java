@@ -106,19 +106,19 @@ public class Menu {
                 "focusedBackground: #f6685e;");
         helpButton.putClientProperty(FlatClientProperties.STYLE, "arc: 15;");
 
+
         pondButton.setFont(fontButton);
         frogedexButton.setFont(fontButton);
         quitButton.setFont(fontButton);
         helpButton.setFont(fontButton);
 
-        // Toggle buttons
+        // Toggle buttons: Sound and Dev mode
         ImageIcon soundOnIcon = new ImageIcon(Utils.resizeKeepingRatio(Constants.SOUND_ON, 20, 20).getImage());
         ImageIcon soundOffIcon = new ImageIcon(Utils.resizeKeepingRatio(Constants.SOUND_OFF, 20, 20).getImage());
 
         JToggleButton soundButton = new JToggleButton(soundOnIcon);
         JToggleButton devButton = new JToggleButton("Dev OFF");
 
-        // --- Initial state stored directly in the buttons ---
         soundButton.putClientProperty("soundOn", true);
         devButton.putClientProperty("devMode", false);
 
@@ -134,13 +134,11 @@ public class Menu {
         devButton.setToolTipText("Developer mode: enable spawn buttons on the pond.");
 
 
-        // --- Behavior ---
         soundButton.addActionListener(e -> {
             boolean selected = soundButton.isSelected();
             soundButton.setIcon(selected ? soundOnIcon : soundOffIcon);
             pond.toggleSound();
         });
-
 
         devButton.addActionListener(e -> {
             boolean selected = devButton.isSelected();
@@ -148,21 +146,16 @@ public class Menu {
             pond.toggleDevMode();
         });
 
-        // --- Panel container ---
         JPanel togglePanel = new JPanel(new GridLayout(1, 2, 5, 0));
         togglePanel.add(soundButton);
         togglePanel.add(devButton);
 
-        helpButton.addActionListener(e -> {
-            new HelpDialog(menuFrame).setVisible(true);
-        });
 
         // Layout
         JPanel menuButtonPanel = new JPanel();
         menuButtonPanel.setLayout(new GridLayout(0, 1, 0, 5));
         menuButtonPanel.add(pondButton);
         menuButtonPanel.add(frogedexButton);
-
         menuButtonPanel.add(togglePanel);
         menuButtonPanel.setBorder(new EmptyBorder(5, 10, 30, 10));
 
@@ -174,6 +167,9 @@ public class Menu {
 
         pondButton.addActionListener(e -> openPond());
         frogedexButton.addActionListener(e -> openFrogedex());
+        helpButton.addActionListener(e -> {
+            new HelpDialog(menuFrame).setVisible(true);
+        });
         quitButton.addActionListener(e -> quitGame());
 
         menuFrame.add(titlePanel, BorderLayout.NORTH);
@@ -182,9 +178,19 @@ public class Menu {
     }
 
     private void quitGame() {
-        System.exit(0);
-        //todo: mettre un pop up de vérif
+        int choice = JOptionPane.showConfirmDialog(
+                menuFrame,
+                "Are you sure you want to quit Frokki? \n(Your collection will be saved, but the pond state will reset)",
+                "Quit Game",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (choice == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
     }
+
 
     private void openFrogedex() {
         frogedex.show();
