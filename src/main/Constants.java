@@ -57,6 +57,8 @@ public class Constants {
 
 
     // TOOLBAR SHARED main.resources
+    public static ImageIcon TOOLS_IMG = new ImageIcon(RESOURCES_PATH + File.separator + "tool"+ File.separator + "tools.png");
+
     public static ImageIcon SCISSORS_IMG = new ImageIcon(RESOURCES_PATH + File.separator + "tool"+ File.separator + "scissors.png");
     public static ImageIcon NET_IMG = new ImageIcon(RESOURCES_PATH + File.separator + "tool" + File.separator + "net.png");
     public static ImageIcon GRAB_BEFORE_IMG = new ImageIcon(RESOURCES_PATH + File.separator + "tool" + File.separator + "grab_before.png");

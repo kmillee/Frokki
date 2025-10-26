@@ -6,9 +6,15 @@ import main.Constants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * This class is responsible for creating and displaying the Pond frame,
+ * with which user can interact to catch frogs
+ */
 public class Pond {
 
     private JFrame frame;
@@ -18,21 +24,27 @@ public class Pond {
     private PondController controller;
     private Frogedex frogedex;
 
+    // Developer mode variables
+    private JPanel devPanel;
+    private boolean devModeEnabled;
+
+
     public Pond(Frogedex frogedex) {
         this.frogedex = frogedex;
         this.imagePath = Constants.POND_IMAGE;
 
         setUpFrame();
         setUpModelViewController();
+        setUpKeyboardShortcut();
         setUpDevMode();
 
         frame.setVisible(false);
         frame.pack();
     }
 
+    // ---- FRAME SETUP ----
     private void setUpFrame() {
-        frame = new JFrame();
-        frame.setTitle("Pond");
+        frame = new JFrame("Pond");
         frame.setResizable(false);
         frame.setPreferredSize(new Dimension(860, 600));
 
@@ -56,69 +68,104 @@ public class Pond {
         if (controller != null) controller.setUpTimers();
     }
 
+    // ---- MVC SETUP ----
     private void setUpModelViewController() {
         ImageIcon pondImg = new ImageIcon(imagePath);
         int width = pondImg.getIconWidth();
         int height = pondImg.getIconHeight();
 
-        // 1. Model
         model = new PondModel(width, height, Constants.CELL_SIZE);
 
-        // 2. View
         pondView = new PondView(this, model, pondImg.getImage());
         frame.add(pondView, BorderLayout.CENTER);
         pondView.setPreferredSize(new Dimension(width, height));
 
-        // 3. Controller
         controller = new PondController(this, model, pondView);
         pondView.setController(controller);
+        pondView.addToolboxButton(controller);
+
 
     }
 
+
+    // ---- DEV MODE ----
     private void setUpDevMode() {
-        JPanel buttonBar = new JPanel();
-        buttonBar.setLayout(new FlowLayout());
+
+        devPanel = new JPanel(new FlowLayout());
+//        devPanel.setVisible(false);
 
         JButton frogButton = new JButton("Frog");
         JButton reedButton = new JButton("Reed");
         JButton lilyButton = new JButton("Lily pad");
         JButton crocoButton = new JButton("Croco");
-        JButton showToolButton = new JButton("Show Tool");
 
         frogButton.addActionListener(e -> controller.trySpawnFrog());
         reedButton.addActionListener(e -> controller.trySpawnReed());
         lilyButton.addActionListener(e -> controller.trySpawnLily());
         crocoButton.addActionListener(e -> controller.trySpawnCroco());
-        showToolButton.addActionListener(e -> controller.getToolbox().show());
 
-        buttonBar.add(frogButton);
-        buttonBar.add(reedButton);
-        buttonBar.add(lilyButton);
-        buttonBar.add(crocoButton);
-        buttonBar.add(showToolButton);
+        devPanel.add(frogButton);
+        devPanel.add(reedButton);
+        devPanel.add(lilyButton);
+        devPanel.add(crocoButton);
 
-        frame.add(buttonBar, BorderLayout.SOUTH);
+        frame.add(devPanel, BorderLayout.SOUTH);
+//        JPanel buttonBar = new JPanel();
+//        buttonBar.setLayout(new FlowLayout());
+//
+//        JButton frogButton = new JButton("Frog");
+//        JButton reedButton = new JButton("Reed");
+//        JButton lilyButton = new JButton("Lily pad");
+//        JButton crocoButton = new JButton("Croco");
+//        JButton showToolButton = new JButton("Show Tool");
+//
+//        frogButton.addActionListener(e -> controller.trySpawnFrog());
+//        reedButton.addActionListener(e -> controller.trySpawnReed());
+//        lilyButton.addActionListener(e -> controller.trySpawnLily());
+//        crocoButton.addActionListener(e -> controller.trySpawnCroco());
+//        showToolButton.addActionListener(e -> controller.getToolbox().show());
+//
+//        buttonBar.add(frogButton);
+//        buttonBar.add(reedButton);
+//        buttonBar.add(lilyButton);
+//        buttonBar.add(crocoButton);
+//        buttonBar.add(showToolButton);
+//
+//        frame.add(buttonBar, BorderLayout.SOUTH);
     }
 
-    // ---- Getters / Setters ----
+    private void setUpKeyboardShortcut() {
+        setUpDevMode();
+
+        // Key listener for secret shortcut: Ctrl + Shift + D
+        frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println(e.getKeyCode());
+                if (e.isControlDown() && e.isShiftDown() && e.getKeyCode() == KeyEvent.VK_D) {
+                    toggleDevMode();
+
+                }
+            }
+        });
+    }
+
+    private void toggleDevMode() {
+        devModeEnabled = !devModeEnabled;
+        devPanel.setVisible(devModeEnabled);
+        frame.revalidate();
+        frame.repaint();
+
+        System.out.println(devModeEnabled ? "[DEV MODE ENABLED]" : "[DEV MODE DISABLED]");
+    }
+
+    // ---- GETTERS / SETTERS ----
     public Frogedex getFrogedex() {
         return frogedex;
     }
 
     public void setFrogedex(Frogedex frogedex) {
         this.frogedex = frogedex;
-    }
-
-    public PondView getPondView() {
-        return pondView;
-    }
-
-    public PondModel getModel() {
-        return model;
-    }
-
-    public PondController getController() {
-        return controller;
     }
 }
 

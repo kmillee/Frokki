@@ -50,9 +50,7 @@ public class PondController implements MouseListener, MouseMotionListener {
         this.pond = pond;
         this.model = model;
         this.view = view;
-        this.toolbox = new Toolbox();
-
-        //TODO: sounds
+        this.toolbox = new Toolbox(this);
 
         view.addMouseListener(this);
         view.addMouseMotionListener(this);
@@ -498,5 +496,10 @@ public class PondController implements MouseListener, MouseMotionListener {
     public void setDy(int dy) { this.dy = dy; }
     public int getDx() { return dx; }
     public int getDy() { return dy; }
+
+    public void updateToolButtonIcon(Toolbox.Tool currentTool) {
+        view.updateToolboxButtonIcon(currentTool);
+    }
+
 
 }

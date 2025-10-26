@@ -46,8 +46,8 @@ public class Tile extends Rectangle{
     public void draw(Graphics g, int dx, int dy, PondImages images,
                      Tile grabbedTile, Image grabbedImg, ArrayList<Tile> waterGrid) {
 
-        int draw_x = x + dx + 3;
-        int draw_y = y + dy - 1;
+        int draw_x = x + dx ;
+        int draw_y = y + dy ;
         int draw_width = width - 1;
         int draw_height = height - 1;
 
@@ -89,7 +89,7 @@ public class Tile extends Rectangle{
             } else {
                 g.setColor(new Color(255, 255, 255, 100)); // white hover
             }
-            g.fillRect(x + dx + 3, y + dy - 2, draw_width, draw_height);
+            g.fillRect(draw_x, draw_y, draw_width, draw_height);
         }
 
         // Selection overlay (optional)

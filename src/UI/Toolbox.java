@@ -2,6 +2,7 @@ package UI;
 
 import main.Constants;
 import main.Utils;
+import pond.PondController;
 import pond.Tile;
 
 import javax.swing.*;
@@ -22,13 +23,16 @@ public class Toolbox implements MouseListener, MouseMotionListener {
         BELL
     }
 
-    private Tool currentTool = Tool.NONE;
+    private Tool currentTool = Tool.NET;
     private JFrame frame;
 
     public JButton grabButton; //image updated during grab
     public Tile grabbedTile;
 
-    public Toolbox(){
+    public PondController controller;
+
+    public Toolbox(PondController controller) {
+        this.controller = controller;
         setUpFrame();
         setUpTools();
         installUI();
@@ -59,15 +63,19 @@ public class Toolbox implements MouseListener, MouseMotionListener {
 
         // Add tools button
         JButton netButton = addButton(Constants.NET_IMG, Tool.NET);
+        netButton.setToolTipText("Net: click to catch frogs!");
         panel.add(netButton);
 
         JButton scissorsButton = addButton(Constants.SCISSORS_IMG, Tool.SCISSORS);
+        scissorsButton.setToolTipText("Scissors: click to cut off reeds.");
         panel.add(scissorsButton);
 
         grabButton = addButton(Constants.GRAB_BEFORE_IMG, Tool.GRAB);
+        scissorsButton.setToolTipText("Grab: drag and drop rotten lily pads into the bin.");
         panel.add(grabButton);
 
         JButton bellButton = addButton(Constants.BELL_IMG, Tool.BELL);
+        scissorsButton.setToolTipText("Bell: shake it next to crocodiles to scare them away!");
         panel.add(bellButton);
 
         frame.add(panel, BorderLayout.CENTER);
@@ -81,7 +89,11 @@ public class Toolbox implements MouseListener, MouseMotionListener {
         newButton.addActionListener(e -> {
             setCurrentTool(tool);
             Utils.setCustomCursor(getToolIcon(tool), frame.getContentPane());
+            if (controller != null) {
+                controller.updateToolButtonIcon(tool);
+            }
         });
+
 
         return newButton;
     }

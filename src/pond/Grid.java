@@ -111,7 +111,7 @@ public class Grid extends JPanel implements MouseListener, MouseMotionListener, 
         this.frog_grid = new ArrayList<>();
         this.rotten_grid = new ArrayList<>();
 
-        this.toolbox = new Toolbox();
+//        this.toolbox = new Toolbox();
 
         installUI();
         //setUpTimers();

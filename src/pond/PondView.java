@@ -1,13 +1,15 @@
 package pond;
 
+import UI.Toolbox;
 import main.Constants;
+import main.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
-// Access model read-only
+// Handles rendering and mouse coordinates mechanics
 public class PondView extends JPanel {
     private final Pond pond;
     private final PondModel model; // model later
@@ -35,6 +37,9 @@ public class PondView extends JPanel {
     private final Point gridOrigin = new Point(0,0);
     private int dx, dy;
     private PondImages images;
+
+    private JButton toolboxBtn;
+
 
 
 
@@ -64,6 +69,88 @@ public class PondView extends JPanel {
     public void setController(PondController controller) {
         this.controller = controller;
     }
+
+    public void addToolboxButton(PondController controller) {
+        setLayout(null); // absolute positioning
+
+        int btnSize = 50;
+        int margin = 15;
+
+        toolboxBtn = new JButton();
+        toolboxBtn.setToolTipText("Open toolbox");
+        toolboxBtn.setBackground(Color.PINK);
+//        toolboxBtn.setIcon(Utils.resizeKeepingRatio(icon, 45,45));
+
+        // Default tool: NET
+        updateToolboxButtonIcon(controller.getToolbox().getCurrentTool());
+
+        toolboxBtn.addActionListener(e -> controller.getToolbox().show());
+
+        add(toolboxBtn);
+
+        // Position after resize
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                toolboxBtn.setBounds(
+                        getWidth() - btnSize - margin,
+                        getHeight() - btnSize - margin,
+                        btnSize,
+                        btnSize
+                );
+                repaint();
+            }
+        });
+    }
+    public void updateToolboxButtonIcon(Toolbox.Tool currentTool) {
+        ImageIcon icon = controller.getToolbox().getToolIcon(currentTool);
+        toolboxBtn.setIcon(Utils.resizeKeepingRatio(icon, 45, 45));
+    }
+
+
+//    public void addToolboxButton(PondController controller) {
+//
+//        setLayout(null); // Absolute positioning on top of the pond
+//
+//        // Load icon
+//        ImageIcon icon = new ImageIcon(Constants.NET_IMG.getImage());
+//        int btnSize = 50;
+//
+//        JButton toolboxBtn = new JButton(icon);
+//        toolboxBtn.setToolTipText("Open toolbox");
+//        toolboxBtn.setBackground(Color.PINK);
+//        toolboxBtn.setIcon(Utils.resizeKeepingRatio(icon, 45,45));
+//
+//        // bottom-right corner
+//        int margin = 15;
+//        toolboxBtn.setBounds(
+//                getWidth() - btnSize - margin,
+//                getHeight() - btnSize - margin,
+//                btnSize,
+//                btnSize
+//        );
+//
+//        toolboxBtn.addActionListener(e -> controller.getToolbox().show());
+//
+//        add(toolboxBtn);
+//
+//        // Wait until the panel is sized, then position the button
+//        addComponentListener(new java.awt.event.ComponentAdapter() {
+//            @Override
+//            public void componentResized(java.awt.event.ComponentEvent e) {
+//                int margin = 20;
+//                toolboxBtn.setBounds(
+//                        getWidth() - btnSize - margin,
+//                        getHeight() - btnSize - margin,
+//                        btnSize,
+//                        btnSize
+//                );
+//                repaint();
+//            }
+//        });
+//
+//    }
+
 
 
     // ---- PAINTING ----
@@ -111,7 +198,7 @@ public class PondView extends JPanel {
         Image grabbedImg = controller.getGrabbedImg();
 
         for (Tile tile : model.getTiles()){
-            tile.draw(pen, dx , dy, images, grabbedTile, grabbedImg, model.getWaterTiles());
+            tile.draw(pen, controller.getDx() , controller.getDy(), images, grabbedTile, grabbedImg, model.getWaterTiles());
         }
 
     }
@@ -119,7 +206,7 @@ public class PondView extends JPanel {
 
     //Helper
     public Point toModelCoords(Point mousePoint){
-        return new Point(mousePoint.x - gridOrigin.x, mousePoint.y - gridOrigin.y);
+        return new Point(mousePoint.x - controller.getDx(), mousePoint.y - controller.getDy());
     }
 
     public void repaintTile(Tile tile){
