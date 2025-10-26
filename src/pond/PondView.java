@@ -74,7 +74,7 @@ public class PondView extends JPanel {
         setLayout(null); // absolute positioning
 
         int btnSize = 50;
-        int margin = 15;
+        int margin = 25;
 
         toolboxBtn = new JButton();
         toolboxBtn.setToolTipText("Open toolbox");

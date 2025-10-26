@@ -40,13 +40,14 @@ public class Pond {
 
         frame.setVisible(false);
         frame.pack();
+        frame.setFocusable(true);
     }
 
     // ---- FRAME SETUP ----
     private void setUpFrame() {
         frame = new JFrame("Pond");
         frame.setResizable(false);
-        frame.setPreferredSize(new Dimension(860, 600));
+        frame.setPreferredSize(new Dimension(860, 610));
 
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -92,7 +93,7 @@ public class Pond {
     private void setUpDevMode() {
 
         devPanel = new JPanel(new FlowLayout());
-//        devPanel.setVisible(false);
+        devPanel.setVisible(false);
 
         JButton frogButton = new JButton("Frog");
         JButton reedButton = new JButton("Reed");

@@ -71,11 +71,11 @@ public class Toolbox implements MouseListener, MouseMotionListener {
         panel.add(scissorsButton);
 
         grabButton = addButton(Constants.GRAB_BEFORE_IMG, Tool.GRAB);
-        scissorsButton.setToolTipText("Grab: drag and drop rotten lily pads into the bin.");
+        grabButton.setToolTipText("Grab: drag and drop rotten lily pads into the bin.");
         panel.add(grabButton);
 
         JButton bellButton = addButton(Constants.BELL_IMG, Tool.BELL);
-        scissorsButton.setToolTipText("Bell: shake it next to crocodiles to scare them away!");
+        bellButton.setToolTipText("Bell: shake it next to crocodiles to scare them away!");
         panel.add(bellButton);
 
         frame.add(panel, BorderLayout.CENTER);
