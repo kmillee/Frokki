@@ -58,7 +58,7 @@ public class Utils {
             Font font = Font.createFont(Font.TRUETYPE_FONT, new File(Constants.RESOURCES_PATH + File.separator + fontPath));
             return font.deriveFont(size);
         } catch(Exception e) {
-            e.printStackTrace();
+            System.err.println("Failed to load font: " + fontPath + ", using default.");
             return new  Font("Arial", Font.PLAIN, (int)size);
         }
     }
@@ -89,7 +89,11 @@ public class Utils {
         frame.setSize(width, height);
     }
 
-
+    /** Check if an integer array contains a specific value.
+     * @param id The integer to be searched in the list
+     * @param list The integer array to look into
+     * @return true if the array contains id, false if not
+     * */
     public static boolean contains(int[] list, int id){
         if (list == null) return false;
         for (int j : list) {
@@ -104,7 +108,7 @@ public class Utils {
      * @return A list of ImageIcons representing the image frames.
      */
     public static List<ImageIcon> loadFrames(String directoryPath){
-        List<ImageIcon> frames = new ArrayList<ImageIcon>();
+        List<ImageIcon> frames = new ArrayList<>();
         File directory = new File(directoryPath);
 
         if(directory.exists() && directory.isDirectory()){
@@ -118,7 +122,7 @@ public class Utils {
         return frames;
     }
 
-
+    /** Set a custom cursor on a container. */
     public static void setCustomCursor(ImageIcon cursor, Container container){
         // Set a custom cursor
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -126,12 +130,14 @@ public class Utils {
         container.setCursor(customCursor);
     }
 
+    /** Return current date formatted as dd-MM-yyyy. */
     public static String getFormattedDate(){
         SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
 
         return ft.format(new Date());
     }
 
+    /** Return random integer in range [min, max[. */
     public static int randomBetween(int min, int max){
         return min + (int) (Math.random() * (max - min));
     }
