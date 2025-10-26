@@ -1,19 +1,14 @@
 package menu;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import frog.frogbar.FrogBarController;
 import frogedex.Frogedex;
 import main.Constants;
 import main.Utils;
 import pond.Pond;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 
 
@@ -28,7 +23,6 @@ public class Menu {
         frogedex = new Frogedex();
         pond = new Pond(frogedex);
 
-        FrogBarController frogbar = new FrogBarController(frogedex);
         pond.setFrogedex(frogedex);
 
         toggleMenu();
@@ -197,10 +191,6 @@ public class Menu {
     }
 
     private void openPond() {
-//        if (pond == null){
-//            pond = new Pond();
-//            System.out.print("no pond found, creating a new one");
-//        }
         pond.activate();
     }
 
