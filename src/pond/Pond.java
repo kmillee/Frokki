@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class Pond extends JComponent {
+public class Pond {
 
     private JFrame frame;
     private final String imagePath;
@@ -65,7 +65,7 @@ public class Pond extends JComponent {
         model = new PondModel(width, height, Constants.CELL_SIZE);
 
         // 2. View
-        pondView = new PondView(this, model);
+        pondView = new PondView(this, model, pondImg.getImage());
         frame.add(pondView, BorderLayout.CENTER);
         pondView.setPreferredSize(new Dimension(width, height));
 

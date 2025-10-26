@@ -13,6 +13,8 @@ public class PondView extends JPanel {
     private final PondModel model; // model later
     private PondController controller;
 
+
+
     // Images
     private final Image background;
     private final Image lilyImg;
@@ -30,14 +32,16 @@ public class PondView extends JPanel {
     private final ArrayList<Image> reedImages;
 
     // Grid parameters
-    private Point gridOrigin = new Point(0,0);
+    private final Point gridOrigin = new Point(0,0);
     private int dx, dy;
+    private PondImages images;
 
 
-    public PondView(Pond pond, PondModel model) {
+
+    public PondView(Pond pond, PondModel model, Image background) {
         this.pond = pond;
         this.model = model;
-        this.background = new ImageIcon(Constants.POND_IMAGE).getImage();
+        this.background = background;
 
         // Load game sprites
          reedImages = new ArrayList<>() {
@@ -51,7 +55,7 @@ public class PondView extends JPanel {
         lilyImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "lilypad.png").getImage();
         rottenImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "rotten.png").getImage();
         crocoImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "croco.png").getImage();
-
+        images = new PondImages(lilyImg, rottenImg, crocoImg, reedImages);
         setFocusable(true);
 //        setDoubleBuffered(true);
         setPreferredSize(new Dimension(background.getWidth(null), background.getHeight(null)));
@@ -78,6 +82,11 @@ public class PondView extends JPanel {
 
         pen.drawImage(background, dx, dy, background.getWidth(null), background.getHeight(null), null);
 
+        // update controller offsets so tiles draw correctly
+        if (controller != null) {
+            controller.setDx(dx);
+            controller.setDy(dy);
+        }
 
         pen.setColor(new Color(120,120,120,120));
 
@@ -94,15 +103,10 @@ public class PondView extends JPanel {
         for (int col = 0; col <= cols; col++) {
             pen.drawLine(col * cellSize + dx, dy, col * cellSize + dx, rows * cellSize + dy);
         }
-        // update controller offsets so tiles draw correctly
-        if (controller != null) {
-            controller.setDx(dx);
-            controller.setDy(dy);
-        }
+
     }
 
     private void updateTiles(Graphics pen){
-        PondImages images = new PondImages(lilyImg, rottenImg, crocoImg, reedImages);
         Tile grabbedTile = controller.getGrabbedTile();
         Image grabbedImg = controller.getGrabbedImg();
 
@@ -110,39 +114,7 @@ public class PondView extends JPanel {
             tile.draw(pen, dx , dy, images, grabbedTile, grabbedImg, model.getWaterTiles());
         }
 
-            // if tile selected, display in full pink
-//            if (tile.isSelected()){
-//                g.setColor(new Color(255, 143, 248,180));
-//                g.fillRect(tile.x + dx, tile.y + dy, tile.width, tile.height);
-//
-//                Tile left = getLeftTile(tile);
-//                Tile right = getRightTile(tile);
-//                Tile up = getUpperTile(tile);
-//                Tile down = getLowerTile(tile);
-//
-//                if(left!=null){
-//                    g.setColor(new Color(100,255,100,100));
-//                    g.fillRect(left.x + dx, left.y + dy, tile.width, tile.height);
-//                }
-//
-//                if(right!=null){
-//                    g.setColor(new Color(147, 114, 3, 228));
-//                    g.fillRect(right.x + dx, right.y + dy, tile.width, tile.height);
-//                }
-//
-//                if(up!=null){
-//                    g.setColor(new Color(0, 255, 205,100));
-//                    g.fillRect(up.x + dx, up.y + dy, tile.width, tile.height);
-//                }
-//
-//                if(down!=null){
-//
-//                    g.setColor(Color.yellow);
-//                    g.fillRect(down.x + dx, down.y + dy, tile.width, tile.height);
-//                }
-//
-//            }
-        }
+    }
 
 
     //Helper
