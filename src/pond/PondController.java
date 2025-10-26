@@ -12,27 +12,40 @@ import java.util.LinkedList;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 
-// Manipulates Model and View
+/**
+ * PondController handles user interactions with the Pond.
+ * <p>
+ * Responsibilities:
+ * - Manages mouse events and interactions with tiles.
+ * - Controls tools from the Toolbox (Net, Scissors, Grab, Bell).
+ * - Handles automatic spawning of frogs, lily pads, reeds, rotten pads, and croco.
+ * - Plays corresponding sounds and updates the PondView.
+ */
 public class PondController implements MouseListener, MouseMotionListener {
     private final Pond pond;
     private final PondModel model;
     private final PondView view;
     private final Toolbox toolbox;
 
+    // Timers for automatic pond mechanics
     private Timer reedLilyTimer, rotTimer, crocoTimer, frogTimer;
 
+    // Currently grabbed tile
     private Tile grabbedTile;
     private Image grabbedImg;
+
+
+    // Chance for croco to spawn
     private double crocoSpawnChance = 0.1;
 
-
+    // Sounds
     private final Sound croakSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "croak.wav");
     private final Sound crocoSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "jaws.wav");
     private final Sound scissorsSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "scissors.wav");
     private final Sound bellsound = new Sound( Constants.RESOURCES_PATH + File.separator + "sound" + File.separator +"bell.wav");
     private final Sound endbellsound = new Sound(Constants.RESOURCES_PATH + File.separator + "sound" + File.separator + "bell_short.wav");
 
-    // BELL MECHANICS
+    // ---- BELL MECHANICS ----
     static class MouseData {
         Point position;
         long time;
@@ -46,6 +59,13 @@ public class PondController implements MouseListener, MouseMotionListener {
     private boolean alreadyJiggling = false;
     private Point lastCursorPoint;
 
+    // Offsets from view for drawing tiles accurately
+    private int dx, dy;
+
+
+    /**
+     * Constructor: Sets up controller, listeners, and timers.
+     */
     public PondController(Pond pond, PondModel model, PondView view) {
         this.pond = pond;
         this.model = model;
@@ -65,7 +85,7 @@ public class PondController implements MouseListener, MouseMotionListener {
         toolbox.getFrame().requestFocus();
     }
 
-    // Random timer for spawning mechanics
+    // ---- TIMERS ----
     public void setUpTimers(){
         setupReedLilyTimer();
         setupRotTimer();
@@ -84,8 +104,7 @@ public class PondController implements MouseListener, MouseMotionListener {
     private void setupReedLilyTimer() {
         int delay = Utils.randomBetween(Constants.MIN_REEDLILY_TIMER, Constants.MAX_REEDLILY_TIMER);
 
-//        System.out.println("ree/lily timer: " + delay);
-        reedLilyTimer = new javax.swing.Timer(delay, e -> {
+        reedLilyTimer = new Timer(delay, e -> {
             if (Math.random() < 0.2) {      //80% reed, 20% lily pad
                 trySpawnLily();
             } else {
@@ -100,9 +119,8 @@ public class PondController implements MouseListener, MouseMotionListener {
     private void setupRotTimer() {
         int delay = Utils.randomBetween(Constants.MIN_ROT_TIMER, Constants.MAX_ROT_TIMER);
 
-//        System.out.println("rot timer: " + delay);
 
-        rotTimer = new javax.swing.Timer(delay, e -> {
+        rotTimer = new Timer(delay, e -> {
             if (Math.random() < 0.3) {  // 30% chance to rot a lily pad (if any available)
                 trySpawnRotten();
             }
@@ -126,7 +144,6 @@ public class PondController implements MouseListener, MouseMotionListener {
     private void setupCrocoTimer() {
         int delay = Utils.randomBetween(Constants.MIN_CROCO_TIMER, Constants.MAX_CROCO_TIMER);
 
-//        System.out.println("croco timer: " + delay);
 
         crocoTimer = new Timer(delay, e -> {
             if (Math.random() < crocoSpawnChance && !model.hasCroco()) {        // set up a low chance of spawn
@@ -143,6 +160,7 @@ public class PondController implements MouseListener, MouseMotionListener {
     }
 
 
+    // ---- SPAWN METHODS ----
     public void trySpawnFrog() {
         if (model.spawnFrog()) {
             croakSound.play();
@@ -175,12 +193,10 @@ public class PondController implements MouseListener, MouseMotionListener {
         }
     }
 
-// TOOLS
-
 
     // ---- TOOLS ----
 
-    // Remove frog from lilypad and add it to frogedex
+    /** Removes frog from tile and adds it to Frogedex */
     public void useNet(Tile tile){
         Utils.setCustomCursor(Constants.NET_IMG, view);
         if (tile.getFrog() != null){
@@ -193,10 +209,33 @@ public class PondController implements MouseListener, MouseMotionListener {
         }
     }
 
+    /** Removes reeds from tile */
+    public void useScissors(Tile tile){
+        Utils.setCustomCursor(Constants.SCISSORS_IMG, view);
+        if (tile.isReed()){
+            tile.clean();
+            model.getReeds().remove(tile);
+            scissorsSound.play();
+
+            view.repaint();
+        }
+    }
+
+    /** Sets cursor to grab tool */
+    public void useGrab(){
+        Utils.setCustomCursor(Constants.GRAB_BEFORE_IMG, view);
+    }
+
+    // ---- CROCO MECHANICS ----
+
+
+    /**
+     * Determines if the bell is being jiggled by the mouse quickly enough.
+     */
     private boolean isJiggling() {
         if (history.size() < 10) return false;
 
-        // compute average speed
+        // Compute average speed
         double totalDist = 0;
         long totalTime = history.getLast().time - history.getFirst().time;
 
@@ -211,27 +250,24 @@ public class PondController implements MouseListener, MouseMotionListener {
         if (totalTime > Constants.INACTIVITY_MS) return false;
         if (totalDist < 20) return false;
 
-//        System.out.println("Total dist in the last move: " + totalDist);
-//        System.out.println("Total time in the last move: " + totalTime);
-//        System.out.println("Speed: " + speed);
-//        System.out.println("Jiggles: " + (speed > main.Constants.SPEED_THRESHOLD));
-
-        return speed > Constants.SPEED_THRESHOLD /*&& directionChanges > 2*/;
+        return speed > Constants.SPEED_THRESHOLD;
     }
 
 
-
+    /**
+     * Moves croco away from cursor when bell is used.
+     */
     private void scareCroco(Point cursor){
         for (Tile tile : model.getTiles()){
             if (tile.isCroco()){
                 // find running direction
+                Tile neighbor;
+
                 float croco_x = tile.x + (float) model.getCellSize() / 2;
                 float croco_y = tile.y + (float) model.getCellSize() / 2;
                 float dx = cursor.x - croco_x;
                 float dy = cursor.y - croco_y;
 
-                int moveX, moveY;
-                Tile neighbor;
                 if (Math.abs(dx) > Math.abs(dy)){
                     neighbor = (dx > 0) ? model.getLeftTile(tile) : model.getRightTile(tile); // left or right
                 }
@@ -243,22 +279,20 @@ public class PondController implements MouseListener, MouseMotionListener {
                 if (neighbor != null){
                     neighbor.setCroco(true);
                     view.repaint();
-                    System.out.println("moving croco");
                 }
                 else{
                     model.setCroco(false);
-                    System.out.println("croco out");
                 }
-
 
             }
         }
 
     }
 
+    /** Stops bell sound and croco timer */
     private void stopBellandCroco() {
-        if (bellsound != null) bellsound.pause();
-        if (endbellsound != null) endbellsound.play();
+        bellsound.pause();
+        endbellsound.play();
 
         if (crocoTimer != null) {
             crocoTimer.stop();
@@ -269,50 +303,20 @@ public class PondController implements MouseListener, MouseMotionListener {
     }
 
 
-
-    // Only used to change the cursor, the actual work is done in listeners
-    public void useGrab(){
-        Utils.setCustomCursor(Constants.GRAB_BEFORE_IMG, view);
-    }
-
-    // Remove reed from tiles
-    public void useScissors(Tile tile){
-        Utils.setCustomCursor(Constants.SCISSORS_IMG, view);
-        if (tile.isReed()){
-            tile.clean();
-            model.getReeds().remove(tile);
-            scissorsSound.play();
-
-            view.repaint();
-        }
-
-    }
-
-
-
-
+    // ---- MOUSE EVENTS ----
 
     @Override
     public void mouseClicked(MouseEvent e) {
 
-//        System.out.println("mouseClicked");
-//        System.out.println("Current Tool: " + toolbox.getCurrentTool());
         Point gridCursor = view.toModelCoords(e.getPoint());
 
         for (Tile tile : model.getTiles()) {
             if (tile.contains(gridCursor)) {
                 switch (toolbox.getCurrentTool()) {
-                    case Toolbox.Tool.BELL:
-                        break;
-                    case Toolbox.Tool.SCISSORS:
-                        useScissors(tile);
-                        break;
-                    case Toolbox.Tool.GRAB:
-                        useGrab();
-                        break;
-                    case Toolbox.Tool.NET:
-                        useNet(tile);
-                        break;
+                    case SCISSORS -> useScissors(tile);
+                    case GRAB -> useGrab();
+                    case NET -> useNet(tile);
+                    case BELL -> { /* handled during drag */ }
                 }
             }
         }
@@ -329,12 +333,7 @@ public class PondController implements MouseListener, MouseMotionListener {
                 if (tile.contains(gridCursor) && tile.isMovable()) {
                     toolbox.setCurrentTool(Toolbox.Tool.GRAB_WHILE);
                     grabbedTile = tile;
-                    if (tile.isLily()){
-                        grabbedImg = view.getLilyImg();
-                    }
-                    else if (tile.isRotten()){
-                        grabbedImg = view.getRottenImg();
-                    }
+                    grabbedImg = tile.isLily() ? view.getLilyImg() : view.getRottenImg();
                     tile.clean();   // empty the grabbed tile
                 }
             }
@@ -345,18 +344,17 @@ public class PondController implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
         Point gridCursor = view.toModelCoords(e.getPoint());
+        boolean placed = false;
 
-        boolean placed = false; // check if the grabbed object has already been placed
         if (toolbox.getCurrentTool() == Toolbox.Tool.GRAB_WHILE) {
 
-            //mouse released outside of bin
+            // Mouse released outside of bin
             if (!(toolbox.getBinRectangle().contains(e.getX(), e.getY()))) {
 
                 for (Tile tile : model.getTiles()) {
 
-                    // set object in a free spot
+                    // Place dragged object on new tile
                     if (tile.contains(gridCursor) && model.getWaterTiles().contains(tile) && !tile.isOccupied() && !tile.isLily()) {
                         if (grabbedImg == view.getLilyImg()) {
                             tile.setLily(true);
@@ -366,7 +364,8 @@ public class PondController implements MouseListener, MouseMotionListener {
                         placed = true;
                     }
                 }
-                // user try to set a grabbed object on an unavailable tile
+
+                // If an object is dragged to an unavailable tile, put it back to initial place
                 if (!placed) {
                     if (grabbedImg == view.getLilyImg()) {
                         grabbedTile.setLily(true);
@@ -388,49 +387,32 @@ public class PondController implements MouseListener, MouseMotionListener {
         }
 
         if (toolbox.getCurrentTool() == Toolbox.Tool.BELL) {
-            // bell sound stop
             stopBellandCroco();
         }
     }
 
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        if (toolbox.getCurrentTool() != Toolbox.Tool.GRAB_WHILE) {
-            grabbedImg = null;
-        }
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
     @Override
     public void mouseDragged(MouseEvent e) {
-        // Bell mechanics
-        if (toolbox.getCurrentTool() == Toolbox.Tool.BELL){
 
+        // Bell mechanics: updates mouseData history list and compute speed
+        if (toolbox.getCurrentTool() == Toolbox.Tool.BELL){
             long now = System.currentTimeMillis();
             history.add(new MouseData(e.getPoint(), now));
-            lastCursorPoint = e.getPoint(); // save latest cursor for croco
+            lastCursorPoint = e.getPoint(); // Save latest position to get crocodile run direction
 
-            // remove old data
+            // Remove old data
             while (!history.isEmpty() && (now - history.getFirst().time > Constants.MAX_HISTORY_MS)) {
                 history.removeFirst();
-//                System.out.println("Old data removed, size og the list: " + history.size());
             }
 
             boolean jigglingNow = isJiggling();
-//            System.out.println("Is jiggling: " + jigglingNow);
-
             if (jigglingNow) {
                 // start bell sound if not already running
                 if (!alreadyJiggling) {
                     bellsound.play();
                     bellsound.clip.loop(Clip.LOOP_CONTINUOUSLY);
 
-                    // start periodic croco timer (every 0.5s)
+                    // Start periodic scareCroco timer (every 0.5s)
                     crocoTimer = new Timer(500, evt -> scareCroco(lastCursorPoint));
                     crocoTimer.start();
                 }
@@ -439,15 +421,14 @@ public class PondController implements MouseListener, MouseMotionListener {
             alreadyJiggling = jigglingNow;
         }
 
-        // update tool to "grab while" or "grab before" icon
+        // Update tool to "grab while" or "grab before" icon
         if (toolbox.getCurrentTool() != Toolbox.Tool.NONE){
             Utils.setCustomCursor(toolbox.getToolIcon(toolbox.getCurrentTool()), view);
         }
 
-        // update grabbed object position
+        // Update grabbed object position
         Point gridCursor = view.toModelCoords(e.getPoint());
         for (Tile tile : model.getTiles()) {
-            // System.out.println(tile);
             tile.setHovered(tile.contains(gridCursor));
 
         }
@@ -457,40 +438,29 @@ public class PondController implements MouseListener, MouseMotionListener {
     @Override
     public void mouseMoved(MouseEvent e) {
         // Update cursor with current tool
-        if (toolbox.getCurrentTool() != Toolbox.Tool.NONE){
-            Utils.setCustomCursor(toolbox.getToolIcon(toolbox.getCurrentTool()), view);
-        }
-
-//         System.out.println("mouse moved: " + e.getX() + " " + e.getY());
+        Utils.setCustomCursor(toolbox.getToolIcon(toolbox.getCurrentTool()), view);
 
         Point gridCursor = view.toModelCoords(e.getPoint());
-        for (Tile tile : model.getTiles()) {
-            tile.setHovered(tile.contains(gridCursor));
-        }
+        for (Tile tile : model.getTiles()) {tile.setHovered(tile.contains(gridCursor));}
         view.repaint();
     }
 
-    public Image getGrabbedImg() {
-        return grabbedImg;
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // If the grabbed object has been thrown into the Toolbox's bin, remove it
+        if (toolbox.getCurrentTool() != Toolbox.Tool.GRAB_WHILE) {
+            grabbedImg = null;
+        }
     }
 
-    public void setGrabbedImg(Image grabbedImg) {
-        this.grabbedImg = grabbedImg;
-    }
+    @Override
+    public void mouseExited(MouseEvent e) {}
 
-    public Tile getGrabbedTile() {
-        return grabbedTile;
-    }
+    // ---- GETTERS & SETTERS ----
 
-    public void setGrabbedTile(Tile grabbedTile) {
-        this.grabbedTile = grabbedTile;
-    }
-
-    public Toolbox getToolbox() {
-        return toolbox;
-    }
-
-    private int dx, dy;
+    public Image getGrabbedImg() {return grabbedImg;}
+    public Tile getGrabbedTile() {return grabbedTile;}
+    public Toolbox getToolbox() {return toolbox;}
     public void setDx(int dx) { this.dx = dx; }
     public void setDy(int dy) { this.dy = dy; }
     public int getDx() { return dx; }
