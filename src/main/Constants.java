@@ -29,9 +29,10 @@ public class Constants {
     public static final int TASKBAR_FROG_SIZE = 100;
     public static final int TASKBAR_OFFSET = 48;
 
-
-
-
+    public static final ImageIcon SOUND_ON = new ImageIcon( RESOURCES_PATH + File.separator + "sound_on.png");
+    public static final ImageIcon SOUND_OFF = new ImageIcon( RESOURCES_PATH + File.separator + "sound_off.png");
+    public static final ImageIcon CHEAT_ON = new ImageIcon( RESOURCES_PATH + File.separator + "sound_on.png");
+    public static final ImageIcon CHEAT_OFF = new ImageIcon( RESOURCES_PATH + File.separator + "sound_off.png");
 
     // POND CONSTANTS
     public static final String POND_IMAGE = RESOURCES_PATH + File.separator + "pond" + File.separator + "pond.png";

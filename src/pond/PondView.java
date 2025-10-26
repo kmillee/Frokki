@@ -42,7 +42,6 @@ public class PondView extends JPanel {
 
 
 
-
     public PondView(Pond pond, PondModel model, Image background) {
         this.pond = pond;
         this.model = model;
@@ -62,7 +61,6 @@ public class PondView extends JPanel {
         crocoImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "croco.png").getImage();
         images = new PondImages(lilyImg, rottenImg, crocoImg, reedImages);
         setFocusable(true);
-//        setDoubleBuffered(true);
         setPreferredSize(new Dimension(background.getWidth(null), background.getHeight(null)));
     }
 

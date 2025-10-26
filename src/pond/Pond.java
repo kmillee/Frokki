@@ -3,6 +3,7 @@ package pond;
 import com.formdev.flatlaf.FlatClientProperties;
 import frogedex.Frogedex;
 import main.Constants;
+import main.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -153,13 +154,18 @@ public class Pond {
         });
     }
 
-    private void toggleDevMode() {
+    public void toggleDevMode() {
         devModeEnabled = !devModeEnabled;
         devPanel.setVisible(devModeEnabled);
         frame.revalidate();
         frame.repaint();
 
         System.out.println(devModeEnabled ? "[DEV MODE ENABLED]" : "[DEV MODE DISABLED]");
+    }
+
+    public void toggleSound(){
+        //TODO
+
     }
 
     // ---- GETTERS / SETTERS ----
