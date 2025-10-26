@@ -79,7 +79,7 @@ public class PondController implements MouseListener, MouseMotionListener {
     public void pauseTimers(){
         reedLilyTimer.stop();
         rotTimer.stop();
-        crocoTimer.stop();
+        if(crocoTimer != null){crocoTimer.stop();}
         frogTimer.stop();
     }
 
