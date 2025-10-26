@@ -328,7 +328,6 @@ public class PondController implements MouseListener, MouseMotionListener {
             for (Tile tile : model.getTiles()) {
                 if (tile.contains(gridCursor) && tile.isMovable()) {
                     toolbox.setCurrentTool(Toolbox.Tool.GRAB_WHILE);
-//                    System.out.println("Current tool: " + toolbox.getCurrentTool());
                     grabbedTile = tile;
                     if (tile.isLily()){
                         grabbedImg = view.getLilyImg();

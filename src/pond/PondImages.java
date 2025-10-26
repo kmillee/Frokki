@@ -3,6 +3,12 @@ package pond;
 import java.awt.*;
 import java.util.ArrayList;
 
+
+/**
+ * PondImages holds the visual assets for different objects in the pond.
+ * <p>
+ * This class provides easy access to images for rendering tiles in the pond.
+ */
 public class PondImages {
     public Image lilyImg;
     public Image rottenImg;

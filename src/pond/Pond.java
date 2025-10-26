@@ -80,7 +80,7 @@ public class Pond {
 
         model = new PondModel(width, height, Constants.CELL_SIZE);
 
-        pondView = new PondView(this, model, pondImg.getImage());
+        pondView = new PondView(model, pondImg.getImage());
         frame.add(pondView, BorderLayout.CENTER);
         pondView.setPreferredSize(new Dimension(width, height));
 
