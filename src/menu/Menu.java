@@ -136,7 +136,7 @@ public class Menu {
 
         soundButton.addActionListener(e -> {
             boolean selected = soundButton.isSelected();
-            soundButton.setIcon(selected ? soundOnIcon : soundOffIcon);
+            soundButton.setIcon(selected ? soundOffIcon : soundOnIcon);
             pond.toggleSound();
         });
 

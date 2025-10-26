@@ -163,10 +163,13 @@ public class Pond {
         System.out.println(devModeEnabled ? "[DEV MODE ENABLED]" : "[DEV MODE DISABLED]");
     }
 
-    public void toggleSound(){
-        //TODO
-
+    public boolean toggleSound() {
+        boolean newState = !sound.Sound.isMute();
+        sound.Sound.setMute(newState);
+        System.out.println("Mute: " + newState);
+        return newState;
     }
+
 
     // ---- GETTERS / SETTERS ----
     public Frogedex getFrogedex() {

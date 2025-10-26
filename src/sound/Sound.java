@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Sound {
+    private static boolean mute = false; // mute menu button
     public Clip clip;
     private AudioInputStream sound;
 
@@ -25,7 +26,8 @@ public class Sound {
     }
 
     public void play() {
-        if (clip == null) return;
+        if (clip == null || mute) return;
+        System.out.println("mute state: " + mute);
         clip.setFramePosition(0); // rewind to start
         clip.start();
     }
@@ -43,6 +45,14 @@ public class Sound {
             clip.close();
         }
         if (sound != null) sound.close();
+    }
+
+    public static void setMute(boolean b) {
+        mute = b;
+    }
+
+    public static boolean isMute() {
+        return mute;
     }
 
 }
