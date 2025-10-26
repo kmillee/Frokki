@@ -1,8 +1,7 @@
-package UI;
+package pond.Controller;
 
 import main.Constants;
 import main.Utils;
-import pond.PondController;
 
 import javax.swing.*;
 import java.awt.*;

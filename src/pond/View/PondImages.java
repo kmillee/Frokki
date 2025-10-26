@@ -1,4 +1,4 @@
-package pond;
+package pond.View;
 
 import java.awt.*;
 import java.util.ArrayList;

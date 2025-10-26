@@ -1,6 +1,7 @@
 package pond;
 
 import frog.Frog;
+import pond.View.PondImages;
 
 import javax.swing.*;
 import java.awt.*;

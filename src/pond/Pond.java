@@ -2,6 +2,8 @@ package pond;
 
 import frogedex.Frogedex;
 import main.Constants;
+import pond.Controller.PondController;
+import pond.View.PondView;
 
 import javax.swing.*;
 import java.awt.*;

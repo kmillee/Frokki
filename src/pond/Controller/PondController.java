@@ -1,8 +1,11 @@
-package pond;
+package pond.Controller;
 
-import UI.Toolbox;
 import main.Constants;
 import main.Utils;
+import pond.Pond;
+import pond.PondModel;
+import pond.View.PondView;
+import pond.Tile;
 import sound.Sound;
 
 import java.awt.*;
