@@ -1,6 +1,7 @@
 package menu;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import frog.frogbar.FrogBarController;
 import frogedex.Frogedex;
 import main.Constants;
 import main.Utils;
@@ -22,6 +23,8 @@ public class Menu {
 
         frogedex = new Frogedex();
         pond = new Pond(frogedex);
+        FrogBarController frogbar = new FrogBarController(frogedex);
+
 
         pond.setFrogedex(frogedex);
 
