@@ -47,7 +47,7 @@ public class Menu {
         try {
             Image image = new ImageIcon(Constants.RESOURCES_PATH + File.separator + "frog_1.png").getImage();
 
-            TrayIcon trayIcon = new TrayIcon(image, "Frog Game");
+            TrayIcon trayIcon = new TrayIcon(image, "Frokkie - Open Menu");
             trayIcon.setImageAutoSize(true);
 
             trayIcon.addActionListener(e -> {toggleMenu();});
