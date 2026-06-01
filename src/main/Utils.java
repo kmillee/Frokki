@@ -3,6 +3,7 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,7 +59,9 @@ public class Utils {
      */
     public static Font loadFont(String fontPath, float size) {
         try {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, new File(Constants.RESOURCES_PATH + File.separator + fontPath));
+            InputStream is = Utils.class.getResourceAsStream("/Gaegu/Gaegu-Regular.ttf");
+            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            
             return font.deriveFont(size);
         } catch(Exception e) {
             System.err.println("Failed to load font: " + fontPath + ", using default.");

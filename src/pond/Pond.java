@@ -59,7 +59,9 @@ public class Pond {
         frame = new JFrame("Pond");
         frame.setResizable(false);
         frame.setPreferredSize(new Dimension(860, 610));
-        frame.setIconImage(new ImageIcon(Constants.POND_IMAGE).getImage());
+        ImageIcon icon = Constants.loadIcon("/pond/pond.png");
+
+        if(icon != null) frame.setIconImage(icon.getImage());
 
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -85,7 +87,7 @@ public class Pond {
 
     // ---- MVC SETUP ----
     private void setUpModelViewController() {
-        ImageIcon pondImg = new ImageIcon(imagePath);
+        ImageIcon pondImg = Constants.loadIcon(Constants.POND_IMAGE);
         int width = pondImg.getIconWidth();
         int height = pondImg.getIconHeight();
 
