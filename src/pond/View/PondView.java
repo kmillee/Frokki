@@ -47,14 +47,14 @@ public class PondView extends JPanel {
 
         // Load pond sprites
          reedImages = new ArrayList<>() {{
-                add(new ImageIcon(Constants.RESOURCES_PATH + File.separator + "pond" + File.separator + "reed_1.png").getImage());
-                add(new ImageIcon(Constants.RESOURCES_PATH + File.separator + "pond" + File.separator + "reed_2.png").getImage());
-                add(new ImageIcon(Constants.RESOURCES_PATH + File.separator + "pond" + File.separator + "reed_3.png").getImage());
+                add(Constants.loadIcon("/pond/reed_1.png").getImage());
+                add(Constants.loadIcon("/pond/reed_2.png").getImage());
+                add(Constants.loadIcon("/pond/reed_3.png").getImage());
 
             }};
-        lilyImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "lilypad.png").getImage();
-        rottenImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "rotten.png").getImage();
-        crocoImg = new ImageIcon(Constants.RESOURCES_PATH + File.separator+ "pond" + File.separator + "croco.png").getImage();
+        lilyImg = Constants.loadIcon("/pond/lilypad.png").getImage();
+        rottenImg = Constants.loadIcon("/pond/rotten.png").getImage();
+        crocoImg = Constants.loadIcon("/pond/croco.png").getImage();
         images = new PondImages(lilyImg, rottenImg, crocoImg, reedImages);
 
         setFocusable(true);
