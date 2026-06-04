@@ -17,16 +17,24 @@ public class Constants {
 
     // ---- GENERAL PATHS ----
     public static final String RESOURCES_PATH = "src" +File.separator + "resources";
-//    public static final String DATA_FILE = RESOURCES_PATH + File.separator + "frogedex_data.json";
-    public static final String SAVE_DIR =
-            System.getProperty("user.home")
-                    + File.separator
-                    + ".pond_simulator";
+
+    
+    public static String getJarDirectory() {
+        try {
+            return new File(
+                    Constants.class
+                            .getProtectionDomain()
+                            .getCodeSource()
+                            .getLocation()
+                            .toURI()
+            ).getParent();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static final String DATA_FILE =
-            SAVE_DIR
-                    + File.separator
-                    + "frogedex_data.json";
+            getJarDirectory() + File.separator + "frogedex_data.json";
 
     // ---- FROG DATA ----
 
