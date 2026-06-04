@@ -1,7 +1,9 @@
 package sound;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.InputStream;
 
 public class Sound {
     private static boolean mute = false; // mute menu button
@@ -13,23 +15,26 @@ public class Sound {
 
     public void setFile(String soundFileName) {
         try {
-            var url = Sound.class.getResource(soundFileName);
+            InputStream is = getClass().getResourceAsStream(soundFileName);
 
-            if (url == null) {
-                System.err.println("Sound resource not found: " + soundFileName);
+            if (is == null) {
+                System.err.println("Sound not found: " + soundFileName);
                 return;
             }
 
-            AudioInputStream sound =
-                    AudioSystem.getAudioInputStream(url);
+            AudioInputStream audioStream =
+                    AudioSystem.getAudioInputStream(
+                            new BufferedInputStream(is)
+                    );
 
             clip = AudioSystem.getClip();
-            clip.open(sound);
+            clip.open(audioStream);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     public void play() {
         if (clip == null || mute) return;
         clip.setFramePosition(0); // rewind to start
