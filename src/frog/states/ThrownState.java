@@ -4,11 +4,13 @@ import frog.Frog;
 import frog.FrogComponent;
 import frog.FrogState;
 import main.Constants;
+import main.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.URL;
 
 public class ThrownState implements FrogState {
     private final FrogComponent frogComponent;
@@ -61,7 +63,13 @@ public class ThrownState implements FrogState {
     @Override
     public ImageIcon getCurrentImage() {
         Frog frog = frogComponent.getFrog();
-        return new ImageIcon( Constants.RESOURCES_PATH + File.separator + "animation_sprite" + File.separator + "hop" + File.separator + frog.getSpecies().toInt() + File.separator+ "hop_3.png");
+        String path = "/animation_sprite/hop/" + frog.getSpecies().toInt() + "/hop_3.png";
+        URL url = Utils.class.getResource(path);
+        if (url == null){
+            System.err.println("Error loading animation sprite : " + path);
+            return null;
+        }
+        return new ImageIcon(url);
     }
 
     @Override

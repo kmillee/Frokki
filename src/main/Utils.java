@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,21 +111,28 @@ public class Utils {
 
     /**
      * Loads all image frames from a specified directory.
-     * @param directoryPath The path to the directory containing the image frames.
+     * @param directoryPath The path to the directory containing the image frames, including the first part of the image name.
      * @return A list of ImageIcons representing the image frames.
      */
-    public static List<ImageIcon> loadFrames(String directoryPath){
-        List<ImageIcon> frames = new ArrayList<>();
-        File directory = new File(directoryPath);
+    public static List<ImageIcon> loadFrames(String directoryPath, int frameCount) {
 
-        if(directory.exists() && directory.isDirectory()){
-            File[] files = directory.listFiles();
-            if(files != null){
-                for(File file: files){
-                    frames.add(new ImageIcon(file.getAbsolutePath()));
-                }
+        List<ImageIcon> frames = new ArrayList<>();
+
+        for (int i = 0; i < frameCount; i++) {
+
+            String fullPath = directoryPath + i + ".png";
+            System.out.println(fullPath);
+
+            URL url = Utils.class.getResource(fullPath);
+
+            if (url != null) {
+                frames.add(new ImageIcon(url));
+            }
+            else{
+                System.err.println("Failed to load image: " + fullPath);
             }
         }
+
         return frames;
     }
 
