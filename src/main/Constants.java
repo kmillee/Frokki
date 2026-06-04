@@ -17,7 +17,16 @@ public class Constants {
 
     // ---- GENERAL PATHS ----
     public static final String RESOURCES_PATH = "src" +File.separator + "resources";
-    public static final String DATA_FILE = RESOURCES_PATH + File.separator + "frogedex_data.json";
+//    public static final String DATA_FILE = RESOURCES_PATH + File.separator + "frogedex_data.json";
+    public static final String SAVE_DIR =
+            System.getProperty("user.home")
+                    + File.separator
+                    + ".pond_simulator";
+
+    public static final String DATA_FILE =
+            SAVE_DIR
+                    + File.separator
+                    + "frogedex_data.json";
 
     // ---- FROG DATA ----
 
@@ -30,7 +39,7 @@ public class Constants {
     public static void setUpFrogList(){
         if (!FROGS.isEmpty()) return;
         for (int i = 0 ; i < 13 ; i++){
-            Frog frog = new Frog("/frog/frog_" + i + ".png", "The Frog "+ i, FrogSpecies.getSpecies(i), "01/01/2025");
+            Frog frog = new Frog("/frog_" + i + ".png", "The Frog "+ i, FrogSpecies.getSpecies(i), "01/01/2025");
             FROGS.add(frog);
         }
     }

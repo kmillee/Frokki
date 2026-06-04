@@ -45,7 +45,7 @@ public class Menu {
         }
 
         try {
-            Image image = Constants.loadIcon("frog_1.png").getImage();
+            Image image = Constants.loadIcon("/frog_1.png").getImage();
 
             TrayIcon trayIcon = new TrayIcon(image, "Frokkie - Open Menu");
             trayIcon.setImageAutoSize(true);

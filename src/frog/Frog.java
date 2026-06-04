@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,29 +38,49 @@ public class Frog {
         this.listeners = new ArrayList<>();
     }
 
-    public Frog(String imagePath, String name, FrogSpecies species, String acquisitionDate) {
-        this();
-        this.imagePath = Constants.RESOURCES_PATH + File.separator + "frog_" + species.toInt() + ".png";
 
-        this.image = new ImageIcon(imagePath);
+    public Frog(String imagePath,String name,FrogSpecies species,String acquisitionDate) {
+        this();
+        this.imagePath = imagePath;
+
+        URL url = Frog.class.getResource(imagePath);
+
+        if(url != null) this.image = Constants.loadIcon(this.imagePath);
+        else System.err.println("Could not load frog image: " + imagePath);
+
         this.name = name;
         this.species = species;
         this.acquisitionDate = acquisitionDate;
-        this.experience = 0;
-        this.sound = new Sound(RESOURCES_PATH + File.separator + "sound" + File.separator + "croak.wav");
+        this.sound = new Sound("/sound/croak.wav");
     }
 
-    public Frog(String name, FrogSpecies species, String acquisitionDate) {
+    public Frog(String name,
+                FrogSpecies species,
+                String acquisitionDate) {
+
         this();
 
-        this.imagePath = Constants.RESOURCES_PATH + File.separator + "frog_" + species.toInt() + ".png";
-
-        this.image = new ImageIcon(imagePath);
         this.name = name;
         this.species = species;
         this.acquisitionDate = acquisitionDate;
         this.experience = 0;
-        this.sound = new Sound(RESOURCES_PATH + File.separator + "sound" + File.separator + "croak.wav");
+
+        this.imagePath ="/frog_" +
+                        species.toInt() +
+                        ".png";
+
+        URL url = Frog.class.getResource(imagePath);
+
+        if (url != null) {
+            this.image = new ImageIcon(url);
+        } else {
+            System.err.println(
+                    "Could not load frog image: "
+                            + imagePath
+            );
+        }
+
+        this.sound = new Sound("/sound/croak.wav");
     }
 
     /**
@@ -79,6 +100,7 @@ public class Frog {
     }
 
     public ImageIcon getImage() {
+        System.out.println("image to fetch:" + imagePath);
         return image;
     }
 
@@ -194,9 +216,19 @@ public class Frog {
     }
 
     public void reconstruct() {
-        if(imagePath != null)
-            this.image = new ImageIcon(imagePath);
-        this.sound = new Sound(RESOURCES_PATH + File.separator + "sound" + File.separator + "croak.wav");
+
+        if (imagePath != null) {
+
+            URL url = Frog.class.getResource(imagePath);
+
+            if (url != null) {
+                this.image = new ImageIcon(url);
+            } else {
+                System.err.println("Could not reconstruct image: " + imagePath);
+            }
+        }
+
+        this.sound = new Sound("/sound/croak.wav");
         this.animation = null;
     }
 }

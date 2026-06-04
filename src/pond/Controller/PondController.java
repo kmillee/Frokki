@@ -42,11 +42,11 @@ public class PondController implements MouseListener, MouseMotionListener {
     private double crocoSpawnChance = 0.1;
 
     // Sounds
-    private final Sound croakSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "croak.wav");
-    private final Sound crocoSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "jaws.wav");
-    private final Sound scissorsSound = new Sound(Constants.RESOURCES_PATH + File.separator+ "sound" + File.separator+ "scissors.wav");
-    private final Sound bellsound = new Sound( Constants.RESOURCES_PATH + File.separator + "sound" + File.separator +"bell.wav");
-    private final Sound endbellsound = new Sound(Constants.RESOURCES_PATH + File.separator + "sound" + File.separator + "bell_short.wav");
+    private final Sound croakSound = new Sound("/sound/croak.wav");
+    private final Sound crocoSound = new Sound("/sound/jaws.wav");
+    private final Sound scissorsSound = new Sound( "/sound/scissors.wav");
+    private final Sound bellsound = new Sound(  "/sound/bell.wav");
+    private final Sound endbellsound = new Sound("/sound/bell_short.wav");
 
     // ---- BELL MECHANICS ----
     static class MouseData {

@@ -13,8 +13,16 @@ public class Sound {
 
     public void setFile(String soundFileName) {
         try {
-            File file = new File(soundFileName);
-            AudioInputStream sound = AudioSystem.getAudioInputStream(file);
+            var url = Sound.class.getResource(soundFileName);
+
+            if (url == null) {
+                System.err.println("Sound resource not found: " + soundFileName);
+                return;
+            }
+
+            AudioInputStream sound =
+                    AudioSystem.getAudioInputStream(url);
+
             clip = AudioSystem.getClip();
             clip.open(sound);
 
@@ -22,7 +30,6 @@ public class Sound {
             e.printStackTrace();
         }
     }
-
     public void play() {
         if (clip == null || mute) return;
         clip.setFramePosition(0); // rewind to start
